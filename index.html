@@ -7,216 +7,83 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
-/* VOICE: vui, gấp gáp như một ca trực đêm, nhưng rõ ràng để MC điều khiển nhanh
-   IDEA: bộ bài vai trò + bảng điều phối ca trực của tổng đài
-   PICTURE: quạt lá bài vai trò (thiết lập), lá bài lật (người chơi), lưới ghế (MC)
-   COLOUR and TYPE: đỏ Toshiba làm nền chủ đạo, mực than, xanh điện làm điểm nhấn; Be Vietnam Pro
-   LAYOUT: dải đỏ trên cùng có tab, nội dung một cột rộng, lưới ghế tự xuống dòng */
+/* VOICE: gấp gáp vui như ca trực đêm, chữ to rõ để chiếu máy chiếu và bấm trên điện thoại
+   IDEA: bảng điều phối ca trực tổng đài + lá bài vai trò trên điện thoại
+   PICTURE: màn hình MC = bảng ca trực (QR, đồng hồ, ghế); điện thoại = thẻ nhiệm vụ
+   COLOUR and TYPE: đỏ Toshiba chủ đạo, mực than, xanh điện nhấn; Be Vietnam Pro
+   LAYOUT: dải đỏ trên cùng, nội dung một cột, ghế tự xuống dòng; điện thoại một cột */
 :root{color-scheme:light dark;--bg:light-dark(#ffffff,#121216);--ink:light-dark(#18181d,#f1f1f4);--mute:light-dark(#5d5d68,#a9a9b6);--red:#d4001a;--red2:light-dark(#ffe9eb,#3a1015);--blue:light-dark(#1f5cff,#7ea2ff);--card:light-dark(#f5f5f7,#1d1d23);--line:light-dark(#e2e2e8,#2e2e37);--ok:light-dark(#0a7a3d,#5fd497)}
 :root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
 *{box-sizing:border-box;min-width:0}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Be Vietnam Pro",system-ui,sans-serif;overflow-x:clip}
-h1,h2,h3{line-height:1.1;text-wrap:balance;margin:0 0 .4em}
-h1{font-size:clamp(30px,5vw,46px);font-weight:800}h2{font-size:24px;font-weight:800}h3{font-size:18px}
-.top{background:var(--red);color:#fff;padding:22px max(5vw,16px) 0}
-.top p{margin:0 0 14px;max-width:62ch;opacity:.92}
-.tabs{display:flex;flex-wrap:wrap;gap:4px}
+h1,h2,h3{line-height:1.12;text-wrap:balance;margin:0 0 .4em}
+h1{font-size:clamp(28px,4.6vw,44px);font-weight:800}h2{font-size:22px;font-weight:800}h3{font-size:18px}
+.top{background:var(--red);color:#fff;padding:18px max(5vw,16px) 0}
+.top .row{justify-content:space-between}
+.tabs{display:flex;flex-wrap:wrap;gap:4px;margin-top:10px}
 .tabs button{background:transparent;color:#fff;border:0;border-radius:10px 10px 0 0;padding:12px 18px;font:600 16px/1.2 "Be Vietnam Pro",system-ui,sans-serif;cursor:pointer;min-height:44px}
 .tabs button.on{background:var(--bg);color:var(--ink)}
-.band{padding:clamp(22px,3vw,40px) max(5vw,16px);max-width:1240px;margin:0 auto}
+.band{padding:clamp(18px,3vw,36px) max(5vw,16px);max-width:1240px;margin:0 auto}
 .hide{display:none!important}
-.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;align-items:start}
-@media(max-width:860px){.grid2{grid-template-columns:minmax(0,1fr)}}
-.box{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
+.g2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;align-items:start}
+.g2b{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:24px;align-items:start}
+@media(max-width:860px){.g2,.g2b{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
 label{display:block;font-weight:600;margin:14px 0 6px}
 input,textarea,select{font:16px/1.3 "Be Vietnam Pro",system-ui,sans-serif;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:100%;min-height:44px}
-textarea{min-height:120px;resize:vertical}
-input:focus-visible,textarea:focus-visible,select:focus-visible,button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+textarea{min-height:110px;resize:vertical}
+input[type=radio]{width:auto;min-height:0}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
 .btn{font:600 16px/1.2 "Be Vietnam Pro",system-ui,sans-serif;border:0;border-radius:12px;padding:11px 18px;min-height:44px;cursor:pointer;background:var(--ink);color:var(--bg)}
 .btn.red{background:var(--red);color:#fff}.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
-.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn.full{width:100%}.btn:disabled{opacity:.4;cursor:not-allowed}
 .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 .small{font-size:14px;color:var(--mute)}
-.roles{display:grid;gap:8px}
-.rl{display:grid;grid-template-columns:36px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 10px;border-radius:12px;background:var(--bg);border:1px solid var(--line)}
-.rl svg{width:32px;height:32px}
-.cnt{display:flex;align-items:center;gap:6px}.cnt button{width:44px;height:44px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:20px;cursor:pointer}
-.cnt b{width:28px;text-align:center;font-size:18px}
-/* quạt bài */
-.fan{position:relative;height:270px;margin:0 0 24px}
-@media(max-width:600px){.fan{height:220px;overflow:hidden}.pc{width:112px;height:162px;margin-left:-56px}.pc svg{width:44px;height:44px}}
-.pc{position:absolute;left:50%;bottom:0;width:150px;height:216px;margin-left:-75px;border-radius:16px;background:var(--bg);border:2px solid var(--line);box-shadow:0 10px 24px rgb(0 0 0/.16);transform-origin:50% 260%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:12px;text-align:center;transition:transform .5s}
-.pc svg{width:62px;height:62px}.pc b{font-size:15px;line-height:1.2}.pc i{font-style:normal;font-size:13px;color:var(--mute)}
-.pc .n{position:absolute;top:8px;left:12px;font-weight:800;font-size:18px}
-/* lưới ghế */
-.seats{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px}
-.seat{border:1px solid var(--line);border-radius:14px;padding:12px;background:var(--card);display:grid;gap:6px}
-.seat.out{opacity:.45;background:transparent}
-.seat .hd{display:flex;justify-content:space-between;gap:6px;align-items:baseline}
-.seat .no{font-weight:800;font-size:20px}
-.tag{display:inline-block;font-size:13px;font-weight:600;padding:2px 8px;border-radius:99px;background:var(--red2);color:var(--red)}
-.tag.v{background:color-mix(in srgb,var(--blue) 14%,transparent);color:var(--blue)}
-.blur .tag{filter:blur(6px)}
-.kpi{display:flex;align-items:center;gap:6px}.kpi button{width:36px;height:36px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer;font-size:18px}
-.mini{font:600 14px/1.2 "Be Vietnam Pro",system-ui,sans-serif;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:8px;padding:6px 10px;cursor:pointer;min-height:36px}
-.qr{display:grid;grid-template-columns:auto minmax(0,1fr);gap:20px;align-items:center}
-.qr .code{background:#fff;padding:10px;border-radius:14px;width:220px;max-width:100%}.qr .code svg{display:block;width:100%;height:auto}
-@media(max-width:600px){.qr{grid-template-columns:minmax(0,1fr)}.qr .code{margin:auto}}
-.url{font-size:13px;overflow-wrap:anywhere;color:var(--mute)}
-.phase{display:flex;gap:8px;align-items:center;font-weight:800;font-size:22px}
-.steps{margin:0;padding-left:22px}.steps li{margin:6px 0}
-.qcard{border:2px dashed var(--blue);border-radius:16px;padding:16px;margin-top:10px}
-.qcard .q{font-size:19px;font-weight:600}.qcard .a{margin-top:10px;color:var(--ok);font-weight:600}
-.banner{background:var(--ink);color:var(--bg);border-radius:14px;padding:14px 18px;font-weight:800;font-size:20px}
-.log{max-height:240px;overflow:auto;font-size:14px;margin:0;padding-left:20px}
-.timer{font-weight:800;font-size:28px;font-variant-numeric:tabular-nums}
 .warn{color:var(--red);font-weight:600}
-table{border-collapse:collapse;width:100%}td,th{padding:8px;border-bottom:1px solid var(--line);text-align:left}td.r,th.r{text-align:right}
-.rules h3{margin-top:22px}.rules p,.rules li{max-width:72ch}
-/* người chơi */
-#player{min-height:100vh;background:var(--red);color:#fff;padding:24px 16px;display:flex;flex-direction:column;align-items:center;gap:16px}
-#player .box{background:var(--bg);color:var(--ink);width:100%;max-width:420px}
-.flip{width:min(330px,88vw);aspect-ratio:2/3;perspective:1200px;cursor:pointer}
-.flip .in{position:relative;width:100%;height:100%;transition:transform .7s;transform-style:preserve-3d}
-.flip.on .in{transform:rotateY(180deg)}
-.face{position:absolute;inset:0;border-radius:22px;backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:22px;text-align:center;box-shadow:0 18px 40px rgb(0 0 0/.3)}
-.back{background:repeating-linear-gradient(45deg,#1b1b21 0 14px,#26262e 14px 28px);color:#fff;border:6px solid #fff}
-.front{background:var(--bg);color:var(--ink);transform:rotateY(180deg);border:6px solid #fff;justify-content:flex-start;gap:8px;overflow:auto}
-.front svg{width:84px;height:84px;flex:none}
-.front .team{font-size:14px;font-weight:600}
-.front p{margin:0;font-size:15px;text-align:left}
-@media(prefers-reduced-motion:reduce){.flip .in,.pc{transition:none}}
+.okc{color:var(--ok);font-weight:600}
+.cols3{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+@media(max-width:600px){.cols3{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.mode{display:flex;gap:10px;flex-wrap:wrap}
+.mode label{margin:0;display:flex;gap:8px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:10px 14px;cursor:pointer;font-weight:600}
+pre{overflow-x:auto;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px;font-size:13px}
+/* MC */
+.qr{background:#fff;padding:10px;border-radius:14px;width:100%;max-width:300px}.qr svg{display:block;width:100%;height:auto}
+.code{font-size:clamp(34px,5vw,52px);font-weight:800;letter-spacing:.08em;line-height:1}
+.url{font-size:13px;overflow-wrap:anywhere;color:var(--mute)}
+.head{font-size:clamp(22px,3vw,32px);font-weight:800;line-height:1.2}
+.timer{font-weight:800;font-size:clamp(40px,6vw,64px);font-variant-numeric:tabular-nums;line-height:1}
+.ph{display:inline-block;font-weight:700;font-size:14px;padding:4px 12px;border-radius:99px;background:var(--ink);color:var(--bg)}
+.ph.n{background:#1b1b33;color:#fff}.ph.d{background:#f2b400;color:#111}
+.seats{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.seat{border:1px solid var(--line);border-radius:14px;padding:12px;background:var(--card);display:grid;gap:4px}
+.seat.out{opacity:.45;background:transparent}
+.seat b{font-size:18px}
+.tag{display:inline-block;font-size:13px;font-weight:600;padding:2px 8px;border-radius:99px;background:color-mix(in srgb,var(--blue) 14%,transparent);color:var(--blue)}
+.tag.bad{background:var(--red2);color:var(--red)}
+.log{margin:0;padding-left:20px;max-height:300px;overflow:auto}.log li{margin:4px 0}
+table{border-collapse:collapse;width:100%}td,th{padding:8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}td.r,th.r{text-align:right;white-space:nowrap}
+.rules h3{margin-top:22px}.rules p,.rules li{max-width:74ch}.rules ol,.rules ul{padding-left:22px}.rules li{margin:6px 0}
+.rl{display:grid;grid-template-columns:44px minmax(0,1fr);gap:12px;align-items:start;padding:10px 12px;border-radius:12px;background:var(--card);border:1px solid var(--line);margin:8px 0}
+.rl svg{width:40px;height:40px}
+/* điện thoại */
+.pv{max-width:480px;margin:0 auto;padding:16px;display:grid;gap:14px}
+.ptop{background:var(--red);color:#fff;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.ptop b{font-size:18px}
+.role{display:grid;grid-template-columns:64px minmax(0,1fr);gap:12px;align-items:center}
+.role svg{width:64px;height:64px}
+.opts{display:grid;gap:8px}
+.opt{font:600 16px/1.35 "Be Vietnam Pro",system-ui,sans-serif;text-align:left;border:2px solid var(--line);background:var(--bg);color:var(--ink);border-radius:12px;padding:12px 14px;min-height:48px;cursor:pointer}
+.opt.on{border-color:var(--blue);background:color-mix(in srgb,var(--blue) 12%,var(--bg))}
+.q{font-size:18px;font-weight:600;margin:4px 0 10px}
+.lbl{font-weight:700;margin:16px 0 8px}
+.cd{font-weight:800;font-variant-numeric:tabular-nums}
+.msgs{margin:0;padding-left:18px}.msgs li{margin:6px 0}
+.big{font-size:20px;font-weight:700}
+@media(prefers-reduced-motion:no-preference){.pulse{animation:p 1.6s ease-in-out infinite}@keyframes p{50%{opacity:.55}}}
 </style>
 </head>
 <body>
-
-<section id="player" class="hide">
-  <h1 style="text-align:center">Ma Sói Tổng Đài</h1>
-  <div class="box" id="pjoin">
-    <h2>Nhận vai của bạn</h2>
-    <p class="small">Nhập đúng <b>số ghế</b> MC đã phát cho bạn. Mỗi điện thoại chỉ nhận được một vai.</p>
-    <label for="pseat">Số ghế</label><input id="pseat" type="number" inputmode="numeric" min="1">
-    <label for="pname">Tên của bạn</label><input id="pname" autocomplete="name">
-    <p id="perr" class="warn"></p>
-    <button class="btn red" id="pgo" style="width:100%">Nhận vai</button>
-  </div>
-  <div id="pcard" class="hide" style="display:flex;flex-direction:column;align-items:center;gap:14px">
-    <div class="flip" id="flip"><div class="in">
-      <div class="face back"><div style="font-size:15px;opacity:.8">Ghế</div><div id="pno" style="font-size:72px;font-weight:800;line-height:1"></div><div id="pnm" style="margin:6px 0 18px;font-weight:600"></div><div>Chạm để xem vai · che màn hình nhé!</div></div>
-      <div class="face front" id="pfront"></div>
-    </div></div>
-    <p style="margin:0;max-width:330px;text-align:center">Chạm lần nữa để úp bài. Không cho người khác xem.</p>
-  </div>
-</section>
-
-<div id="mc">
-<header class="top">
-  <h1>Ma Sói Tổng Đài</h1>
-  <p>Trò chơi suy luận cho Tổng đài viên: quét QR nhận vai ngẫu nhiên, ban đêm "Mã Lỗi" phá ca trực, ban ngày trả lời đúng nghiệp vụ để có thêm phiếu và phao cứu.</p>
-  <nav class="tabs" id="tabs">
-    <button data-t="setup" class="on">Thiết lập</button>
-    <button data-t="game">Điều khiển ván</button>
-    <button data-t="bank">Ngân hàng câu hỏi</button>
-    <button data-t="rules">Luật chơi</button>
-  </nav>
-</header>
-
-<main>
-<section class="band" id="t-setup">
-  <div class="grid2">
-    <div>
-      <h2>Tạo ván mới</h2>
-      <label for="n">Số người chơi (5–30)</label>
-      <input id="n" type="number" min="5" max="30" value="10">
-      <div class="row" style="margin-top:10px"><button class="btn ghost" id="sug">Gợi ý vai theo số người</button><span class="small" id="vill"></span></div>
-      <label>Số lượng vai</label>
-      <div class="roles" id="roles"></div>
-      <label for="names">Tên theo số ghế (tuỳ chọn, mỗi dòng 1 người)</label>
-      <textarea id="names" placeholder="Dòng 1 = ghế 1&#10;Dòng 2 = ghế 2"></textarea>
-      <label for="base">Địa chỉ trang web cho người chơi quét</label>
-      <input id="base">
-      <p class="small">Đưa file này lên GitHub Pages (hoặc web nội bộ) rồi dán đường dẫn vào đây, để điện thoại của Tổng đài viên mở được mà không cần tài khoản.</p>
-      <div class="row" style="margin-top:14px"><button class="btn red" id="new">Tạo ván & mã QR</button><span id="serr" class="warn"></span></div>
-    </div>
-    <div>
-      <h2>Bộ bài ván này</h2>
-      <div class="fan" id="fan" aria-hidden="true"></div>
-      <div class="box small" id="mix"></div>
-    </div>
-  </div>
-</section>
-
-<section class="band hide" id="t-game">
-  <div id="nogame" class="box">Chưa có ván. Vào <b>Thiết lập</b> để tạo ván mới.</div>
-  <div id="g" class="hide" style="display:grid;gap:22px">
-    <div class="box qr">
-      <div class="code" id="qr"></div>
-      <div>
-        <h2>Quét để nhận vai</h2>
-        <p style="margin:0 0 8px">Phát số ghế 1 → <b id="gn"></b> cho từng người, rồi cho cả phòng quét mã. Mã ván: <b id="gseed"></b></p>
-        <p class="url" id="gurl"></p>
-        <div class="row"><button class="btn ghost" id="copy">Sao chép link</button><span class="small" id="copied"></span></div>
-      </div>
-    </div>
-    <div id="win" class="banner hide"></div>
-    <div class="grid2">
-      <div class="box" id="phase"></div>
-      <div class="box">
-        <div class="row" style="justify-content:space-between"><h2 style="margin:0">Nhật ký ca trực</h2><button class="mini" id="final">Tổng kết điểm</button></div>
-        <ol class="log" id="log"></ol>
-        <div id="board"></div>
-      </div>
-    </div>
-    <div>
-      <div class="row" style="justify-content:space-between;margin-bottom:10px"><h2 style="margin:0">Sơ đồ ghế</h2><button class="mini" id="eye">Hiện vai (chỉ MC xem)</button></div>
-      <div class="seats" id="seats"></div>
-    </div>
-  </div>
-</section>
-
-<section class="band hide" id="t-bank">
-  <div class="grid2">
-    <div>
-      <h2>Ngân hàng câu hỏi</h2>
-      <p class="small">Mỗi dòng: <b>Câu hỏi | Đáp án | Nhóm</b>. Dòng bắt đầu bằng # là ghi chú. Các câu có sẵn là <b>câu mẫu chung về kỹ năng tổng đài</b>; hãy thêm câu về mã lỗi, model, quy trình từ tài liệu nội bộ của bạn.</p>
-      <textarea id="bank" style="min-height:360px"></textarea>
-      <div class="row" style="margin-top:10px"><button class="btn" id="save">Lưu câu hỏi</button><button class="btn ghost" id="reset">Khôi phục câu mẫu</button><span class="small" id="bcount"></span></div>
-    </div>
-    <div>
-      <h2>Rút thử thẻ</h2>
-      <button class="btn red" id="draw2">Rút thẻ câu hỏi</button>
-      <div id="qbox2"></div>
-    </div>
-  </div>
-</section>
-
-<section class="band hide rules" id="t-rules">
-  <h2>Luật chơi Ma Sói Tổng Đài</h2>
-  <p>Cả phòng là một <b>ca trực tổng đài</b>. Ẩn trong ca là vài <b>Mã Lỗi</b> muốn đánh sập ca trực. Phe Tổng đài thắng khi loại hết Mã Lỗi; Mã Lỗi thắng khi số Mã Lỗi còn lại bằng hoặc nhiều hơn số người phe Tổng đài. Khác với Ma Sói thường: ai giỏi nghiệp vụ sẽ có lợi thế ở ban ngày.</p>
-  <h3>Các vai</h3>
-  <div class="roles" id="rlist"></div>
-  <h3>Chuẩn bị (3 phút)</h3>
-  <ol class="steps"><li>MC tạo ván ở tab Thiết lập, phát số ghế cho từng người.</li><li>Mọi người quét QR, nhập số ghế, xem vai rồi úp bài. MC xem toàn bộ vai ở "Sơ đồ ghế".</li><li>Giải thích nhanh luật lồng ghép học tập bên dưới.</li></ol>
-  <h3>Ban đêm – "Ca trực đêm"</h3>
-  <ol class="steps"><li>Cả ca nhắm mắt.</li><li><b>Kỹ thuật viên</b> mở mắt, chỉ 1 người được bảo vệ (không chọn cùng một người 2 đêm liền).</li><li><b>Mã Lỗi</b> mở mắt, thống nhất 1 người để đánh sập.</li><li><b>Giám sát QA</b> mở mắt, chỉ 1 người; MC gật đầu nếu là Mã Lỗi, lắc đầu nếu không.</li><li><b>Chuyên viên Training</b> mở mắt; MC chỉ người vừa bị đánh sập. Có thể dùng Tài liệu cứu hộ (1 lần) hoặc Phiếu đình chỉ để loại 1 người (1 lần).</li><li>Nhập các lựa chọn vào tab Điều khiển ván; app tự tính ai rời ca.</li></ol>
-  <h3>Ban ngày – có lồng ghép học tập</h3>
-  <ol class="steps">
-    <li><b>Công bố:</b> MC báo ai rời ca và lật vai người đó. Nếu là Trưởng ca, người đó chọn 1 người rời ca cùng.</li>
-    <li><b>Cuộc gọi buổi sáng:</b> MC rút 1 thẻ câu hỏi. Ai còn trong ca giơ tay trước được trả lời. Đúng: +1 điểm KPI và <b>phiếu bầu của người đó tính ×2</b> trong hôm nay. Sai: nhường người giơ tay tiếp theo (tối đa 2 lượt).</li>
-    <li><b>Thảo luận</b> 3 phút (có đồng hồ trong app). Được nói dối, không được cho xem điện thoại.</li>
-    <li><b>Bỏ phiếu:</b> cùng chỉ tay đếm 3-2-1. Người nhiều phiếu nhất bị đưa ra "xử lý ca".</li>
-    <li><b>Phao nghiệp vụ:</b> người bị nhiều phiếu nhất được trả lời 1 câu hỏi. Đúng thì thoát, hôm nay không ai bị loại (mỗi người chỉ dùng phao 1 lần mỗi ván). Sai thì rời ca và lật vai. Hoà phiếu: không ai bị loại.</li>
-  </ol>
-  <h3>Người đã rời ca: Hội đồng chấm</h3>
-  <p>Người đã rời ca không được tiết lộ gì, nhưng vẫn được trả lời câu hỏi khi không ai trong ca trả lời đúng (+1 KPI). Nhờ vậy ai cũng tiếp tục học đến cuối ván.</p>
-  <h3>Tính điểm cuối ván</h3>
-  <p>Mỗi người phe thắng +3 điểm, cộng với điểm KPI trả lời đúng. Vinh danh <b>Tổng đài viên xuất sắc</b> là người có tổng điểm cao nhất, dù thuộc phe nào. Mã Lỗi cũng cần học giỏi: trả lời sai nhiều dễ bị nghi, và phao nghiệp vụ cứu được cả Mã Lỗi.</p>
-  <h3>Biến thể cho buổi training</h3>
-  <ul><li><b>Chế độ khó:</b> Giám sát QA phải trả lời đúng một câu MC đưa xem trên điện thoại (im lặng) thì mới nhận kết quả soi đêm đó.</li><li><b>Theo chủ đề:</b> mỗi ván chỉ dùng một nhóm câu (ví dụ mã lỗi máy giặt), ván sau đổi ngành hàng.</li><li><b>Nhập vai:</b> câu Phao nghiệp vụ là một tình huống khách hàng; người bị bầu phải xử lý như đang nghe máy, cả phòng giơ tay chấm đạt/không đạt.</li></ul>
-</section>
-</main>
-</div>
-
+<div id="app"></div>
 <script>//---------------------------------------------------------------------
 //
 // QR Code Generator for JavaScript
@@ -2517,185 +2384,472 @@ var qrcode = function() {
 </script>
 <script>
 {
+/* ================= tiện ích ================= */
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const ORDER=['wolf','seer','guard','witch','hunter'];
+const rnd=n=>crypto.getRandomValues(new Uint32Array(n));
+const rid=n=>{const a='abcdefghjkmnpqrstuvwxyz23456789';return[...rnd(n)].map(x=>a[x%a.length]).join('')};
+const shuffle=a=>{a=[...a];const r=rnd(a.length||1);for(let i=a.length-1;i>0;i--){const j=r[i]%(i+1);[a[i],a[j]]=[a[j],a[i]]}return a};
+const pick=a=>a[rnd(1)[0]%a.length];
+const clean=o=>JSON.parse(JSON.stringify(o));
+const mk=s=>({get(k,d){try{const v=s().getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{s().setItem(k,JSON.stringify(v))}catch(e){}},del(k){try{s().removeItem(k)}catch(e){}}});
+const LS=mk(()=>localStorage),SS=mk(()=>sessionStorage);
+function deepMerge(t,s){for(const k in s){const v=s[k];if(v&&typeof v==='object'&&!Array.isArray(v)){if(!t[k]||typeof t[k]!=='object'||Array.isArray(t[k]))t[k]={};deepMerge(t[k],v)}else t[k]=v}return t}
+const b64e=o=>btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+const b64d=s=>JSON.parse(decodeURIComponent(escape(atob(s.replace(/-/g,'+').replace(/_/g,'/')))));
+const loadScript=src=>new Promise((ok,no)=>{const s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=()=>no(new Error('Không tải được '+src));document.head.appendChild(s)});
+const mmss=ms=>{const s=Math.max(0,Math.ceil(ms/1000));return`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`};
+
+/* ================= đồng bộ: Firebase hoặc thử 1 máy ================= */
+function LocalBE(){
+  const bc=('BroadcastChannel' in window)?new BroadcastChannel('msTD'):null,subs=new Set(),K=p=>'msTDdb:'+p;
+  const emit=()=>setTimeout(()=>subs.forEach(f=>f()));
+  if(bc)bc.onmessage=emit;addEventListener('storage',e=>{if(e.key&&e.key.startsWith('msTDdb:'))emit()});
+  return{
+    async set(path,data){LS.set(K(path),deepMerge(LS.get(K(path),{}),clean(data)));if(bc)bc.postMessage(1);emit()},
+    watch(path,cb){const f=()=>cb(LS.get(K(path),null));subs.add(f);setTimeout(f)},
+    watchCol(path,cb){const pre=K(path+'/');const f=()=>{const o={};for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k.startsWith(pre)&&!k.slice(pre.length).includes('/'))o[k.slice(pre.length)]=LS.get(k,null)}cb(o)};subs.add(f);setTimeout(f)}
+  };
+}
+async function FireBE(cfg){
+  const V='10.12.2';
+  if(!window.firebase){await loadScript(`https://www.gstatic.com/firebasejs/${V}/firebase-app-compat.js`);await loadScript(`https://www.gstatic.com/firebasejs/${V}/firebase-firestore-compat.js`)}
+  const app=firebase.apps.length?firebase.app():firebase.initializeApp({apiKey:cfg.a,projectId:cfg.p,authDomain:cfg.p+'.firebaseapp.com'});
+  const db=firebase.firestore(app);
+  return{
+    set:(path,data)=>db.doc(path).set(clean(data),{merge:true}),
+    watch:(path,cb)=>db.doc(path).onSnapshot(d=>cb(d.exists?d.data():null),e=>showErr(e)),
+    watchCol:(path,cb)=>db.collection(path).onSnapshot(s=>{const o={};s.forEach(d=>o[d.id]=d.data());cb(o)},e=>showErr(e))
+  };
+}
+function showErr(e){const d=document.createElement('div');d.className='card warn';d.style.cssText='position:fixed;left:12px;right:12px;bottom:12px;z-index:9';d.textContent='Lỗi kết nối: '+(e&&e.message||e);document.body.appendChild(d);setTimeout(()=>d.remove(),8000)}
+
+/* ================= vai trò ================= */
 const ic={
  wolf:'<path d="M32 6 60 56H4Z" fill="#d4001a"/><path d="M32 6 60 56H32Z" fill="#a30014"/><rect x="29" y="22" width="6" height="20" rx="3" fill="#fff"/><circle cx="32" cy="48" r="3.4" fill="#fff"/>',
  seer:'<circle cx="27" cy="27" r="18" fill="#1f5cff"/><circle cx="27" cy="27" r="11" fill="#fff"/><path d="M22 22a8 8 0 0 1 8-3" stroke="#1f5cff" stroke-width="3" fill="none"/><rect x="38" y="40" width="9" height="22" rx="4" transform="rotate(-45 42 51)" fill="#18181d"/>',
  guard:'<path d="M32 4 56 13v18c0 15-10 25-24 29C18 56 8 46 8 31V13Z" fill="#0a7a3d"/><path d="M32 4 56 13v18c0 15-10 25-24 29Z" fill="#075c2e"/><path d="M21 32l8 8 15-16" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round"/>',
- witch:'<path d="M8 12h22c2 0 2 2 2 2v42s-1-4-6-4H8Z" fill="#7a3cff"/><path d="M56 12H34c-2 0-2 2-2 2v42s1-4 6-4h18Z" fill="#5a22d6"/><path d="M14 22h12M14 30h12M38 22h12M38 30h12" stroke="#fff" stroke-width="3"/>',
- hunter:'<path d="M12 36a20 20 0 0 1 40 0" stroke="#18181d" stroke-width="6" fill="none"/><rect x="6" y="34" width="12" height="18" rx="5" fill="#d4001a"/><rect x="46" y="34" width="12" height="18" rx="5" fill="#d4001a"/><path d="M32 4l3.5 7 7.5 1-5.5 5 1.5 7.5L32 21l-7 3.5 1.5-7.5-5.5-5 7.5-1Z" fill="#f2b400"/>',
- villager:'<path d="M12 36a20 20 0 0 1 40 0" stroke="#18181d" stroke-width="6" fill="none"/><rect x="6" y="34" width="12" height="18" rx="5" fill="#1f5cff"/><rect x="46" y="34" width="12" height="18" rx="5" fill="#1f5cff"/><path d="M52 50q0 8-12 8" stroke="#18181d" stroke-width="3" fill="none"/><circle cx="38" cy="58" r="3" fill="#18181d"/>'
+ villager:'<path d="M12 36a20 20 0 0 1 40 0" stroke="#888" stroke-width="6" fill="none"/><rect x="6" y="34" width="12" height="18" rx="5" fill="#1f5cff"/><rect x="46" y="34" width="12" height="18" rx="5" fill="#1f5cff"/><path d="M52 50q0 8-12 8" stroke="#888" stroke-width="3" fill="none"/><circle cx="38" cy="58" r="3" fill="#888"/>'
 };
 const svg=k=>`<svg viewBox="0 0 64 64" aria-hidden="true">${ic[k]}</svg>`;
-const R={
- wolf:{n:'Mã Lỗi',team:'Phe Mã Lỗi',bad:1,p:'Mỗi đêm cùng đồng bọn mở mắt, thống nhất chọn 1 người để "đánh sập" (rời ca).',g:'Thắng khi số Mã Lỗi còn lại bằng hoặc nhiều hơn phe Tổng đài.',s:'Ban ngày vẫn phải trả lời câu hỏi thật tốt: trả lời sai nhiều dễ bị nghi, và Phao nghiệp vụ cứu được cả bạn.'},
- seer:{n:'Giám sát QA',team:'Phe Tổng đài',p:'Mỗi đêm chỉ 1 người. MC gật đầu nếu người đó là Mã Lỗi, lắc đầu nếu không.',g:'Dẫn dắt cả ca loại hết Mã Lỗi mà không để lộ mình quá sớm.',s:'Thông tin của bạn chỉ có giá trị khi cả ca tin bạn: hãy trả lời nghiệp vụ chuẩn để tạo uy tín.'},
- guard:{n:'Kỹ thuật viên',team:'Phe Tổng đài',p:'Mỗi đêm bảo vệ 1 người (kể cả chính mình). Không bảo vệ cùng một người 2 đêm liên tiếp.',g:'Giữ Giám sát QA và người giỏi nghiệp vụ ở lại ca.',s:'Người trả lời đúng nhiều thường là mục tiêu của Mã Lỗi: đáng để bảo vệ.'},
- witch:{n:'Chuyên viên Training',team:'Phe Tổng đài',p:'Có 1 Tài liệu cứu hộ (cứu người vừa bị đánh sập) và 1 Phiếu đình chỉ (loại 1 người). Mỗi thứ dùng 1 lần.',g:'Dùng đúng lúc để lật ngược thế trận.',s:'Hãy quan sát ai trả lời sai một cách cố ý: đó có thể là Mã Lỗi đang giả vờ.'},
- hunter:{n:'Trưởng ca',team:'Phe Tổng đài',p:'Khi bị loại (ban đêm hoặc bỏ phiếu), bạn chỉ định ngay 1 người rời ca cùng.',g:'Để lại một quyết định chính xác trước khi rời ca.',s:'Ghi nhớ ai trả lời ra sao trong cả ván để chọn đúng người.'},
- villager:{n:'Tổng đài viên',team:'Phe Tổng đài',p:'Không có kỹ năng ban đêm. Sức mạnh của bạn là suy luận, lá phiếu và kiến thức nghiệp vụ.',g:'Cùng cả ca tìm và loại hết Mã Lỗi.',s:'Trả lời đúng Cuộc gọi buổi sáng để lá phiếu tính ×2, và giữ phao nghiệp vụ cho mình.'}
+const ROLE={
+ wolf:{n:'Mã Lỗi',team:'Phe Mã Lỗi',bad:1,p:'Mỗi đêm chọn 1 người để đánh sập. Lệnh chỉ thành công khi bạn trả lời ĐÚNG câu hỏi đêm.',g:'Thắng khi số Mã Lỗi còn lại bằng hoặc nhiều hơn phe Tổng đài. Ban ngày hãy giả làm người tốt.'},
+ seer:{n:'Giám sát QA',team:'Phe Tổng đài',p:'Mỗi đêm chọn 1 người để soi. Trả lời ĐÚNG câu hỏi đêm thì biết người đó có phải Mã Lỗi không.',g:'Tìm ra Mã Lỗi và thuyết phục cả ca bỏ phiếu đúng người.'},
+ guard:{n:'Kỹ thuật viên',team:'Phe Tổng đài',p:'Mỗi đêm bảo vệ 1 người (được chọn chính mình, không trùng người đêm trước). Bảo vệ chỉ có hiệu lực khi trả lời ĐÚNG.',g:'Giữ những người quan trọng ở lại ca.'},
+ villager:{n:'Tổng đài viên',team:'Phe Tổng đài',p:'Mỗi đêm chọn người bạn nghi nhất và trả lời câu hỏi. Tổng đài viên trả lời ĐÚNG NHANH NHẤT nhận 1 manh mối: tên một người chắc chắn không phải Mã Lỗi.',g:'Cùng cả ca loại hết Mã Lỗi. Mỗi đêm nghi đúng Mã Lỗi được +1 điểm cuối ván.'}
 };
-const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
-function hashStr(s){let h=1779033703^s.length;for(let i=0;i<s.length;i++){h=Math.imul(h^s.charCodeAt(i),3432918353);h=h<<13|h>>>19}return h>>>0}
-function rng(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
-function deal(seed,n,c){const a=[];ORDER.forEach((k,i)=>{for(let j=0;j<c[i];j++)a.push(k)});while(a.length<n)a.push('villager');const r=rng(hashStr(seed));for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
-function suggest(n){if(n<=6)return[1,1,1,0,0];if(n<=8)return[2,1,1,1,0];if(n<=11)return[2,1,1,1,1];if(n<=15)return[3,1,1,1,1];return[4,1,1,1,1]}
-const cardHTML=k=>{const r=R[k];return`${svg(k)}<h2 style="margin:0;color:${r.bad?'var(--red)':'var(--blue)'}">${r.n}</h2><div class="team">${r.team}</div><p><b>Kỹ năng:</b> ${r.p}</p><p><b>Mục tiêu:</b> ${r.g}</p><p><b>Mẹo học tập:</b> ${r.s}</p>`};
+function suggest(n,w){const wolf=w&&w!=='auto'?+w:(n<=6?1:n<=9?2:3);return{wolf:Math.min(wolf,Math.floor((n-1)/2)),seer:1,guard:n>=5?1:0}}
+const compText=(n,c)=>`${c.wolf} Mã Lỗi, 1 Giám sát QA${c.guard?', 1 Kỹ thuật viên':''}, ${n-c.wolf-1-c.guard} Tổng đài viên`;
 
-/* ---------- NGƯỜI CHƠI ---------- */
-const m=location.hash.match(/^#j\.([a-z0-9]+)\.(\d+)\.(\d+)\.(\d+)\.(\d+)\.(\d+)\.(\d+)$/);
-if(m){
-  $('#mc').classList.add('hide');$('#player').classList.remove('hide');
-  const seed=m[1],n=+m[2],c=m.slice(3).map(Number),roles=deal(seed,n,c),key='msTD_p_'+seed;
-  $('#pseat').max=n;
-  const show=(seat,name)=>{$('#pjoin').classList.add('hide');$('#pcard').classList.remove('hide');$('#pno').textContent=seat;$('#pnm').textContent=name;$('#pfront').innerHTML=cardHTML(roles[seat-1])};
-  const saved=store.get(key,null);if(saved)show(saved.seat,saved.name);
-  $('#pgo').onclick=()=>{const s=+$('#pseat').value,nm=$('#pname').value.trim();
-    if(!(s>=1&&s<=n)){$('#perr').textContent=`Số ghế phải từ 1 đến ${n}.`;return}
-    if(!nm){$('#perr').textContent='Nhập tên của bạn.';return}
-    store.set(key,{seat:s,name:nm});show(s,nm)};
-  $('#flip').onclick=()=>$('#flip').classList.toggle('on');
-}
+/* ================= ngân hàng câu hỏi ================= */
+const SAMPLE=`# Định dạng mỗi dòng:  Câu hỏi | Đáp án ĐÚNG | Sai 1 | Sai 2 | Sai 3
+# Dòng bắt đầu bằng # là ghi chú. Đây là câu mẫu chung về kỹ năng tổng đài — hãy thêm câu mã lỗi, model, quy trình từ tài liệu nội bộ.
+Khách gọi đến đang rất bực tức. Việc đầu tiên nên làm là gì? | Lắng nghe hết ý và ghi nhận cảm xúc của khách | Giải thích ngay quy định bảo hành | Chuyển máy cho cấp trên | Đề nghị khách bình tĩnh rồi gọi lại sau
+Thông tin nào ít liên quan nhất khi tiếp nhận yêu cầu sửa chữa? | Nghề nghiệp của khách | Số điện thoại liên hệ | Địa chỉ đặt sản phẩm | Model sản phẩm và mô tả lỗi
+Vì sao nên đọc lại thông tin trước khi kết thúc cuộc gọi? | Tránh sai địa chỉ, số điện thoại và giảm cuộc gọi lại | Để kéo dài thời gian cuộc gọi | Vì khách hay quên tên mình | Để ghi âm rõ hơn
+Chưa chắc câu trả lời kỹ thuật, Tổng đài viên nên làm gì? | Xin phép khách giữ máy hoặc hẹn gọi lại để kiểm tra tài liệu | Đoán câu trả lời gần đúng nhất | Nói không biết rồi kết thúc cuộc gọi | Bảo khách tự tìm trên mạng
+Câu nào chuyên nghiệp nhất khi yêu cầu không thuộc bộ phận mình? | Em sẽ chuyển yêu cầu đến bộ phận phụ trách và báo lại anh/chị | Cái đó không phải việc của em | Anh/chị gọi số khác giúp em | Em cũng không rõ ai làm việc đó
+Khi cần để khách chờ máy, nên làm gì? | Xin phép, nêu lý do và thời gian chờ dự kiến | Bấm giữ máy ngay, không cần nói | Im lặng để tra cứu | Bảo khách gọi lại sau 30 phút
+Kết thúc cuộc gọi nên có bước nào? | Hỏi khách còn cần hỗ trợ gì thêm rồi cảm ơn | Cúp máy ngay khi xong việc | Nhắc khách đánh giá 5 sao | Đọc lại toàn bộ chính sách bảo hành
+Khách báo máy hiển thị mã lỗi. Nên hỏi thêm điều gì trước tiên? | Model sản phẩm và mã lỗi chính xác đang hiển thị | Khách mua ở cửa hàng nào | Khách dùng nhà mạng nào | Màu sắc của sản phẩm
+Khách phàn nàn KTV đến trễ hẹn. Phản hồi phù hợp nhất? | Xin lỗi, ghi nhận và kiểm tra lịch hẹn để báo lại cụ thể | Nói do kẹt xe nên không ai có lỗi | Bảo khách tự liên hệ KTV | Bỏ qua và chuyển sang việc khác
+Khách đọc số điện thoại. Cách xác nhận tốt nhất là gì? | Đọc lại từng cụm số để khách xác nhận | Ghi nhanh rồi chuyển ý | Không cần xác nhận nếu khách nói rõ | Hỏi lại tên khách là đủ`;
+const parseBank=t=>t.split('\n').map(l=>l.trim()).filter(l=>l&&!l.startsWith('#')).map(l=>l.split('|').map(x=>x.trim()).filter(Boolean)).filter(p=>p.length>=3).map(p=>({q:p[0],a:p[1],w:p.slice(2,5)}));
 
-/* ---------- MC ---------- */
-const SAMPLE=`# Câu mẫu chung về kỹ năng tổng đài. Thêm câu mã lỗi / model / quy trình từ tài liệu nội bộ theo cùng định dạng.
-Khách gọi đến đang rất bực tức. Việc đầu tiên Tổng đài viên nên làm là gì? | Lắng nghe hết ý, ghi nhận cảm xúc và xin lỗi vì sự bất tiện, sau đó mới hỏi thông tin | Kỹ năng
-Kể tên ít nhất 4 thông tin cần ghi nhận khi tiếp nhận yêu cầu sửa chữa. | Họ tên, số điện thoại, địa chỉ, sản phẩm/model, mô tả lỗi hoặc mã lỗi hiển thị, thời gian mua | Quy trình
-Khách đọc mã lỗi trên màn hình máy giặt. Nên hỏi thêm gì để KTV chuẩn bị tốt? | Model, mã lỗi chính xác, lỗi xuất hiện ở bước nào, đã thử tắt mở lại chưa, có tiếng động hay rò nước không | Nghiệp vụ
-Vì sao phải đọc lại thông tin trước khi kết thúc cuộc gọi? | Tránh sai địa chỉ/số điện thoại, khách biết bước tiếp theo, giảm cuộc gọi lại | Quy trình
-Chưa chắc câu trả lời kỹ thuật thì Tổng đài viên nên làm gì? | Không đoán; xin phép khách giữ máy hoặc hẹn gọi lại, tra tài liệu hoặc hỏi bộ phận kỹ thuật | Kỹ năng
-Hãy nói lại câu "Cái đó không phải việc của em" theo cách chuyên nghiệp. | Ví dụ: "Em sẽ chuyển yêu cầu đến bộ phận phụ trách và báo lại anh/chị trong thời gian sớm nhất" | Kỹ năng
-Một cuộc gọi kết thúc chuẩn gồm những bước nào? | Tóm tắt, xác nhận thông tin và bước tiếp theo, hỏi khách cần hỗ trợ gì thêm, cảm ơn và chào | Quy trình
-Khi cần để khách chờ máy, Tổng đài viên nên nói gì? | Xin phép, nêu lý do và thời gian chờ dự kiến, cảm ơn khách khi quay lại | Kỹ năng`;
-let bankTxt=store.get('msTD_bank',SAMPLE);
-const parseBank=()=>bankTxt.split('\n').map(l=>l.trim()).filter(l=>l&&!l.startsWith('#')).map(l=>{const p=l.split('|').map(x=>x.trim());return{q:p[0],a:p[1]||'',g:p[2]||''}}).filter(x=>x.q);
-let S=store.get('msTD_game',null);
-const save=()=>store.set('msTD_game',S);
-let cnt=suggest(10),hideRoles=true;
+/* ================= điều hướng ================= */
+const jm=location.hash.match(/^#j\.([a-z0-9]+)\.(L|F)(?:\.([A-Za-z0-9_-]+))?$/);
+if(jm)playerApp(jm[1],jm[2],jm[3]);else mcApp();
 
-$('#tabs').onclick=e=>{const b=e.target.closest('button');if(!b)return;document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('on',x===b));['setup','game','bank','rules'].forEach(t=>$('#t-'+t).classList.toggle('hide',t!==b.dataset.t));if(b.dataset.t==='game')renderGame()};
-
-$('#base').value=store.get('msTD_base',location.href.split('#')[0]);
-function renderRoles(){
-  const n=+$('#n').value||0,used=cnt.reduce((a,b)=>a+b,0),v=n-used;
-  $('#roles').innerHTML=ORDER.map((k,i)=>`<div class="rl">${svg(k)}<div><b>${R[k].n}</b><div class="small">${R[k].team}</div></div><div class="cnt"><button data-i="${i}" data-d="-1" aria-label="Bớt ${R[k].n}">−</button><b>${cnt[i]}</b><button data-i="${i}" data-d="1" aria-label="Thêm ${R[k].n}">+</button></div></div>`).join('');
-  $('#vill').textContent=v>=0?`${v} Tổng đài viên thường`:'Số vai vượt số người!';
-  const deck=[];ORDER.forEach((k,i)=>{for(let j=0;j<cnt[i];j++)deck.push(k)});for(let j=0;j<Math.max(v,0);j++)deck.push('villager');
-  const kinds=[...new Set(deck)],spread=Math.min(kinds.length-1,6)||1;
-  $('#fan').innerHTML=kinds.map((k,i)=>{const a=kinds.length>1?-22+44*i/spread:0;const num=deck.filter(x=>x===k).length;return`<div class="pc" style="transform:rotate(${a}deg);z-index:${i}"><span class="n">×${num}</span>${svg(k)}<b>${R[k].n}</b><i>${R[k].team}</i></div>`}).join('');
-  const w=cnt[0];$('#mix').innerHTML=n?`${n} người: <b>${w}</b> Mã Lỗi đấu với <b>${n-w}</b> người phe Tổng đài. Tỉ lệ Mã Lỗi khoảng 1/4 đến 1/3 số người là cân bằng.`:'';
-}
-$('#roles').onclick=e=>{const b=e.target.closest('button');if(!b)return;const i=+b.dataset.i;cnt[i]=Math.max(i===0?1:0,cnt[i]+ +b.dataset.d);if(i>0)cnt[i]=Math.min(cnt[i],1+(i===0?9:0));renderRoles()};
-$('#n').oninput=renderRoles;
-$('#sug').onclick=()=>{cnt=suggest(+$('#n').value||10);renderRoles()};
-$('#new').onclick=()=>{
-  const n=+$('#n').value;$('#serr').textContent='';
-  if(!(n>=5&&n<=30)){$('#serr').textContent='Số người từ 5 đến 30.';return}
-  if(cnt.reduce((a,b)=>a+b,0)>n){$('#serr').textContent='Số vai vượt số người.';return}
-  if(S&&!S.win&&S.log.length>1&&!window.confirmNew){$('#serr').textContent='Đang có ván dở. Bấm lần nữa để thay bằng ván mới.';window.confirmNew=1;return}
-  window.confirmNew=0;
-  const seed=Math.random().toString(36).slice(2,8),names=$('#names').value.split('\n').map(s=>s.trim());
-  store.set('msTD_base',$('#base').value.trim());
-  S={seed,n,c:[...cnt],roles:deal(seed,n,cnt),names:Array.from({length:n},(_,i)=>names[i]||''),out:Array(n).fill(false),kpi:Array(n).fill(0),phao:Array(n).fill(false),potSave:false,potKill:false,lastGuard:0,round:1,phase:'night',log:['Ván mới đã tạo. Phát số ghế và cho quét QR.'],win:'',q:null,used:[]};
-  save();document.querySelector('#tabs [data-t=game]').click();
-};
-
-const alive=()=>S.roles.map((r,i)=>i).filter(i=>!S.out[i]);
-const nm=i=>`ghế ${i+1}${S.names[i]?' ('+S.names[i]+')':''}`;
-const opts=(blank)=>`<option value="0">${blank}</option>`+alive().map(i=>`<option value="${i+1}">${esc(nm(i))}</option>`).join('');
-const has=k=>S.roles.includes(k);
-function checkWin(){const a=alive(),w=a.filter(i=>S.roles[i]==='wolf').length,o=a.length-w;
-  if(w===0)S.win='Phe Tổng đài chiến thắng! Ca trực đã sạch Mã Lỗi.';else if(w>=o)S.win='Phe Mã Lỗi chiến thắng! Ca trực đã bị đánh sập.';
-  if(S.win)S.log.push(S.win)}
-function kill(i,why){if(i<0||S.out[i])return;S.out[i]=true;S.log.push(`${why}: ${nm(i)} rời ca – vai ${R[S.roles[i]].n}.`);if(S.roles[i]==='hunter')S.log.push(`Trưởng ca ${nm(i)} chọn 1 người rời ca cùng: bấm "Cho rời ca" ở ghế đó.`)}
-
-function qCard(target){
-  const b=parseBank();if(!b.length){$(target).innerHTML='<p class="warn">Ngân hàng câu hỏi trống.</p>';return}
-  let pool=b.map((x,i)=>i).filter(i=>!(S?.used||[]).includes(i));if(!pool.length){if(S)S.used=[];pool=b.map((x,i)=>i)}
-  const i=pool[Math.floor(Math.random()*pool.length)];if(S){S.used.push(i);save()}
-  const x=b[i];$(target).innerHTML=`<div class="qcard"><div class="small">${esc(x.g)}</div><div class="q">${esc(x.q)}</div><button class="mini" style="margin-top:10px" onclick="this.nextElementSibling.classList.remove('hide');this.remove()">Hiện đáp án</button><div class="a hide">${esc(x.a)}</div></div>`;
-}
-let tm=null,left=180;
-function renderPhase(){
-  const P=$('#phase');
-  if(S.win){P.innerHTML=`<div class="phase">Ván kết thúc</div><p>Bấm <b>Tổng kết điểm</b> để vinh danh, hoặc tạo ván mới ở tab Thiết lập.</p>`;return}
-  if(S.phase==='night'){
-    P.innerHTML=`<div class="phase">Đêm ${S.round} · Ca trực đêm</div>
-    <ol class="steps small"><li>"Cả ca nhắm mắt."</li><li>Gọi lần lượt từng vai bên dưới, kể cả vai đã rời ca (gọi giả để giữ bí mật).</li></ol>
-    ${has('guard')?`<label for="ng">Kỹ thuật viên bảo vệ</label><select id="ng">${opts('— không ai —')}</select>`:''}
-    <label for="nw">Mã Lỗi đánh sập</label><select id="nw">${opts('— không ai —')}</select>
-    ${has('seer')?`<label for="ns">Giám sát QA soi</label><select id="ns">${opts('— không soi —')}</select><p id="nsr" class="small"></p>`:''}
-    ${has('witch')?`<label><input type="checkbox" id="nsave" style="width:auto;min-height:0" ${S.potSave?'disabled':''}> Chuyên viên Training dùng Tài liệu cứu hộ ${S.potSave?'(đã dùng)':''}</label>
-    <label for="nk">Phiếu đình chỉ ${S.potKill?'(đã dùng)':''}</label><select id="nk" ${S.potKill?'disabled':''}>${opts('— không dùng —')}</select>`:''}
-    <p id="nerr" class="warn"></p><button class="btn red" id="endN">Trời sáng – công bố kết quả</button>`;
-    const ns=$('#ns');if(ns)ns.onchange=()=>{const v=+ns.value;$('#nsr').innerHTML=v?(S.roles[v-1]==='wolf'?'<b class="warn">MC gật đầu: là Mã Lỗi</b>':'<b>MC lắc đầu: không phải Mã Lỗi</b>'):''};
-    $('#endN').onclick=()=>{
-      const g=+($('#ng')?.value||0),w=+$('#nw').value,sv=$('#nsave')?.checked,k=+($('#nk')?.value||0);
-      if(g&&g===S.lastGuard){$('#nerr').textContent='Kỹ thuật viên không được bảo vệ cùng một người 2 đêm liền.';return}
-      S.lastGuard=g;const before=S.out.filter(Boolean).length;
-      if(sv)S.potSave=true;if(k)S.potKill=true;
-      if(w&&w!==g&&!sv)kill(w-1,`Đêm ${S.round}`);
-      if(k)kill(k-1,`Đêm ${S.round} (Phiếu đình chỉ)`);
-      if(S.out.filter(Boolean).length===before)S.log.push(`Đêm ${S.round}: bình yên, không ai rời ca.`);
-      S.phase='day';left=180;checkWin();save();renderGame()};
-  }else{
-    P.innerHTML=`<div class="phase">Ngày ${S.round} · Giao ban sáng</div>
-    <ol class="steps"><li>Công bố kết quả đêm (xem nhật ký).</li><li><b>Cuộc gọi buổi sáng</b>: rút thẻ, ai giơ tay trước trả lời. Đúng: +1 KPI và phiếu ×2 hôm nay.</li></ol>
-    <div class="row"><button class="btn" id="draw">Rút thẻ câu hỏi</button></div><div id="qbox"></div>
-    <ol class="steps" start="3"><li>Thảo luận <span class="timer" id="tmr">3:00</span> <button class="mini" id="tgo">Bắt đầu</button> <button class="mini" id="trs">Đặt lại</button></li><li>Bỏ phiếu và <b>Phao nghiệp vụ</b> (rút thẻ khác cho người bị bầu).</li></ol>
-    <label for="dv">Người bị nhiều phiếu nhất</label><select id="dv">${opts('— hoà phiếu / không ai —')}</select>
-    <label><input type="checkbox" id="dp" style="width:auto;min-height:0"> Trả lời đúng câu Phao nghiệp vụ (thoát lần này)</label><p id="derr" class="warn"></p>
-    <button class="btn red" id="endD">Kết thúc ngày – trời tối</button>`;
-    $('#draw').onclick=()=>qCard('#qbox');
-    const fmt=()=>$('#tmr').textContent=`${Math.floor(left/60)}:${String(left%60).padStart(2,'0')}`;fmt();
-    $('#tgo').onclick=()=>{clearInterval(tm);tm=setInterval(()=>{left=Math.max(0,left-1);if($('#tmr'))fmt();if(!left)clearInterval(tm)},1000)};
-    $('#trs').onclick=()=>{clearInterval(tm);left=180;fmt()};
-    $('#endD').onclick=()=>{const v=+$('#dv').value,p=$('#dp').checked;
-      if(v&&p&&S.phao[v-1]){$('#derr').textContent=`${nm(v-1)} đã dùng phao trong ván này.`;return}
-      if(!v)S.log.push(`Ngày ${S.round}: hoà phiếu, không ai rời ca.`);
-      else if(p){S.phao[v-1]=true;S.kpi[v-1]++;S.log.push(`Ngày ${S.round}: ${nm(v-1)} trả lời đúng Phao nghiệp vụ, thoát (+1 KPI).`)}
-      else kill(v-1,`Ngày ${S.round} (bỏ phiếu)`);
-      clearInterval(tm);S.phase='night';S.round++;checkWin();save();renderGame()};
+/* ================================================================
+   MÀN HÌNH NGƯỜI CHƠI (điện thoại)
+================================================================ */
+async function playerApp(code,mode,cfgS){
+  const app=$('#app');
+  app.innerHTML=`<div class="ptop"><b>Ma Sói Tổng Đài</b><span>Phòng ${esc(code.toUpperCase())}</span></div><div class="pv"><div class="card">Đang kết nối…</div></div>`;
+  let BE;
+  try{BE=mode==='L'?LocalBE():await FireBE(b64d(cfgS))}catch(e){app.querySelector('.pv').innerHTML=`<div class="card warn">Không kết nối được: ${esc(e.message)}</div>`;return}
+  const st=mode==='L'?SS:LS,pk='msTD_pid_'+code;
+  let pid=st.get(pk,'');if(!pid){pid=rid(10);st.set(pk,pid)}
+  const rp='msTD/'+code,pp=rp+'/players/'+pid;
+  let R=null,ME=null,sel={key:'',target:'',ans:[]},showRole=false,sending=false;
+  BE.watch(rp,d=>{R=d;render()});BE.watch(pp,d=>{ME=d;render()});
+  const view=app.querySelector('.pv');
+  function render(){
+    if(!R){view.innerHTML='<div class="card">Đang tìm phòng… Nếu lâu không vào được, hãy quét lại mã QR.</div>';return}
+    if(!ME||!ME.name||ME.kicked){
+      if(R.phase!=='lobby'){view.innerHTML='<div class="card">Ván đang diễn ra. Chờ MC mở ván mới rồi quét lại nhé.</div>';return}
+      if(view.querySelector('#jn'))return;
+      view.innerHTML=`<div class="card"><h2>Vào phòng ${esc(code.toUpperCase())}</h2><label for="jn">Tên của bạn</label><input id="jn" autocomplete="name" maxlength="20"><p class="warn" id="je"></p><button class="btn red full" id="jb">Vào phòng</button></div>`;
+      return}
+    const pr=ME.priv||{},stp=pr.step||{kind:'wait'},role=pr.role,done=ME.act&&ME.act.key===stp.key;
+    if(stp.key!==sel.key)sel={key:stp.key,target:'',ans:[]};
+    let h='';
+    if(R.phase==='lobby'||!role){
+      h+=`<div class="card"><p class="big">Xin chào ${esc(ME.name)}!</p><p>Bạn đã vào phòng. Chờ MC chia vai…</p><p class="small pulse">Giữ màn hình này mở.</p></div>`;
+    }else{
+      const r=ROLE[role];
+      h+=`<div class="card"><div class="row" style="justify-content:space-between"><span><b>${esc(ME.name)}</b> · ${R.alive&&R.alive[pid]?'đang trong ca':'<span class="warn">đã rời ca</span>'}</span><button class="btn ghost" id="rb">${showRole?'Úp vai':'Xem vai'}</button></div>
+        ${showRole?`<div class="role" style="margin-top:12px">${svg(role)}<div><div class="big" style="color:${r.bad?'var(--red)':'var(--blue)'}">${r.n}</div><div class="small">${r.team}${pr.mates&&pr.mates.length?' · Đồng bọn: '+esc(pr.mates.join(', ')):''}</div></div></div><p style="margin:10px 0 0"><b>Kỹ năng:</b> ${r.p}</p><p style="margin:6px 0 0"><b>Mục tiêu:</b> ${r.g}</p>`:''}</div>`;
+      if(R.phase==='end')h+=endHTML(R);
+      else if(stp.kind!=='wait'&&!done)h+=stepHTML(stp);
+      else h+=`<div class="card"><span class="ph ${R.phase==='night'?'n':'d'}">${phaseName(R)}</span><p class="big" style="margin:10px 0 4px">${esc(R.headline||'')}</p>${R.deadline&&R.phase!=='result'?`<p class="small">Còn <span class="cd" data-d="${R.deadline}"></span></p>`:''}${done?'<p class="okc">Đã gửi. Chờ mọi người…</p>':''}</div>`;
+      const ms=(pr.msgs||[]).slice().reverse();
+      h+=`<div class="card"><h3>Tin riêng của bạn</h3>${ms.length?`<ul class="msgs">${ms.map(m=>`<li>${esc(m)}</li>`).join('')}</ul>`:'<p class="small">Chưa có.</p>'}</div>`;
+      h+=`<div class="card"><h3>Bảng tin chung</h3><ul class="msgs">${(R.news||[]).slice().reverse().map(m=>`<li>${esc(m)}</li>`).join('')}</ul>
+        <h3 style="margin-top:14px">Ca trực</h3><p>${(R.order||[]).map(p=>`<span class="tag ${R.alive[p]?'':'bad'}" style="margin:2px">${esc(R.names[p])}${R.alive[p]?'':' (rời ca)'} · ${R.kpi[p]||0} KPI</span>`).join(' ')}</p></div>`;
+    }
+    view.innerHTML=h;tick();
   }
+  const title={night:'Nhiệm vụ đêm',quiz:'Hội đồng chấm',vote:'Bỏ phiếu',phao:'Phao nghiệp vụ'};
+  function stepHTML(s){
+    let h=`<div class="card" style="border:2px solid var(--blue)"><div class="row" style="justify-content:space-between"><h2 style="margin:0">${title[s.kind]||''}</h2>${R.deadline?`<span class="cd big" data-d="${R.deadline}"></span>`:''}</div>`;
+    if(s.prompt)h+=`<p class="lbl">${esc(s.prompt)}</p>`;
+    if(s.targets){const list=s.targets.map(t=>[t,R.names[t]]);if(s.kind==='vote')list.push(['skip','Bỏ qua, không bầu ai']);
+      h+=`<div class="opts">${list.map(([v,l])=>`<button class="opt ${sel.target===v?'on':''}" data-t="${v}">${esc(l)}</button>`).join('')}</div>`}
+    const qs=s.qs||(s.q?[s.q]:[]);
+    qs.forEach((q,i)=>{h+=`<p class="lbl">Câu hỏi${qs.length>1?' '+(i+1):''}</p><p class="q">${esc(q.q)}</p><div class="opts">${q.opts.map((o,j)=>`<button class="opt ${sel.ans[i]===j?'on':''}" data-q="${i}" data-a="${j}">${'ABCD'[j]}. ${esc(o)}</button>`).join('')}</div>`});
+    return h+`<p class="warn" id="se"></p><button class="btn red full" id="sb" ${sending?'disabled':''}>Gửi</button></div>`;
+  }
+  view.addEventListener('click',async e=>{
+    const b=e.target.closest('button');if(!b)return;
+    if(b.id==='jb'){const n=$('#jn').value.trim();if(!n){$('#je').textContent='Nhập tên của bạn.';return}b.disabled=true;await BE.set(pp,{name:n,joinedAt:Date.now(),kicked:false});return}
+    if(b.id==='rb'){showRole=!showRole;render();return}
+    if(b.dataset.t!==undefined){sel.target=b.dataset.t;render();return}
+    if(b.dataset.q!==undefined){sel.ans[+b.dataset.q]=+b.dataset.a;render();return}
+    if(b.id==='sb'){const s=ME.priv.step,qs=s.qs||(s.q?[s.q]:[]);
+      if(s.targets&&!sel.target){$('#se').textContent='Hãy chọn 1 người.';return}
+      if(qs.some((_,i)=>sel.ans[i]===undefined)){$('#se').textContent='Hãy trả lời câu hỏi.';return}
+      sending=true;b.disabled=true;
+      try{await BE.set(pp,{act:{key:s.key,target:sel.target||'',ans:qs.length>1?sel.ans:(qs.length?sel.ans[0]:-1),t:Date.now()}})}catch(err){showErr(err)}
+      sending=false}
+  });
+  setInterval(tick,500);
 }
-function renderSeats(){
-  $('#seats').classList.toggle('blur',hideRoles);$('#eye').textContent=hideRoles?'Hiện vai (chỉ MC xem)':'Che vai';
-  $('#seats').innerHTML=S.roles.map((r,i)=>`<div class="seat ${S.out[i]?'out':''}"><div class="hd"><span class="no">${i+1}</span><span class="tag ${R[r].bad?'':'v'}">${R[r].n}</span></div>
-  <div>${esc(S.names[i]||'—')}${S.phao[i]?' <span class="small">· đã dùng phao</span>':''}</div>
-  <div class="kpi"><button data-k="${i}" data-d="-1" aria-label="Bớt KPI ghế ${i+1}">−</button><b>${S.kpi[i]}</b> KPI<button data-k="${i}" data-d="1" aria-label="Thêm KPI ghế ${i+1}">+</button></div>
-  <button class="mini" data-o="${i}">${S.out[i]?'Quay lại ca':'Cho rời ca'}</button></div>`).join('');
+function phaseName(R){return{lobby:'Phòng chờ',intro:'Xem vai',night:`Đêm ${R.round}`,day:`Ngày ${R.round} · thảo luận`,vote:`Ngày ${R.round} · bỏ phiếu`,phao:`Ngày ${R.round} · phao`,result:`Ngày ${R.round} · kết quả`,end:'Kết thúc'}[R.phase]||''}
+function tick(){document.querySelectorAll('.cd').forEach(el=>el.textContent=mmss(+el.dataset.d-Date.now()))}
+function endHTML(R){
+  return`<div class="card"><p class="big">${esc(R.headline)}</p><table><thead><tr><th>Người chơi</th><th>Vai</th><th class="r">KPI</th><th class="r">Thắng</th><th class="r">Nghi đúng</th><th class="r">Tổng</th></tr></thead><tbody>${(R.final||[]).map((x,i)=>`<tr><td>${i===0?'<b>':''}${esc(R.names[x.p])}${i===0?'</b> · xuất sắc':''}</td><td><span class="tag ${R.reveal[x.p]==='wolf'?'bad':''}">${ROLE[R.reveal[x.p]].n}</span></td><td class="r">${x.k}</td><td class="r">+${x.b}</td><td class="r">+${x.s}</td><td class="r"><b>${x.t}</b></td></tr>`).join('')}</tbody></table></div>`;
 }
-$('#seats').onclick=e=>{const b=e.target.closest('button');if(!b)return;
-  if(b.dataset.k){const i=+b.dataset.k;S.kpi[i]=Math.max(0,S.kpi[i]+ +b.dataset.d)}
-  else if(b.dataset.o){const i=+b.dataset.o;if(S.out[i]){S.out[i]=false;S.log.push(`MC đưa ${nm(i)} quay lại ca.`);S.win=''}else{kill(i,'MC/Trưởng ca');checkWin()}}
-  save();renderGame()};
-$('#eye').onclick=()=>{hideRoles=!hideRoles;renderSeats()};
-$('#final').onclick=()=>{
-  const wolvesWon=S.win.includes('Mã Lỗi'),townWon=S.win.includes('Tổng đài');
-  const rows=S.roles.map((r,i)=>{const won=(R[r].bad&&wolvesWon)||(!R[r].bad&&townWon);return{i,r,k:S.kpi[i],t:S.kpi[i]+(won?3:0)}}).sort((a,b)=>b.t-a.t);
-  $('#board').innerHTML=`<h3 style="margin-top:16px">Bảng điểm${S.win?'':' (ván chưa kết thúc, chưa cộng điểm thắng)'}</h3><table><thead><tr><th>Người chơi</th><th>Vai</th><th class="r">KPI</th><th class="r">Tổng</th></tr></thead><tbody>${rows.map((x,j)=>`<tr><td>${j===0?'<b>':''}${esc(nm(x.i))}${j===0?'</b> · xuất sắc':''}</td><td>${R[x.r].n}</td><td class="r">${x.k}</td><td class="r"><b>${x.t}</b></td></tr>`).join('')}</tbody></table>`};
-$('#copy').onclick=async()=>{try{await navigator.clipboard.writeText($('#gurl').textContent);$('#copied').textContent='Đã sao chép'}catch(e){$('#copied').textContent='Hãy chọn và sao chép link thủ công'}};
 
-function renderGame(){
-  $('#nogame').classList.toggle('hide',!!S);$('#g').classList.toggle('hide',!S);if(!S)return;
-  const url=`${store.get('msTD_base',location.href.split('#')[0])}#j.${S.seed}.${S.n}.${S.c.join('.')}`;
-  $('#gurl').textContent=url;$('#gn').textContent=S.n;$('#gseed').textContent=S.seed;
-  try{const q=qrcode(0,'M');q.addData(url);q.make();$('#qr').innerHTML=q.createSvgTag({cellSize:6,margin:2,scalable:true})}catch(e){$('#qr').innerHTML='<p style="color:#000">Không tạo được QR, hãy gửi link.</p>'}
-  $('#win').classList.toggle('hide',!S.win);$('#win').textContent=S.win;
-  $('#log').innerHTML=S.log.map(l=>`<li>${esc(l)}</li>`).join('');$('#log').scrollTop=1e6;
-  renderPhase();renderSeats();
+/* ================================================================
+   MÀN HÌNH MC (máy tính / máy chiếu)
+================================================================ */
+function mcApp(){
+  const app=$('#app');
+  app.innerHTML=`<header class="top"><div class="row"><h1 style="margin:0">Ma Sói Tổng Đài</h1><span id="hcode"></span></div>
+  <nav class="tabs" id="tabs"><button data-t="room" class="on">Phòng chơi</button><button data-t="bank">Ngân hàng câu hỏi</button><button data-t="rules">Luật chơi</button></nav></header>
+  <main><section class="band" id="t-room"></section><section class="band hide" id="t-bank"></section><section class="band hide rules" id="t-rules"></section></main>`;
+  $('#tabs').onclick=e=>{const b=e.target.closest('button');if(!b)return;document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('on',x===b));['room','bank','rules'].forEach(t=>$('#t-'+t).classList.toggle('hide',t!==b.dataset.t))};
+  let bankTxt=LS.get('msTD_bank2',SAMPLE);
+  const S=Object.assign({nightSec:60,talkSec:180,voteSec:60,phaoSec:90,wolves:'auto',mode:'L',cfg:null,cfgRaw:'',base:location.href.split('#')[0]},LS.get('msTD_set',{}));
+  const saveS=()=>LS.set('msTD_set',S);
+
+  /* ---- tab câu hỏi ---- */
+  $('#t-bank').innerHTML=`<div class="g2"><div><h2>Ngân hàng câu hỏi trắc nghiệm</h2><p class="small">Mỗi dòng: <b>Câu hỏi | Đáp án đúng | Sai 1 | Sai 2 | Sai 3</b> (ít nhất 1 đáp án sai). Điện thoại sẽ tự xáo trộn thứ tự đáp án. Câu có sẵn là câu mẫu chung về kỹ năng tổng đài; hãy thêm câu về mã lỗi, model, quy trình từ tài liệu nội bộ của bạn.</p>
+  <textarea id="bank" style="min-height:380px"></textarea><div class="row" style="margin-top:10px"><button class="btn" id="bsave">Lưu câu hỏi</button><button class="btn ghost" id="breset">Khôi phục câu mẫu</button><span class="small" id="bcount"></span></div></div>
+  <div><h2>Xem trước</h2><div id="bprev" class="card small"></div></div></div>`;
+  const bankPrev=()=>{const b=parseBank($('#bank').value);$('#bcount').textContent=`${b.length} câu hợp lệ`;$('#bprev').innerHTML=b.slice(0,3).map(x=>`<p><b>${esc(x.q)}</b><br><span class="okc">✓ ${esc(x.a)}</span><br>${x.w.map(w=>'✗ '+esc(w)).join('<br>')}</p>`).join('')||'Chưa có câu hợp lệ.'};
+  $('#bank').value=bankTxt;bankPrev();$('#bank').oninput=bankPrev;
+  $('#bsave').onclick=()=>{bankTxt=$('#bank').value;LS.set('msTD_bank2',bankTxt);bankPrev();$('#bcount').textContent+=' · đã lưu'};
+  $('#breset').onclick=()=>{$('#bank').value=SAMPLE;bankPrev()};
+
+  /* ---- tab luật ---- */
+  $('#t-rules').innerHTML=RULES();
+
+  /* ---- trạng thái phòng ---- */
+  let BE=null,code='',R=null,P={},H=null,busy=false,showRoles=false,qrCache={},link='';
+  const hk=()=>'msTD_host_'+code,saveH=()=>LS.set(hk(),H);
+  const rp=()=>'msTD/'+code,pp=p=>'msTD/'+code+'/players/'+p;
+  const WAIT={key:'w',kind:'wait',q:null,qs:null,prompt:null,targets:null};
+  const nm=p=>(R&&R.names&&R.names[p])||(P[p]&&P[p].name)||'?';
+  const alive=()=>(R.order||[]).filter(p=>R.alive[p]);
+  const roleOf=p=>(H.roles&&H.roles[p])||(P[p]&&P[p].priv&&P[p].priv.role);
+  const stepKey=()=>R.phase==='night'?'n'+R.round:R.phase==='vote'?'v'+R.round:R.phase==='phao'?'p'+R.round:'';
+
+  const saved=LS.get('msTD_mc',null);
+  if(saved&&saved.code)attach(saved.code).catch(e=>{showErr(e);setup()});else setup();
+
+  function setup(){
+    $('#hcode').innerHTML='';
+    $('#t-room').innerHTML=`<div class="g2"><div>
+      <h2>Tạo phòng chơi</h2>
+      <label>Cách kết nối điện thoại</label>
+      <div class="mode"><label><input type="radio" name="md" value="F" ${S.mode==='F'?'checked':''}> Điện thoại thật (Firebase)</label><label><input type="radio" name="md" value="L" ${S.mode==='L'?'checked':''}> Thử trên 1 máy (nhiều tab)</label></div>
+      <div id="fbox" class="${S.mode==='F'?'':'hide'}">
+        <label for="cfg">Cấu hình Firebase (dán nguyên đoạn firebaseConfig)</label><textarea id="cfg" placeholder="const firebaseConfig = { apiKey: &quot;...&quot;, projectId: &quot;...&quot;, ... }">${esc(S.cfgRaw)}</textarea>
+        <p class="small" id="cfgok"></p>
+      </div>
+      <label for="base">Địa chỉ trang web (GitHub Pages)</label><input id="base" value="${esc(S.base)}">
+      <div class="cols3">
+        <div><label for="s1">Đêm (giây)</label><input id="s1" type="number" min="20" value="${S.nightSec}"></div>
+        <div><label for="s2">Thảo luận (giây)</label><input id="s2" type="number" min="30" value="${S.talkSec}"></div>
+        <div><label for="s3">Bỏ phiếu (giây)</label><input id="s3" type="number" min="20" value="${S.voteSec}"></div>
+        <div><label for="s4">Phao (giây)</label><input id="s4" type="number" min="30" value="${S.phaoSec}"></div>
+      </div>
+      <label for="sw">Số Mã Lỗi</label><select id="sw"><option value="auto">Tự động theo số người (khuyên dùng)</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select>
+      <p class="warn" id="se"></p><button class="btn red" id="create">Tạo phòng & mã QR</button>
+    </div><div>
+      <h2>Chia vai theo số người</h2>
+      <div class="card"><table><thead><tr><th>Số người</th><th>Bộ vai</th></tr></thead><tbody>${[4,5,6,7,8,9,10].map(n=>`<tr><td>${n}</td><td>${compText(n,suggest(n,'auto'))}</td></tr>`).join('')}</tbody></table>
+      <p class="small">Ván chuẩn cho buổi training là <b>5 người</b>. MC không chơi, chỉ điều khiển màn hình này.</p></div>
+      <details class="card" style="margin-top:14px"><summary><b>Cách tạo Firebase (làm 1 lần, miễn phí)</b></summary>
+      <ol><li>Vào console.firebase.google.com, bấm tạo project mới (ví dụ tên <b>masoi-tongdai</b>), có thể tắt Google Analytics.</li>
+      <li>Vào <b>Build → Firestore Database → Create database</b>, chọn vị trí gần (ví dụ asia-southeast1).</li>
+      <li>Mở tab <b>Rules</b>, thay bằng đoạn dưới rồi bấm <b>Publish</b>:</li></ol>
+      <pre>rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /msTD/{room} {
+      allow read, write: if true;
+      match /players/{pid} {
+        allow read, write: if true;
+      }
+    }
+  }
+}</pre>
+      <ol start="4"><li>Bấm bánh răng <b>Project settings</b>, kéo xuống <b>Your apps</b>, bấm biểu tượng Web <b>&lt;/&gt;</b>, đặt tên app rồi đăng ký.</li><li>Sao chép đoạn <b>firebaseConfig</b> hiện ra và dán vào ô bên trái.</li></ol>
+      <p class="small">Nên dùng project riêng cho game, đừng sửa Rules của project web tra cứu mã lỗi.</p></details>
+    </div></div>`;
+    $('#sw').value=S.wolves;
+    const md=()=>document.querySelector('input[name=md]:checked').value;
+    document.querySelectorAll('input[name=md]').forEach(r=>r.onchange=()=>$('#fbox').classList.toggle('hide',md()!=='F'));
+    const chk=()=>{const c=parseCfg($('#cfg').value);$('#cfgok').innerHTML=c?`<span class="okc">Đã nhận: project ${esc(c.p)}</span>`:'Chưa nhận được apiKey và projectId.';return c};
+    $('#cfg').oninput=chk;if(S.cfgRaw)chk();
+    $('#create').onclick=async()=>{
+      const m=md(),c=m==='F'?chk():null;$('#se').textContent='';
+      if(m==='F'&&!c){$('#se').textContent='Dán cấu hình Firebase trước.';return}
+      if(parseBank(LS.get('msTD_bank2',SAMPLE)).length<6){$('#se').textContent='Ngân hàng cần ít nhất 6 câu hợp lệ.';return}
+      Object.assign(S,{mode:m,cfg:c,cfgRaw:m==='F'?$('#cfg').value:S.cfgRaw,base:$('#base').value.trim()||location.href.split('#')[0],nightSec:Math.max(20,+$('#s1').value||60),talkSec:Math.max(30,+$('#s2').value||180),voteSec:Math.max(20,+$('#s3').value||60),phaoSec:Math.max(30,+$('#s4').value||90),wolves:$('#sw').value});saveS();
+      $('#create').disabled=true;
+      try{code=rid(5);await attach(code,true)}catch(e){$('#se').textContent='Không kết nối được: '+e.message;$('#create').disabled=false}
+    };
+  }
+  function parseCfg(t){const g=k=>(t.match(new RegExp(k+'["\']?\\s*:\\s*["\']([^"\']+)["\']'))||[])[1];const a=g('apiKey'),p=g('projectId');return a&&p?{a,p}:null}
+
+  async function attach(c,fresh){
+    code=c;BE=S.mode==='F'?await FireBE(S.cfg):LocalBE();
+    H=LS.get(hk(),null)||{key:{},done:[],stats:{},used:[],seen:{},roles:{}};
+    LS.set('msTD_mc',{code});
+    link=`${S.base}#j.${code}.${S.mode}${S.mode==='F'?'.'+b64e(S.cfg):''}`;
+    if(fresh){H={key:{},done:[],stats:{},used:[],seen:{},roles:{}};saveH();await BE.set(rp(),lobbyRoom())}
+    BE.watch(rp(),d=>{R=d;render();check()});
+    BE.watchCol(rp()+'/players',o=>{P=o||{};const k=R&&stepKey();if(k){for(const p in P)if(P[p].act&&P[p].act.key===k&&!H.seen[k+p]){H.seen[k+p]=Date.now();saveH()}}render();check()});
+  }
+  const lobbyRoom=()=>({v:2,phase:'lobby',round:0,names:{},alive:{},kpi:{},phaoUsed:{},order:[],news:[],headline:'Quét mã QR để vào phòng',deadline:0,winner:'',reveal:null,final:null,phao:null,comp:''});
+
+  /* ---- ghi dữ liệu ---- */
+  const newCtx=()=>({room:{},msgs:{},steps:{},priv:{}});
+  const say=(c,p,m)=>(c.msgs[p]=c.msgs[p]||[]).push(m);
+  async function commit(c){
+    const ops=[],ids=new Set([...Object.keys(c.msgs),...Object.keys(c.steps),...Object.keys(c.priv)]);
+    for(const p of ids){const pr=Object.assign({},c.priv[p]||{});
+      if(c.msgs[p]&&c.msgs[p].length)pr.msgs=[...((P[p]&&P[p].priv&&P[p].priv.msgs)||[]),...c.msgs[p]].slice(-30);
+      if(c.steps[p])pr.step=c.steps[p];
+      P[p]=P[p]||{};P[p].priv=Object.assign(P[p].priv||{},pr);ops.push(BE.set(pp(p),{priv:pr}))}
+    Object.assign(R,c.room);saveH();ops.push(BE.set(rp(),c.room));await Promise.all(ops);render();
+  }
+  const run=async f=>{if(busy)return;busy=true;try{await f()}catch(e){showErr(e)}finally{busy=false;setTimeout(check,50)}};
+  function pickQ(){const b=parseBank(LS.get('msTD_bank2',SAMPLE));let pool=b.map((_,i)=>i).filter(i=>!H.used.includes(i));if(!pool.length){H.used=[];pool=b.map((_,i)=>i)}
+    const qi=pick(pool);H.used.push(qi);const x=b[qi],opts=shuffle([x.a,...x.w]);H.stats[qi]=H.stats[qi]||{q:x.q,n:0,c:0};return{qi,q:{q:x.q,opts},c:opts.indexOf(x.a),ans:x.a}}
+  function grade(p,key){const a=P[p]&&P[p].act,K=H.key[p];
+    if(!K||K.k!==key)return{sub:false,ok:false,parts:[]};
+    if(!a||a.key!==key)return{sub:false,ok:false,parts:K.c.map(()=>false)};
+    const ans=Array.isArray(a.ans)?a.ans:[a.ans],parts=K.c.map((c,i)=>ans[i]===c);
+    parts.forEach((ok,i)=>{const s=H.stats[K.qi[i]];if(s){s.n++;if(ok)s.c++}});
+    return{sub:true,ok:parts.every(Boolean),parts,a}}
+
+  /* ---- luật: chia vai ---- */
+  async function deal(){
+    const ids=Object.keys(P).filter(p=>P[p].name&&!P[p].kicked).sort((a,b)=>P[a].joinedAt-P[b].joinedAt);
+    if(ids.length<4)return;
+    const c=suggest(ids.length,S.wolves),deck=[];for(let i=0;i<c.wolf;i++)deck.push('wolf');deck.push('seer');if(c.guard)deck.push('guard');while(deck.length<ids.length)deck.push('villager');
+    const roles=shuffle(deck),map={},names={};ids.forEach((p,i)=>{map[p]=roles[i];names[p]=P[p].name});
+    H={key:{},done:[],stats:H.stats||{},used:H.used||[],seen:{},roles:map};
+    const ctx=newCtx();
+    for(const p of ids){const r=map[p],mates=r==='wolf'?ids.filter(q=>q!==p&&map[q]==='wolf').map(q=>names[q]):[];
+      ctx.priv[p]={role:r,mates,susp:0,lastGuard:''};ctx.steps[p]=WAIT;
+      P[p].priv=Object.assign(P[p].priv||{},{msgs:[]});
+      say(ctx,p,`Bạn là ${ROLE[r].n}.${mates.length?' Đồng bọn: '+mates.join(', ')+'.':''} Bấm "Xem vai" để đọc kỹ năng.`)}
+    const comp=compText(ids.length,c),all=v=>Object.fromEntries(ids.map(p=>[p,v]));
+    ctx.room={phase:'intro',round:0,names,alive:all(true),kpi:all(0),phaoUsed:all(false),order:ids,news:[`Ván bắt đầu: ${ids.length} người gồm ${comp}.`],headline:'Mở điện thoại, bấm "Xem vai" và giữ bí mật',deadline:0,winner:'',reveal:null,final:null,phao:null,comp};
+    await commit(ctx);
+  }
+  /* ---- đêm ---- */
+  async function startNight(){
+    const r=(R.round||0)+1,key='n'+r,ctx=newCtx(),al=alive();H.key={};
+    for(const p of R.order){const q=pickQ(),ro=roleOf(p);
+      if(R.alive[p]){let prompt,targets;
+        if(ro==='wolf'){prompt='Chọn người để đánh sập';targets=al.filter(x=>roleOf(x)!=='wolf')}
+        else if(ro==='seer'){prompt='Chọn người để soi';targets=al.filter(x=>x!==p)}
+        else if(ro==='guard'){prompt='Chọn người để bảo vệ (không trùng đêm trước)';const lg=P[p].priv&&P[p].priv.lastGuard;targets=al.filter(x=>x!==lg)}
+        else{prompt='Bạn nghi ai là Mã Lỗi nhất?';targets=al.filter(x=>x!==p)}
+        ctx.steps[p]={key,kind:'night',q:q.q,qs:null,prompt,targets};
+      }else ctx.steps[p]={key,kind:'quiz',q:q.q,qs:null,prompt:'Bạn đã rời ca: trả lời đúng vẫn được +1 KPI',targets:null};
+      H.key[p]={k:key,c:[q.c],qi:[q.qi],ans:[q.ans]}}
+    ctx.room={phase:'night',round:r,deadline:Date.now()+S.nightSec*1000,headline:`Đêm ${r}: mọi người làm nhiệm vụ trên điện thoại`};
+    await commit(ctx);
+  }
+  async function resolveNight(){
+    const key='n'+R.round;if(H.done.includes(key))return;H.done.push(key);
+    const ctx=newCtx(),al=alive(),kpi=Object.assign({},R.kpi),G={},t=p=>H.seen[key+p]||Infinity;
+    for(const p of R.order){G[p]=grade(p,key);if(G[p].ok)kpi[p]=(kpi[p]||0)+1}
+    const okW=al.filter(p=>roleOf(p)==='wolf'&&G[p].ok&&G[p].a.target);let attack='';
+    if(okW.length){const c={};okW.forEach(p=>c[G[p].a.target]=(c[G[p].a.target]||0)+1);const mx=Math.max(...Object.values(c));attack=pick(Object.keys(c).filter(k=>c[k]===mx))}
+    const gd=al.find(p=>roleOf(p)==='guard');let protect='';
+    if(gd){if(G[gd].ok)protect=G[gd].a.target;ctx.priv[gd]={lastGuard:G[gd].sub?G[gd].a.target:''}}
+    const victim=attack&&attack!==protect?attack:'',alv=Object.assign({},R.alive);if(victim)alv[victim]=false;
+    for(const p of R.order){const g=G[p],K=H.key[p],ro=roleOf(p),n=`Đêm ${R.round}: `;
+      if(!g.sub){say(ctx,p,`${n}bạn chưa gửi kịp${R.alive[p]&&ro!=='villager'?', kỹ năng không có hiệu lực':''}. Đáp án đúng: ${K.ans[0]}.`);continue}
+      const fb=g.ok?'trả lời ĐÚNG (+1 KPI).':`trả lời SAI. Đáp án đúng: ${K.ans[0]}.`;
+      if(!R.alive[p]){say(ctx,p,n+fb);continue}
+      let x='';
+      if(ro==='wolf')x=g.ok?' Lệnh đánh sập đã gửi.':' Lệnh đánh sập thất bại.';
+      if(ro==='guard')x=g.ok?` Bạn đã bảo vệ ${nm(g.a.target)}.`:' Bảo vệ không có hiệu lực.';
+      if(ro==='seer')x=g.ok?` Kết quả soi: ${nm(g.a.target)} ${roleOf(g.a.target)==='wolf'?'LÀ MÃ LỖI!':'không phải Mã Lỗi.'}`:' Không soi được.';
+      say(ctx,p,n+fb+x)}
+    const vs=al.filter(p=>roleOf(p)==='villager'&&G[p].ok).sort((a,b)=>t(a)-t(b));
+    if(vs.length){const w=vs[0],pool=R.order.filter(x=>alv[x]&&x!==w&&roleOf(x)!=='wolf');if(pool.length)say(ctx,w,`Manh mối (bạn đúng nhanh nhất): ${nm(pick(pool))} KHÔNG phải Mã Lỗi.`)}
+    for(const p of al)if(roleOf(p)==='villager'&&G[p].sub&&roleOf(G[p].a.target)==='wolf')ctx.priv[p]={susp:((P[p].priv&&P[p].priv.susp)||0)+1};
+    const news=[...R.news,victim?`Đêm ${R.round}: ${nm(victim)} bị đánh sập, rời ca. Vai: ${ROLE[roleOf(victim)].n}.`:`Đêm ${R.round}: bình yên, không ai rời ca.`];
+    for(const p of R.order)ctx.steps[p]=WAIT;
+    ctx.room={alive:alv,kpi,news,phase:'day',deadline:Date.now()+S.talkSec*1000,headline:news[news.length-1]};
+    checkWin(ctx,alv);await commit(ctx);
+  }
+  /* ---- ngày ---- */
+  async function openVote(){
+    const key='v'+R.round;if(H.done.includes('d'+R.round))return;H.done.push('d'+R.round);
+    const ctx=newCtx(),al=alive();
+    for(const p of R.order)ctx.steps[p]=R.alive[p]?{key,kind:'vote',q:null,qs:null,prompt:'Đưa ai ra xử lý ca?',targets:al.filter(x=>x!==p)}:WAIT;
+    ctx.room={phase:'vote',deadline:Date.now()+S.voteSec*1000,headline:`Ngày ${R.round}: bỏ phiếu bí mật trên điện thoại`};
+    await commit(ctx);
+  }
+  async function resolveVote(){
+    const key='v'+R.round;if(H.done.includes(key))return;H.done.push(key);
+    const ctx=newCtx(),al=alive(),cnt={},lines=[];let skip=0;
+    for(const p of al){const a=P[p]&&P[p].act,tg=a&&a.key===key?a.target:'';if(tg&&tg!=='skip'&&R.alive[tg]){cnt[tg]=(cnt[tg]||0)+1;lines.push(`${nm(p)} → ${nm(tg)}`)}else{skip++;lines.push(`${nm(p)} → bỏ qua`)}}
+    const mx=Math.max(0,...Object.values(cnt)),top=Object.keys(cnt).filter(k=>cnt[k]===mx),news=[...R.news,`Ngày ${R.round}, phiếu bầu: ${lines.join('; ')}.`];
+    for(const p of R.order)ctx.steps[p]=WAIT;
+    if(mx>0&&top.length===1&&mx>skip){const acc=top[0];
+      if(!R.phaoUsed[acc]){const q1=pickQ(),q2=pickQ(),k='p'+R.round;
+        H.key={[acc]:{k,c:[q1.c,q2.c],qi:[q1.qi,q2.qi],ans:[q1.ans,q2.ans]}};
+        ctx.steps[acc]={key:k,kind:'phao',q:null,qs:[q1.q,q2.q],prompt:'Trả lời ĐÚNG CẢ 2 câu để ở lại ca (chỉ 1 lần mỗi ván).',targets:null};
+        news.push(`${nm(acc)} bị nhiều phiếu nhất (${mx} phiếu) và dùng Phao nghiệp vụ.`);
+        ctx.room={news,phase:'phao',phao:{pid:acc},deadline:Date.now()+S.phaoSec*1000,headline:`${nm(acc)} đang trả lời Phao nghiệp vụ (2 câu)`};
+      }else{news.push(`${nm(acc)} bị nhiều phiếu nhất (${mx} phiếu), đã dùng phao từ trước.`);eliminate(ctx,acc,news,'bị bỏ phiếu')}
+    }else{news.push(`Ngày ${R.round}: phiếu hoà hoặc nhiều người bỏ qua, không ai rời ca.`);ctx.room={news,phase:'result',deadline:0,headline:news[news.length-1]}}
+    await commit(ctx);
+  }
+  async function resolvePhao(){
+    const key='p'+R.round;if(H.done.includes(key))return;H.done.push(key);
+    const acc=R.phao&&R.phao.pid;if(!acc)return;
+    const ctx=newCtx(),g=grade(acc,key),K=H.key[acc],n=g.parts.filter(Boolean).length,news=[...R.news],kpi=Object.assign({},R.kpi);kpi[acc]=(kpi[acc]||0)+n;
+    say(ctx,acc,`Phao nghiệp vụ: đúng ${n}/2. Đáp án: (1) ${K.ans[0]} (2) ${K.ans[1]}.`);
+    for(const p of R.order)ctx.steps[p]=WAIT;
+    ctx.room={kpi,phaoUsed:Object.assign({},R.phaoUsed,{[acc]:true})};
+    if(g.ok){news.push(`${nm(acc)} trả lời đúng cả 2 câu phao và ở lại ca!`);Object.assign(ctx.room,{news,phase:'result',phao:null,deadline:0,headline:news[news.length-1]})}
+    else eliminate(ctx,acc,news,`trả lời phao đúng ${n}/2`);
+    await commit(ctx);
+  }
+  function eliminate(ctx,p,news,why){const alv=Object.assign({},R.alive,{[p]:false});news.push(`${nm(p)} rời ca (${why}). Vai: ${ROLE[roleOf(p)].n}.`);
+    ctx.room=Object.assign(ctx.room,{alive:alv,news,phase:'result',deadline:0,phao:null,headline:news[news.length-1]});checkWin(ctx,alv)}
+  function checkWin(ctx,alv){const al=R.order.filter(p=>alv[p]),w=al.filter(p=>roleOf(p)==='wolf').length;
+    const win=!w?'town':w>=al.length-w?'wolf':'';if(!win)return;
+    const kpi=ctx.room.kpi||R.kpi,reveal={};R.order.forEach(p=>reveal[p]=roleOf(p));
+    const final=R.order.map(p=>{const won=(win==='wolf')===(roleOf(p)==='wolf'),s=(ctx.priv[p]&&ctx.priv[p].susp!==undefined)?ctx.priv[p].susp:((P[p].priv&&P[p].priv.susp)||0),k=kpi[p]||0;return{p,k,b:won?3:0,s,t:k+(won?3:0)+s}}).sort((a,b)=>b.t-a.t);
+    const msg=win==='town'?'Phe Tổng đài thắng! Đã loại hết Mã Lỗi.':'Phe Mã Lỗi thắng! Ca trực đã bị đánh sập.';
+    Object.assign(ctx.room,{phase:'end',winner:win,reveal,final,deadline:0,phao:null,headline:msg,news:[...(ctx.room.news||R.news),msg]});
+    for(const p of R.order)ctx.steps[p]=WAIT}
+  async function newGame(){
+    const ctx=newCtx();for(const p of Object.keys(P)){ctx.priv[p]={role:null,mates:[],susp:0,lastGuard:''};ctx.steps[p]=WAIT;P[p].priv=Object.assign(P[p].priv||{},{msgs:[]});ctx.msgs[p]=['Ván mới: chờ MC chia vai.']}
+    H={key:{},done:[],stats:H.stats,used:H.used,seen:{},roles:{}};ctx.room=lobbyRoom();await commit(ctx);
+  }
+
+  /* ---- tự động chuyển bước ---- */
+  function check(){
+    if(!R||!H||busy)return;const now=Date.now(),k=stepKey(),sub=p=>P[p]&&P[p].act&&P[p].act.key===k;
+    if(R.phase==='night'&&!H.done.includes(k)&&(alive().every(sub)||now>R.deadline))run(resolveNight);
+    else if(R.phase==='day'&&now>R.deadline&&!H.done.includes('d'+R.round))run(openVote);
+    else if(R.phase==='vote'&&!H.done.includes(k)&&(alive().every(sub)||now>R.deadline))run(resolveVote);
+    else if(R.phase==='phao'&&!H.done.includes(k)&&(sub(R.phao.pid)||now>R.deadline))run(resolvePhao);
+  }
+  setInterval(()=>{tick();check()},500);
+
+  /* ---- giao diện MC ---- */
+  function qrSvg(){if(qrCache[link])return qrCache[link];try{const q=qrcode(0,'L');q.addData(link);q.make();return qrCache[link]=q.createSvgTag({cellSize:5,margin:2,scalable:true})}catch(e){return'<p style="color:#000">Link quá dài để tạo QR.</p>'}}
+  function render(){
+    if(!R){$('#t-room').innerHTML='<div class="card">Đang kết nối phòng…</div>';return}
+    $('#hcode').innerHTML=`<span class="code">${esc(code.toUpperCase())}</span>`;
+    const lobby=R.phase==='lobby',ids=lobby?Object.keys(P).filter(p=>P[p].name&&!P[p].kicked).sort((a,b)=>P[a].joinedAt-P[b].joinedAt):R.order,k=stepKey();
+    const subN=k?alive().filter(p=>P[p]&&P[p].act&&P[p].act.key===k).length:0,need=k==='p'+R.round?1:alive().length;
+    let ctl='';
+    if(lobby){const n=ids.length,c=suggest(n,S.wolves);ctl=`<p>${n} người đã vào phòng.${n>=4?' Bộ vai: '+compText(n,c)+'.':' Cần ít nhất 4 người.'}</p><button class="btn red" data-a="deal" ${n<4?'disabled':''}>Chia vai & bắt đầu</button>`}
+    else if(R.phase==='intro'||R.phase==='result')ctl=`<button class="btn red" data-a="night">Bắt đầu đêm ${R.round+1}</button>`;
+    else if(R.phase==='night')ctl=`<p class="big">Đã gửi: ${subN}/${need}</p><button class="btn" data-a="endnight">Kết thúc đêm ngay</button> <button class="btn ghost" data-a="plus">+1 phút</button>`;
+    else if(R.phase==='day')ctl=`<p>Thảo luận công khai. Hết giờ sẽ tự mở bỏ phiếu.</p><button class="btn red" data-a="vote">Mở bỏ phiếu ngay</button> <button class="btn ghost" data-a="plus">+1 phút</button>`;
+    else if(R.phase==='vote')ctl=`<p class="big">Đã bầu: ${subN}/${need}</p><button class="btn" data-a="endvote">Chốt phiếu ngay</button> <button class="btn ghost" data-a="plus">+1 phút</button>`;
+    else if(R.phase==='phao')ctl=`<p>Người bị bầu đang trả lời 2 câu trên điện thoại.</p><button class="btn" data-a="endphao">Chốt ngay</button> <button class="btn ghost" data-a="plus">+1 phút</button>`;
+    else if(R.phase==='end')ctl=`<button class="btn red" data-a="again">Ván mới (giữ người chơi)</button>`;
+    const seats=ids.map(p=>{const out=!lobby&&!R.alive[p],ro=lobby?'':(R.phase==='end'?R.reveal[p]:roleOf(p)),sent=k&&P[p]&&P[p].act&&P[p].act.key===k;
+      return`<div class="seat ${out?'out':''}"><b>${esc(nm(p))}</b><span class="small">${lobby?'Đã vào phòng':out?'Rời ca':'Trong ca'}${!lobby?' · '+(R.kpi[p]||0)+' KPI':''}${R.phaoUsed&&R.phaoUsed[p]?' · đã dùng phao':''}</span>${ro&&(showRoles||R.phase==='end')?`<span><span class="tag ${ro==='wolf'?'bad':''}">${ROLE[ro].n}</span></span>`:''}${k&&!out?`<span class="${sent?'okc':'small'}">${sent?'✓ Đã gửi':'… đang làm'}</span>`:''}${lobby?`<button class="btn ghost" data-kick="${p}" style="min-height:36px;padding:6px 10px">Bỏ khỏi phòng</button>`:''}</div>`}).join('');
+    const stats=Object.values(H.stats).filter(s=>s.n).sort((a,b)=>a.c/a.n-b.c/b.n).slice(0,8);
+    $('#t-room').innerHTML=`<div class="g2b">
+      <div class="card"><div class="qr">${qrSvg()}</div><p style="margin:10px 0 4px"><b>Quét để vào phòng ${esc(code.toUpperCase())}</b></p><p class="url">${esc(link)}</p>
+        <div class="row"><button class="btn ghost" data-a="copy">Sao chép link</button>${S.mode==='L'?'<button class="btn ghost" data-a="tab">Mở tab người chơi thử</button>':''}</div><p class="small" id="cp"></p>
+        <button class="btn ghost" data-a="close" style="margin-top:10px">Đóng phòng</button></div>
+      <div style="display:grid;gap:18px">
+        <div class="card"><span class="ph ${R.phase==='night'?'n':'d'}">${phaseName(R)}</span><div class="row" style="justify-content:space-between;margin:12px 0"><div class="head">${esc(R.headline)}</div>${R.deadline?`<div class="timer cd" data-d="${R.deadline}"></div>`:''}</div>${ctl}</div>
+        ${R.phase==='end'?endHTML(R):''}
+        <div><div class="row" style="justify-content:space-between;margin-bottom:8px"><h2 style="margin:0">Ca trực</h2>${!lobby&&R.phase!=='end'?`<button class="btn ghost" data-a="eye">${showRoles?'Che vai':'Hiện vai (đừng chiếu lên màn hình!)'}</button>`:''}</div><div class="seats">${seats||'<p class="small">Chưa có ai. Mời mọi người quét mã QR.</p>'}</div></div>
+        <div class="g2"><div class="card"><h3>Bảng tin</h3><ol class="log">${(R.news||[]).map(m=>`<li>${esc(m)}</li>`).join('')}</ol></div>
+        <div class="card"><h3>Câu hỏi khó nhất (tỉ lệ đúng)</h3>${stats.length?`<table><tbody>${stats.map(s=>`<tr><td>${esc(s.q)}</td><td class="r">${Math.round(100*s.c/s.n)}% (${s.c}/${s.n})</td></tr>`).join('')}</tbody></table>`:'<p class="small">Sẽ hiện sau đêm đầu tiên. Dùng để biết nội dung nào cần training lại.</p>'}</div></div>
+      </div></div>`;
+    tick();
+  }
+  $('#t-room').addEventListener('click',async e=>{
+    const b=e.target.closest('button');if(!b)return;
+    if(b.dataset.kick){await BE.set(pp(b.dataset.kick),{kicked:true});return}
+    const a=b.dataset.a;
+    if(a==='deal')run(deal);else if(a==='night')run(startNight);else if(a==='endnight')run(resolveNight);
+    else if(a==='vote')run(openVote);else if(a==='endvote')run(resolveVote);else if(a==='endphao')run(resolvePhao);
+    else if(a==='again')run(newGame);
+    else if(a==='plus'){R.deadline=Math.max(R.deadline,Date.now())+60000;await BE.set(rp(),{deadline:R.deadline});render()}
+    else if(a==='eye'){showRoles=!showRoles;render()}
+    else if(a==='copy'){try{await navigator.clipboard.writeText(link);$('#cp').textContent='Đã sao chép'}catch(err){$('#cp').textContent='Hãy chọn link và sao chép thủ công'}}
+    else if(a==='tab'){window.open(link,'_blank')}
+    else if(a==='close'){if(b.dataset.sure){LS.del('msTD_mc');location.reload()}else{b.dataset.sure=1;b.textContent='Bấm lần nữa để đóng phòng'}}
+  });
 }
 
-$('#bank').value=bankTxt;
-const bc=()=>$('#bcount').textContent=`${parseBank().length} câu hỏi`;bc();
-$('#save').onclick=()=>{bankTxt=$('#bank').value;store.set('msTD_bank',bankTxt);bc();$('#bcount').textContent+=' · đã lưu'};
-$('#reset').onclick=()=>{$('#bank').value=SAMPLE};
-$('#draw2').onclick=()=>{bankTxt=$('#bank').value;qCard('#qbox2')};
-$('#rlist').innerHTML=['wolf','seer','guard','witch','hunter','villager'].map(k=>`<div class="rl" style="grid-template-columns:36px minmax(0,1fr)">${svg(k)}<div><b>${R[k].n}</b> <span class="small">· ${R[k].team}</span><div>${R[k].p}</div></div></div>`).join('');
-renderRoles();
-if(S)$('#n').value=S.n;
+function RULES(){return`
+<h2>Luật chơi Ma Sói Tổng Đài (bản điện thoại)</h2>
+<p>Cả phòng là một <b>ca trực tổng đài</b>. Ẩn trong ca là <b>Mã Lỗi</b> muốn đánh sập ca trực. Không ai phải nhắm mắt: mọi lựa chọn bí mật đều bấm trên điện thoại của mình. <b>Điểm mới:</b> mỗi đêm ai cũng phải trả lời 1 câu hỏi nghiệp vụ, và <b>kỹ năng chỉ có hiệu lực khi trả lời đúng</b>. Ai giỏi nghiệp vụ thì phe đó mạnh.</p>
+<h3>Ván chuẩn 5 người</h3>
+<p>1 Mã Lỗi, 1 Giám sát QA, 1 Kỹ thuật viên, 2 Tổng đài viên. MC không chơi, chỉ điều khiển màn hình máy tính (có thể chiếu lên máy chiếu). Bộ vai được công bố trước, chỉ không biết ai giữ vai nào.</p>
+${['wolf','seer','guard','villager'].map(k=>`<div class="rl">${svg(k)}<div><b>${ROLE[k].n}</b> <span class="small">· ${ROLE[k].team}</span><div>${ROLE[k].p}</div><div class="small">${ROLE[k].g}</div></div></div>`).join('')}
+<h3>Cách chơi</h3>
+<ol>
+<li><b>Vào phòng:</b> MC tạo phòng, mọi người quét QR và nhập tên. MC bấm "Chia vai". Mỗi người bấm "Xem vai" trên điện thoại.</li>
+<li><b>Đêm (60 giây):</b> tất cả cùng lúc làm trên điện thoại: chọn 1 người theo vai của mình và trả lời 1 câu hỏi trắc nghiệm. Ai cũng có thao tác giống nhau nên không đoán được vai qua việc ai đang bấm.</li>
+<li><b>Kết quả đêm:</b> Mã Lỗi trả lời đúng thì đánh sập người đã chọn, trừ khi Kỹ thuật viên trả lời đúng và bảo vệ đúng người đó. Giám sát QA đúng thì nhận kết quả soi. Tổng đài viên đúng nhanh nhất nhận manh mối. Người bị đánh sập rời ca và lộ vai. Mỗi người nhận đáp án đúng của câu mình vừa làm.</li>
+<li><b>Ngày, thảo luận (3 phút):</b> nói chuyện công khai, có thể kể manh mối hoặc nói dối. Không được đưa điện thoại cho người khác xem.</li>
+<li><b>Bỏ phiếu bí mật (60 giây):</b> bấm trên điện thoại. Người nhiều phiếu nhất (không hoà và nhiều hơn số phiếu bỏ qua) bị đưa ra xử lý. Kết quả phiếu được công khai sau khi chốt.</li>
+<li><b>Phao nghiệp vụ:</b> người bị bầu trả lời 2 câu hỏi. Đúng cả 2 thì ở lại ca; sai 1 câu là rời ca và lộ vai. Mỗi người chỉ có 1 lần phao trong ván.</li>
+<li>Lặp lại đêm và ngày đến khi có phe thắng.</li>
+</ol>
+<h3>Điều kiện thắng</h3>
+<p>Phe Tổng đài thắng khi loại hết Mã Lỗi. Phe Mã Lỗi thắng khi số Mã Lỗi còn lại bằng hoặc nhiều hơn số người phe Tổng đài (5 người: còn 1 Mã Lỗi đối 1 người là Mã Lỗi thắng).</p>
+<h3>Vì sao cân bằng với 5 người</h3>
+<ul>
+<li>Mã Lỗi chỉ cần sống sót 2 đêm là thắng, nên phe Tổng đài thường chỉ có 1–2 lần bỏ phiếu. Bù lại, phe Tổng đài có 2 nguồn thông tin mỗi đêm: kết quả soi của Giám sát QA và 1 manh mối cho Tổng đài viên đúng nhanh nhất.</li>
+<li>Mỗi đêm chỉ có <b>1</b> manh mối, nên Mã Lỗi vẫn có cơ hội nhận vơ là "người có manh mối" và nói dối.</li>
+<li>Mọi kỹ năng đều phụ thuộc vào trả lời đúng, nên Mã Lỗi học kém thì không đánh sập được; Giám sát QA học kém thì soi trượt.</li>
+<li>Phao cần đúng cả 2 câu, nên không quá dễ thoát, nhưng người giỏi nghiệp vụ vẫn có cơ hội lật ngược.</li>
+<li>Người đã rời ca vẫn trả lời câu hỏi mỗi đêm để lấy điểm KPI, nên ai cũng học đến cuối ván.</li>
+</ul>
+<h3>Tính điểm cuối ván</h3>
+<p>Điểm KPI (mỗi câu đúng +1) + 3 điểm nếu thuộc phe thắng + điểm "nghi đúng" (Tổng đài viên mỗi đêm chọn đúng Mã Lỗi là người mình nghi). Người cao điểm nhất được vinh danh <b>Tổng đài viên xuất sắc</b>, dù thuộc phe nào. Màn hình MC có bảng "Câu hỏi khó nhất" để biết nội dung nào cần training lại.</p>
+<h3>Điều chỉnh nếu thấy lệch</h3>
+<ul><li>Mã Lỗi thắng quá dễ: tăng thời gian thảo luận, hoặc dùng câu hỏi khó hơn cho đêm.</li><li>Phe Tổng đài thắng quá dễ: giảm thời gian đêm xuống 40 giây (khó trả lời nhanh để lấy manh mối).</li><li>6 người: thêm 1 Tổng đài viên. 7 người trở lên: app tự dùng 2 Mã Lỗi; hai Mã Lỗi thấy tên nhau trên điện thoại.</li></ul>`}
 }
 </script>
 </body>
