@@ -80,6 +80,16 @@ table{border-collapse:collapse;width:100%}td,th{padding:8px;border-bottom:1px so
 .cd{font-weight:800;font-variant-numeric:tabular-nums}
 .msgs{margin:0;padding-left:18px}.msgs li{margin:6px 0}
 .big{font-size:20px;font-weight:700}
+.ov{position:fixed;inset:0;z-index:20;background:rgb(0 0 0/.55);display:grid;place-items:center;padding:16px;overflow:auto}
+.ovc{background:var(--bg);color:var(--ink);border-radius:20px;max-width:440px;width:100%;padding:22px 20px;display:grid;gap:10px;border-top:8px solid var(--blue)}
+.ovc.t-n{border-top-color:#f2a900}.ovc.t-bad{border-top-color:var(--red)}.ovc.t-ok{border-top-color:#0a7a3d}
+.ovc h2{margin:0;font-size:24px}.ovc .lead{font-size:19px;font-weight:700;margin:0}.ovc p{margin:0}
+.ovi{width:56px;height:56px}.priv{background:color-mix(in srgb,var(--blue) 10%,transparent);border-radius:12px;padding:10px 12px}
+.bars{display:grid;gap:6px}.bar{display:grid;grid-template-columns:minmax(0,7em) minmax(0,1fr) 2.2em;gap:8px;align-items:center}.bar i{display:block;height:14px;border-radius:7px;background:var(--blue)}.bar.hi i{background:var(--red)}.bar b{text-align:right;font-variant-numeric:tabular-nums}
+.ann{border:3px solid #f2a900}.ann.t-bad{border-color:var(--red)}.ann.t-ok{border-color:#0a7a3d}.ann .lead{font-size:26px;font-weight:800;line-height:1.3;margin:6px 0}.ann p{font-size:19px;margin:6px 0}
+.todo{border-left:5px solid #f2a900;padding:8px 12px;background:color-mix(in srgb,#f2a900 12%,transparent);border-radius:8px;margin:10px 0 0}
+.dl{display:inline-block;font-size:13px;font-weight:700;padding:3px 10px;border-radius:99px;background:var(--red2);color:var(--red);margin-left:6px}
+@media(prefers-reduced-motion:no-preference){.ovc{animation:pop .35s ease-out}@keyframes pop{from{transform:scale(.9);opacity:0}}}
 @media(prefers-reduced-motion:no-preference){.pulse{animation:p 1.6s ease-in-out infinite}@keyframes p{50%{opacity:.55}}}
 </style>
 </head>
@@ -2434,12 +2444,15 @@ const ic={
 };
 const svg=k=>`<svg viewBox="0 0 64 64" aria-hidden="true">${ic[k]}</svg>`;
 const ROLE={
- wolf:{n:'Mã Lỗi',team:'Phe Mã Lỗi',bad:1,p:'Mỗi đêm chọn 1 người để đánh sập. Lệnh chỉ thành công khi bạn trả lời ĐÚNG câu hỏi đêm.',g:'Thắng khi số Mã Lỗi còn lại bằng hoặc nhiều hơn phe Tổng đài. Ban ngày hãy giả làm người tốt.'},
- seer:{n:'Giám sát QA',team:'Phe Tổng đài',p:'Mỗi đêm chọn 1 người để soi. Trả lời ĐÚNG câu hỏi đêm thì biết người đó có phải Mã Lỗi không.',g:'Tìm ra Mã Lỗi và thuyết phục cả ca bỏ phiếu đúng người.'},
+ wolf:{n:'Mã Lỗi',team:'Phe Mã Lỗi',bad:1,p:'Mỗi đêm chọn 1 người để đánh sập. Lệnh chỉ thành công khi bạn trả lời ĐÚNG câu hỏi đêm. NGỤY TRANG (1 lần mỗi ván): đêm nào bạn trả lời đúng mà bị Giám sát QA soi trúng, kết quả soi sẽ hiện "không phải Mã Lỗi".',g:'Thắng khi còn ẩn đến hết hạn chót ca trực, hoặc khi số Mã Lỗi bằng số người phe Tổng đài. Ban ngày hãy giả làm người tốt.'},
+ seer:{n:'Giám sát QA',team:'Phe Tổng đài',p:'Mỗi đêm chọn 1 người để soi. Trả lời ĐÚNG câu hỏi đêm thì biết người đó có phải Mã Lỗi không. Cẩn thận: Mã Lỗi có thể Ngụy trang 1 lần, nên kết quả "không phải" chưa chắc đúng 100%.',g:'Tìm ra Mã Lỗi và thuyết phục cả ca bỏ phiếu đúng người.'},
  guard:{n:'Kỹ thuật viên',team:'Phe Tổng đài',p:'Mỗi đêm bảo vệ 1 người (được chọn chính mình, không trùng người đêm trước). Bảo vệ chỉ có hiệu lực khi trả lời ĐÚNG.',g:'Giữ những người quan trọng ở lại ca.'},
- villager:{n:'Tổng đài viên',team:'Phe Tổng đài',p:'Mỗi đêm chọn người bạn nghi nhất và trả lời câu hỏi. Tổng đài viên trả lời ĐÚNG NHANH NHẤT nhận 1 manh mối: tên một người chắc chắn không phải Mã Lỗi.',g:'Cùng cả ca loại hết Mã Lỗi. Mỗi đêm nghi đúng Mã Lỗi được +1 điểm cuối ván.'}
+ villager:{n:'Tổng đài viên',team:'Phe Tổng đài',p:'Mỗi đêm chọn người bạn nghi nhất và trả lời câu hỏi. Từ Đêm 2, Tổng đài viên trả lời ĐÚNG NHANH NHẤT nhận 1 manh mối: tên một người chắc chắn không phải Mã Lỗi.',g:'Cùng cả ca loại hết Mã Lỗi. Mỗi đêm nghi đúng Mã Lỗi được +1 điểm cuối ván.'}
 };
-function suggest(n,w){const wolf=w&&w!=='auto'?+w:(n<=6?1:n<=9?2:3);return{wolf:Math.min(wolf,Math.floor((n-1)/2)),seer:1,guard:n>=5?1:0}}
+function suggest(n,w){const wolf=w&&w!=='auto'?+w:(n<=7?1:n<=13?2:3);return{wolf:Math.min(wolf,Math.floor((n-1)/2)),seer:1,guard:n>=5?1:0}}
+/* hạn chót ca trực: chọn theo kết quả mô phỏng để tỉ lệ thắng 2 phe gần nhau */
+const lastDayOf=(n,w)=>w===1?2:w===2&&n>=9?6:0;
+const dlText=d=>d?`Mã Lỗi thắng nếu vẫn còn ẩn sau Ngày ${d}`:'Không có hạn chót';
 const compText=(n,c)=>`${c.wolf} Mã Lỗi, 1 Giám sát QA${c.guard?', 1 Kỹ thuật viên':''}, ${n-c.wolf-1-c.guard} Tổng đài viên`;
 
 /* ================= ngân hàng câu hỏi ================= */
@@ -2579,7 +2592,7 @@ async function playerApp(code,mode,cfgS){
   const st=mode==='L'?SS:LS,pk='msTD_pid_'+code;
   let pid=st.get(pk,'');if(!pid){pid=rid(10);st.set(pk,pid)}
   const rp='msTD/'+code,pp=rp+'/players/'+pid;
-  let R=null,ME=null,sel={key:'',target:'',ans:[]},showRole=false,sending=false;
+  let R=null,ME=null,sel={key:'',target:'',ans:[]},showRole=null,sending=false;const ak='msTD_ann_'+code+'_'+pid;let seenAnn=st.get(ak,'');
   BE.watch(rp,d=>{R=d;render()});BE.watch(pp,d=>{ME=d;render()});
   const view=app.querySelector('.pv');
   function render(){
@@ -2595,17 +2608,20 @@ async function playerApp(code,mode,cfgS){
     if(R.phase==='lobby'||!role){
       h+=`<div class="card"><p class="big">Xin chào ${esc(ME.name)}!</p><p>Bạn đã vào phòng. Chờ MC chia vai…</p><p class="small pulse">Giữ màn hình này mở.</p></div>`;
     }else{
-      const r=ROLE[role];
-      h+=`<div class="card"><div class="row" style="justify-content:space-between"><span><b>${esc(ME.name)}</b> · ${R.alive&&R.alive[pid]?'đang trong ca':'<span class="warn">đã rời ca</span>'}</span><button class="btn ghost" id="rb">${showRole?'Úp vai':'Xem vai'}</button></div>
-        ${showRole?`<div class="role" style="margin-top:12px">${svg(role)}<div><div class="big" style="color:${r.bad?'var(--red)':'var(--blue)'}">${r.n}</div><div class="small">${r.team}${pr.mates&&pr.mates.length?' · Đồng bọn: '+esc(pr.mates.join(', ')):''}</div></div></div><p style="margin:10px 0 0"><b>Kỹ năng:</b> ${r.p}</p><p style="margin:6px 0 0"><b>Mục tiêu:</b> ${r.g}</p>`:''}</div>`;
+      const r=ROLE[role],sr=showRole===null?(R.phase==='intro'||R.phase==='lobby'):showRole;
+      h+=`<div class="card"><div class="row" style="justify-content:space-between"><span><b>${esc(ME.name)}</b> · ${R.alive&&R.alive[pid]?'đang trong ca':'<span class="warn">đã rời ca</span>'}</span><button class="btn ghost" id="rb">${sr?'Úp vai':'Xem vai'}</button></div>
+        ${sr?`<div class="role" style="margin-top:12px">${svg(role)}<div><div class="big" style="color:${r.bad?'var(--red)':'var(--blue)'}">${r.n}</div><div class="small">${r.team}${pr.mates&&pr.mates.length?' · Đồng bọn: '+esc(pr.mates.join(', ')):''}</div></div></div><p style="margin:10px 0 0"><b>Kỹ năng:</b> ${r.p}</p><p style="margin:6px 0 0"><b>Mục tiêu:</b> ${r.g}</p>`:''}</div>`;
       if(R.phase==='end')h+=endHTML(R);
       else if(stp.kind!=='wait'&&!done)h+=stepHTML(stp);
-      else h+=`<div class="card"><span class="ph ${R.phase==='night'?'n':'d'}">${phaseName(R)}</span><p class="big" style="margin:10px 0 4px">${esc(R.headline||'')}</p>${R.deadline&&R.phase!=='result'?`<p class="small">Còn <span class="cd" data-d="${R.deadline}"></span></p>`:''}${done?'<p class="okc">Đã gửi. Chờ mọi người…</p>':''}</div>`;
+      else h+=`<div class="card"><span class="ph ${R.phase==='night'?'n':'d'}">${phaseName(R)}</span><p class="big" style="margin:10px 0 4px">${esc(R.headline||'')}</p>${R.deadline&&R.phase!=='result'?`<p class="small">Còn <span class="cd" data-d="${R.deadline}"></span></p>`:''}${R.lastDay&&R.phase!=='end'?`<p class="small">Hạn chót: hết Ngày ${R.lastDay}${R.round>=R.lastDay&&R.phase!=='night'?' · <b class="warn">hôm nay là ngày cuối!</b>':''}</p>`:''}<div class="todo"><b>Việc của bạn:</b> ${todo(R,role,R.alive&&R.alive[pid],done,pid)}</div></div>`;
       const ms=(pr.msgs||[]).slice().reverse();
       h+=`<div class="card"><h3>Tin riêng của bạn</h3>${ms.length?`<ul class="msgs">${ms.map(m=>`<li>${esc(m)}</li>`).join('')}</ul>`:'<p class="small">Chưa có.</p>'}</div>`;
       h+=`<div class="card"><h3>Bảng tin chung</h3><ul class="msgs">${(R.news||[]).slice().reverse().map(m=>`<li>${esc(m)}</li>`).join('')}</ul>
         <h3 style="margin-top:14px">Ca trực</h3><p>${(R.order||[]).map(p=>`<span class="tag ${R.alive[p]?'':'bad'}" style="margin:2px">${esc(R.names[p])}${R.alive[p]?'':' (rời ca)'} · ${R.kpi[p]||0} KPI</span>`).join(' ')}</p></div>`;
     }
+    const busyStep=role&&R.phase!=='end'&&stp.kind!=='wait'&&!done;
+    if(R.ann&&R.ann.id!==seenAnn&&!busyStep){const l=pr.last&&pr.last.id===R.ann.id?pr.last.m:[];
+      h+=`<div class="ov" role="dialog" aria-modal="true"><div class="ovc t-${R.ann.tone||'n'}">${annHTML(R.ann)}${l.length?`<div class="priv"><b>Tin riêng của bạn</b>${l.map(m=>`<p>${esc(m)}</p>`).join('')}</div>`:''}<button class="btn red full" id="ovok">Đã xem</button></div></div>`}
     view.innerHTML=h;tick();
   }
   const title={night:'Nhiệm vụ đêm',quiz:'Hội đồng chấm',vote:'Bỏ phiếu',phao:'Phao nghiệp vụ'};
@@ -2621,7 +2637,8 @@ async function playerApp(code,mode,cfgS){
   view.addEventListener('click',async e=>{
     const b=e.target.closest('button');if(!b)return;
     if(b.id==='jb'){const n=$('#jn').value.trim();if(!n){$('#je').textContent='Nhập tên của bạn.';return}b.disabled=true;await BE.set(pp,{name:n,joinedAt:Date.now(),kicked:false});return}
-    if(b.id==='rb'){showRole=!showRole;render();return}
+    if(b.id==='rb'){showRole=!(showRole===null?(R.phase==='intro'||R.phase==='lobby'):showRole);render();return}
+    if(b.id==='ovok'){seenAnn=R.ann.id;st.set(ak,seenAnn);render();return}
     if(b.dataset.t!==undefined){sel.target=b.dataset.t;render();return}
     if(b.dataset.q!==undefined){sel.ans[+b.dataset.q]=+b.dataset.a;render();return}
     if(b.id==='sb'){const s=ME.priv.step,qs=s.qs||(s.q?[s.q]:[]);
@@ -2633,10 +2650,32 @@ async function playerApp(code,mode,cfgS){
   });
   setInterval(tick,500);
 }
+const ICO={n:'<svg class="ovi" viewBox="0 0 64 64"><circle cx="32" cy="32" r="13" fill="#f2a900"/><g stroke="#f2a900" stroke-width="5" stroke-linecap="round"><path d="M32 4v8M32 52v8M4 32h8M52 32h8M12 12l6 6M46 46l6 6M12 52l6-6M46 18l6-6"/></g></svg>',
+ v:'<svg class="ovi" viewBox="0 0 64 64"><rect x="10" y="26" width="44" height="30" rx="5" fill="#1f5cff"/><rect x="22" y="8" width="20" height="26" rx="3" fill="#fff" stroke="#1f5cff" stroke-width="3"/><path d="M26 20l4 4 8-8" stroke="#1f5cff" stroke-width="4" fill="none" stroke-linecap="round"/><rect x="18" y="32" width="28" height="4" rx="2" fill="#0b2e8a"/></svg>',
+ p:'<svg class="ovi" viewBox="0 0 64 64"><circle cx="32" cy="32" r="24" fill="none" stroke="#d4001a" stroke-width="12"/><circle cx="32" cy="32" r="24" fill="none" stroke="#fff" stroke-width="12" stroke-dasharray="19 19"/></svg>',
+ e:'<svg class="ovi" viewBox="0 0 64 64"><path d="M14 8v50" stroke="#555" stroke-width="5" stroke-linecap="round"/><path d="M16 10h34l-8 10 8 10H16z" fill="#d4001a"/></svg>',
+ s:'<svg class="ovi" viewBox="0 0 64 64"><circle cx="32" cy="32" r="26" fill="#1f5cff"/><path d="M26 20l18 12-18 12z" fill="#fff"/></svg>'};
+function annHTML(a,big){if(!a)return'';const mx=Math.max(1,...(a.bars||[]).map(b=>b.v));
+  return`${big?'':ICO[a.icon]||''}<h2>${esc(a.title)}</h2>${a.lead?`<p class="lead">${esc(a.lead)}</p>`:''}${(a.bars||[]).length?`<div class="bars">${a.bars.map(b=>`<div class="bar ${b.top?"hi":""}"><span>${esc(b.n)}</span><i style="width:${Math.max(4,100*b.v/mx)}%"></i><b>${b.v}</b></div>`).join('')}</div>`:''}${(a.lines||[]).filter(Boolean).map(l=>`<p>${esc(l)}</p>`).join('')}`}
+function todo(R,role,alive,done,pid){
+  if(R.phase==='intro')return'Đọc kỹ vai và kỹ năng. Khi MC bắt đầu đêm, nhiệm vụ sẽ hiện ngay tại đây.';
+  if(!alive&&R.phase!=='night')return'Bạn đã rời ca: không tiết lộ vai của người khác. Đêm vẫn có câu hỏi để bạn lấy thêm KPI.';
+  if(R.phase==='night')return done?'Đã gửi. Chờ mọi người xong để xem kết quả đêm.':'Làm nhiệm vụ đêm ở trên.';
+  if(R.phase==='day')return{wolf:'Giả làm người tốt. Có thể nhận là Tổng đài viên có manh mối để đánh lạc hướng. Câu giờ đến hết hạn chót cũng là cách thắng.',
+    seer:'Nếu đã soi ra Mã Lỗi, hãy công khai để cả ca bỏ phiếu. Lộ vai thì Mã Lỗi sẽ nhắm vào bạn đêm sau.',
+    guard:'Nghe xem ai đáng tin để bảo vệ đêm sau. Không cần lộ vai.',
+    villager:'Kể manh mối nếu có, hỏi người nói mâu thuẫn. Phải tìm ra Mã Lỗi trước hạn chót.'}[role];
+  if(R.phase==='vote')return done?'Đã bầu. Chờ kết quả.':'Bầu người bạn nghi nhất. Không chắc thì chọn bỏ qua.';
+  if(R.phase==='phao')return R.phao&&R.phao.pid===pid?'Trả lời phao ở trên.':'Người bị bầu đang trả lời 2 câu phao. Đoán xem họ có phải Mã Lỗi không.';
+  if(R.phase==='result')return'Bàn nhanh kết quả, chờ MC bắt đầu đêm tiếp theo.';
+  return'';
+}
 function phaseName(R){return{lobby:'Phòng chờ',intro:'Xem vai',night:`Đêm ${R.round}`,day:`Ngày ${R.round} · thảo luận`,vote:`Ngày ${R.round} · bỏ phiếu`,phao:`Ngày ${R.round} · phao`,result:`Ngày ${R.round} · kết quả`,end:'Kết thúc'}[R.phase]||''}
 function tick(){document.querySelectorAll('.cd').forEach(el=>el.textContent=mmss(+el.dataset.d-Date.now()))}
+function tallyHTML(R){const T=R.tally;if(!T||!T.rows||!T.rows.length)return'';
+  return`<div class="card"><h3>Tổng điểm cả buổi (${T.games} ván)</h3><table><thead><tr><th>#</th><th>Người chơi</th><th class="r">Số ván</th><th class="r">Thắng</th><th class="r">Câu đúng</th><th class="r">Tổng điểm</th></tr></thead><tbody>${T.rows.map((x,i)=>{const f=T.rows[0],top=x.t===f.t&&(x.k||0)===(f.k||0),nTop=T.rows.filter(y=>y.t===f.t&&(y.k||0)===(f.k||0)).length;return`<tr><td>${i+1}</td><td>${top?'<b>':''}${esc(x.n)}${top?'</b> · TĐV xuất sắc của buổi'+(nTop>1?' (đồng hạng)':''):''}</td><td class="r">${x.g}</td><td class="r">${x.w}</td><td class="r">${x.k||0}</td><td class="r"><b>${x.t}</b></td></tr>`}).join('')}</tbody></table></div>`}
 function endHTML(R){
-  return`<div class="card"><p class="big">${esc(R.headline)}</p><table><thead><tr><th>Người chơi</th><th>Vai</th><th class="r">KPI</th><th class="r">Thắng</th><th class="r">Nghi đúng</th><th class="r">Tổng</th></tr></thead><tbody>${(R.final||[]).map((x,i)=>`<tr><td>${i===0?'<b>':''}${esc(R.names[x.p])}${i===0?'</b> · xuất sắc':''}</td><td><span class="tag ${R.reveal[x.p]==='wolf'?'bad':''}">${ROLE[R.reveal[x.p]].n}</span></td><td class="r">${x.k}</td><td class="r">+${x.b}</td><td class="r">+${x.s}</td><td class="r"><b>${x.t}</b></td></tr>`).join('')}</tbody></table></div>`;
+  return tallyHTML(R)+`<div class="card"><p class="big">${esc(R.headline)}</p><table><thead><tr><th>Người chơi</th><th>Vai</th><th class="r">KPI</th><th class="r">Thắng</th><th class="r">Nghi đúng</th><th class="r">Tổng</th></tr></thead><tbody>${(R.final||[]).map((x,i)=>`<tr><td>${i===0?'<b>':''}${esc(R.names[x.p])}${i===0?'</b> · xuất sắc':''}</td><td><span class="tag ${R.reveal[x.p]==='wolf'?'bad':''}">${ROLE[R.reveal[x.p]].n}</span></td><td class="r">${x.k}</td><td class="r">+${x.b}</td><td class="r">+${x.s}</td><td class="r"><b>${x.t}</b></td></tr>`).join('')}</tbody></table></div>`;
 }
 
 /* ================================================================
@@ -2771,12 +2810,13 @@ function mcApp(){
         <div><label for="s4">Phao (giây)</label><input id="s4" type="number" min="30" value="${S.phaoSec}"></div>
       </div>
       <label for="sw">Số Mã Lỗi</label><select id="sw"><option value="auto">Tự động theo số người (khuyên dùng)</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select>
+      <label for="sdl">Hạn chót ca trực</label><select id="sdl"><option value="auto">Bật, theo số người (khuyên dùng, giúp cân bằng)</option><option value="off">Tắt</option></select>
       <label>Nhóm câu hỏi dùng trong ván</label><div class="mode" id="gbox"></div><p class="small">Bỏ chọn nhóm chưa muốn dùng. Quản lý câu hỏi ở tab "Ngân hàng câu hỏi".</p>
       <p class="warn" id="se"></p><button class="btn red" id="create">Tạo phòng & mã QR</button>
     </div><div>
       <h2>Chia vai theo số người</h2>
-      <div class="card"><table><thead><tr><th>Số người</th><th>Bộ vai</th></tr></thead><tbody>${[4,5,6,7,8,9,10].map(n=>`<tr><td>${n}</td><td>${compText(n,suggest(n,'auto'))}</td></tr>`).join('')}</tbody></table>
-      <p class="small">Ván chuẩn cho buổi training là <b>5 người</b>. MC không chơi, chỉ điều khiển màn hình này.</p></div>
+      <div class="card"><table><thead><tr><th>Số người</th><th>Bộ vai</th></tr></thead><tbody>${[4,5,6,7,8,9,10,11,12,13].map(n=>`<tr><td>${n}</td><td>${compText(n,suggest(n,'auto'))}<br><span class="small">${dlText(lastDayOf(n,suggest(n,'auto').wolf))}</span></td></tr>`).join('')}</tbody></table>
+      <p class="small">Chơi bao nhiêu ván cũng được: bấm "Ván tiếp theo" để cộng dồn điểm, cuối buổi ai tổng cao nhất là TĐV xuất sắc của buổi. Ván chuẩn cho buổi training là <b>5 người</b>. MC không chơi, chỉ điều khiển màn hình này.</p></div>
       <details class="card" style="margin-top:14px"><summary><b>Cách tạo Firebase (làm 1 lần, miễn phí)</b></summary>
       <ol><li>Vào console.firebase.google.com, bấm tạo project mới (ví dụ tên <b>masoi-tongdai</b>), có thể tắt Google Analytics.</li>
       <li>Vào <b>Build → Firestore Database → Create database</b>, chọn vị trí gần (ví dụ asia-southeast1).</li>
@@ -2795,7 +2835,7 @@ service cloud.firestore {
       <ol start="4"><li>Bấm bánh răng <b>Project settings</b>, kéo xuống <b>Your apps</b>, bấm biểu tượng Web <b>&lt;/&gt;</b>, đặt tên app rồi đăng ký.</li><li>Sao chép đoạn <b>firebaseConfig</b> hiện ra và dán vào ô bên trái.</li></ol>
       <p class="small">Nên dùng project riêng cho game, đừng sửa Rules của project web tra cứu mã lỗi.</p></details>
     </div></div>`;
-    $('#sw').value=S.wolves;refreshGroups();
+    $('#sw').value=S.wolves;$('#sdl').value=S.dl||'auto';refreshGroups();
     const md=()=>document.querySelector('input[name=md]:checked').value;
     document.querySelectorAll('input[name=md]').forEach(r=>r.onchange=()=>$('#fbox').classList.toggle('hide',md()!=='F'));
     const chk=()=>{const c=parseCfg($('#cfg').value);$('#cfgok').innerHTML=c?`<span class="okc">Đã nhận: project ${esc(c.p)}</span>`:'Chưa nhận được apiKey và projectId.';return c};
@@ -2807,7 +2847,7 @@ service cloud.firestore {
       if(!gs.length){$('#se').textContent='Chọn ít nhất 1 nhóm câu hỏi.';return}
       if(getBank().filter(x=>gs.includes(x.g)).length<6){$('#se').textContent='Các nhóm đã chọn cần ít nhất 6 câu hỏi.';return}
       const sg=gs.length===gall.length?[]:gs;
-      Object.assign(S,{mode:m,cfg:c,cfgRaw:m==='F'?$('#cfg').value:S.cfgRaw,base:$('#base').value.trim()||location.href.split('#')[0],nightSec:Math.max(20,+$('#s1').value||60),talkSec:Math.max(30,+$('#s2').value||180),voteSec:Math.max(20,+$('#s3').value||60),phaoSec:Math.max(30,+$('#s4').value||90),wolves:$('#sw').value,groups:sg});saveS();
+      Object.assign(S,{mode:m,cfg:c,cfgRaw:m==='F'?$('#cfg').value:S.cfgRaw,base:$('#base').value.trim()||location.href.split('#')[0],nightSec:Math.max(20,+$('#s1').value||60),talkSec:Math.max(30,+$('#s2').value||180),voteSec:Math.max(20,+$('#s3').value||60),phaoSec:Math.max(30,+$('#s4').value||90),wolves:$('#sw').value,dl:$('#sdl').value,groups:sg});saveS();
       $('#create').disabled=true;
       try{code=rid(5);await attach(code,true)}catch(e){$('#se').textContent='Không kết nối được: '+e.message;$('#create').disabled=false}
     };
@@ -2823,16 +2863,19 @@ service cloud.firestore {
     BE.watch(rp(),d=>{R=d;render();check()});
     BE.watchCol(rp()+'/players',o=>{P=o||{};const k=R&&stepKey();if(k){for(const p in P)if(P[p].act&&P[p].act.key===k&&!H.seen[k+p]){H.seen[k+p]=Date.now();saveH()}}render();check()});
   }
-  const lobbyRoom=()=>({v:2,phase:'lobby',round:0,names:{},alive:{},kpi:{},phaoUsed:{},order:[],news:[],headline:'Quét mã QR để vào phòng',deadline:0,winner:'',reveal:null,final:null,phao:null,comp:''});
+  const lobbyRoom=()=>({v:3,tally:null,lastDay:0,ann:null,phase:'lobby',round:0,names:{},alive:{},kpi:{},phaoUsed:{},order:[],news:[],headline:'Quét mã QR để vào phòng',deadline:0,winner:'',reveal:null,final:null,phao:null,comp:''});
 
   /* ---- ghi dữ liệu ---- */
+  const mkAnn=(icon,tone,title,lead,lines,bars)=>({id:'a'+Date.now()+rid(3),icon,tone,title,lead:lead||'',lines:lines||[],bars:bars||[]});
   const newCtx=()=>({room:{},msgs:{},steps:{},priv:{}});
   const say=(c,p,m)=>(c.msgs[p]=c.msgs[p]||[]).push(m);
   async function commit(c){
-    const ops=[],ids=new Set([...Object.keys(c.msgs),...Object.keys(c.steps),...Object.keys(c.priv)]);
+    const ops=[],ids=new Set([...Object.keys(c.msgs),...Object.keys(c.steps),...Object.keys(c.priv)]),an=c.room.ann;
+    if(an)(c.room.order||R.order||[]).forEach(p=>ids.add(p));
     for(const p of ids){const pr=Object.assign({},c.priv[p]||{});
       if(c.msgs[p]&&c.msgs[p].length)pr.msgs=[...((P[p]&&P[p].priv&&P[p].priv.msgs)||[]),...c.msgs[p]].slice(-30);
       if(c.steps[p])pr.step=c.steps[p];
+      if(an)pr.last={id:an.id,m:c.msgs[p]||[]};
       P[p]=P[p]||{};P[p].priv=Object.assign(P[p].priv||{},pr);ops.push(BE.set(pp(p),{priv:pr}))}
     Object.assign(R,c.room);saveH();ops.push(BE.set(rp(),c.room));await Promise.all(ops);render();
   }
@@ -2860,9 +2903,10 @@ service cloud.firestore {
     for(const p of ids){const r=map[p],mates=r==='wolf'?ids.filter(q=>q!==p&&map[q]==='wolf').map(q=>names[q]):[];
       ctx.priv[p]={role:r,mates,susp:0,lastGuard:''};ctx.steps[p]=WAIT;
       P[p].priv=Object.assign(P[p].priv||{},{msgs:[]});
-      say(ctx,p,`Bạn là ${ROLE[r].n}.${mates.length?' Đồng bọn: '+mates.join(', ')+'.':''} Bấm "Xem vai" để đọc kỹ năng.`)}
-    const comp=compText(ids.length,c),all=v=>Object.fromEntries(ids.map(p=>[p,v]));
-    ctx.room={phase:'intro',round:0,names,alive:all(true),kpi:all(0),phaoUsed:all(false),order:ids,news:[`Ván bắt đầu: ${ids.length} người gồm ${comp}.`],headline:'Mở điện thoại, bấm "Xem vai" và giữ bí mật',deadline:0,winner:'',reveal:null,final:null,phao:null,comp};
+      say(ctx,p,`Bạn là ${ROLE[r].n}.${mates.length?' Đồng bọn: '+mates.join(', ')+'.':''} Kỹ năng ghi ở thẻ vai bên dưới.`)}
+    const comp=compText(ids.length,c),ld=S.dl==='off'?0:lastDayOf(ids.length,c.wolf),all=v=>Object.fromEntries(ids.map(p=>[p,v]));
+    ctx.room={phase:'intro',round:0,names,alive:all(true),kpi:all(0),phaoUsed:all(false),order:ids,news:[`Ván bắt đầu: ${ids.length} người gồm ${comp}. ${dlText(ld)}.`],headline:'Mở điện thoại, đọc vai và giữ bí mật',deadline:0,winner:'',reveal:null,final:null,phao:null,comp,lastDay:ld,
+      ann:mkAnn('s','b','Ván bắt đầu!',`${ids.length} người: ${comp}.`,[ld?`Hạn chót: ${dlText(ld)}.`:'',ld?'Phe Tổng đài phải tìm ra Mã Lỗi trước hạn chót.':'','Đọc vai trên điện thoại và giữ bí mật.'])};
     await commit(ctx);
   }
   /* ---- đêm ---- */
@@ -2889,6 +2933,9 @@ service cloud.firestore {
     const gd=al.find(p=>roleOf(p)==='guard');let protect='';
     if(gd){if(G[gd].ok)protect=G[gd].a.target;ctx.priv[gd]={lastGuard:G[gd].sub?G[gd].a.target:''}}
     const victim=attack&&attack!==protect?attack:'',alv=Object.assign({},R.alive);if(victim)alv[victim]=false;
+    H.disg=H.disg||{};let fake='';
+    {const sp=al.find(p=>roleOf(p)==='seer'),tg=sp&&G[sp].ok&&G[sp].a.target;
+     if(tg&&roleOf(tg)==='wolf'&&G[tg]&&G[tg].ok&&!H.disg[tg]){H.disg[tg]=true;fake=tg;say(ctx,tg,`Đêm ${R.round}: Giám sát QA vừa soi trúng bạn, nhưng bạn đã NGỤY TRANG thành công: họ thấy bạn "không phải Mã Lỗi". Bạn đã dùng hết ngụy trang.`)}}
     for(const p of R.order){const g=G[p],K=H.key[p],ro=roleOf(p),n=`Đêm ${R.round}: `;
       if(!g.sub){say(ctx,p,`${n}bạn chưa gửi kịp${R.alive[p]&&ro!=='villager'?', kỹ năng không có hiệu lực':''}. Đáp án đúng: ${K.ans[0]}.`);continue}
       const fb=g.ok?'trả lời ĐÚNG (+1 KPI).':`trả lời SAI. Đáp án đúng: ${K.ans[0]}.`;
@@ -2896,14 +2943,19 @@ service cloud.firestore {
       let x='';
       if(ro==='wolf')x=g.ok?' Lệnh đánh sập đã gửi.':' Lệnh đánh sập thất bại.';
       if(ro==='guard')x=g.ok?` Bạn đã bảo vệ ${nm(g.a.target)}.`:' Bảo vệ không có hiệu lực.';
-      if(ro==='seer')x=g.ok?` Kết quả soi: ${nm(g.a.target)} ${roleOf(g.a.target)==='wolf'?'LÀ MÃ LỖI!':'không phải Mã Lỗi.'}`:' Không soi được.';
+      if(ro==='seer')x=g.ok?` Kết quả soi: ${nm(g.a.target)} ${roleOf(g.a.target)==='wolf'&&g.a.target!==fake?'LÀ MÃ LỖI!':'không phải Mã Lỗi.'}`:' Không soi được.';
       say(ctx,p,n+fb+x)}
-    const vs=al.filter(p=>roleOf(p)==='villager'&&G[p].ok).sort((a,b)=>t(a)-t(b));
-    if(vs.length){const w=vs[0],pool=R.order.filter(x=>alv[x]&&x!==w&&roleOf(x)!=='wolf');if(pool.length)say(ctx,w,`Manh mối (bạn đúng nhanh nhất): ${nm(pick(pool))} KHÔNG phải Mã Lỗi.`)}
+    const vs=al.filter(p=>roleOf(p)==='villager'&&G[p].ok).sort((a,b)=>t(a)-t(b));let clue=false;
+    if(vs.length&&R.round>=2){clue=true;const w=vs[0],pool=R.order.filter(x=>alv[x]&&x!==w&&roleOf(x)!=='wolf');if(pool.length)say(ctx,w,`Manh mối (bạn đúng nhanh nhất): ${nm(pick(pool))} KHÔNG phải Mã Lỗi.`)}
     for(const p of al)if(roleOf(p)==='villager'&&G[p].sub&&roleOf(G[p].a.target)==='wolf')ctx.priv[p]={susp:((P[p].priv&&P[p].priv.susp)||0)+1};
-    const news=[...R.news,victim?`Đêm ${R.round}: ${nm(victim)} bị đánh sập, rời ca. Vai: ${ROLE[roleOf(victim)].n}.`:`Đêm ${R.round}: bình yên, không ai rời ca.`];
+    const lead=victim?`${nm(victim)} bị Mã Lỗi đánh sập và rời ca. Vai: ${ROLE[roleOf(victim)].n}.`:attack?'Mã Lỗi đã ra tay nhưng Kỹ thuật viên bảo vệ thành công. Không ai rời ca!':'Đêm bình yên: lệnh đánh sập thất bại vì Mã Lỗi chưa trả lời đúng câu hỏi.';
+    const okN=al.filter(p=>G[p].ok).length,nAl=R.order.filter(p=>alv[p]).length,last=R.lastDay&&R.round>=R.lastDay;
+    const lines=[`Cả ca trả lời đúng ${okN}/${al.length} câu hỏi đêm nay.`,clue?'1 Tổng đài viên trả lời đúng nhanh nhất đã nhận manh mối bí mật.':R.round<2?'Manh mối cho Tổng đài viên bắt đầu từ Đêm 2.':'Đêm nay không Tổng đài viên nào trả lời đúng nên không có manh mối.',
+      `Còn ${nAl} người trong ca.`+(R.lastDay?last?' Hôm nay là NGÀY CUỐI: không tìm ra Mã Lỗi thì Mã Lỗi thắng!':` Hạn chót: hết Ngày ${R.lastDay} (còn ${R.lastDay-R.round+1} ngày).`:''),
+      `Tiếp theo: thảo luận ${mmss(S.talkSec*1000)} rồi bỏ phiếu.`];
+    const news=[...R.news,`Đêm ${R.round}: ${lead}`];
     for(const p of R.order)ctx.steps[p]=WAIT;
-    ctx.room={alive:alv,kpi,news,phase:'day',deadline:Date.now()+S.talkSec*1000,headline:news[news.length-1]};
+    ctx.room={alive:alv,kpi,news,phase:'day',deadline:Date.now()+S.talkSec*1000,headline:lead,ann:mkAnn('n',victim?'bad':'n',`Trời sáng! Kết quả Đêm ${R.round}`,lead,lines)};
     checkWin(ctx,alv);await commit(ctx);
   }
   /* ---- ngày ---- */
@@ -2919,15 +2971,18 @@ service cloud.firestore {
     const ctx=newCtx(),al=alive(),cnt={},lines=[];let skip=0;
     for(const p of al){const a=P[p]&&P[p].act,tg=a&&a.key===key?a.target:'';if(tg&&tg!=='skip'&&R.alive[tg]){cnt[tg]=(cnt[tg]||0)+1;lines.push(`${nm(p)} → ${nm(tg)}`)}else{skip++;lines.push(`${nm(p)} → bỏ qua`)}}
     const mx=Math.max(0,...Object.values(cnt)),top=Object.keys(cnt).filter(k=>cnt[k]===mx),news=[...R.news,`Ngày ${R.round}, phiếu bầu: ${lines.join('; ')}.`];
+    const bars=[...Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a]).map(k=>({n:nm(k),v:cnt[k],top:cnt[k]===mx&&top.length===1})),...(skip?[{n:'Bỏ qua',v:skip,top:false}]:[])],vt=`Kết quả bỏ phiếu Ngày ${R.round}`;
     for(const p of R.order)ctx.steps[p]=WAIT;
     if(mx>0&&top.length===1&&mx>skip){const acc=top[0];
       if(!R.phaoUsed[acc]){const q1=pickQ(),q2=pickQ(),k='p'+R.round;
         H.key={[acc]:{k,c:[q1.c,q2.c],qi:[q1.qi,q2.qi],ans:[q1.ans,q2.ans]}};
         ctx.steps[acc]={key:k,kind:'phao',q:null,qs:[q1.q,q2.q],prompt:'Trả lời ĐÚNG CẢ 2 câu để ở lại ca (chỉ 1 lần mỗi ván).',targets:null};
         news.push(`${nm(acc)} bị nhiều phiếu nhất (${mx} phiếu) và dùng Phao nghiệp vụ.`);
-        ctx.room={news,phase:'phao',phao:{pid:acc},deadline:Date.now()+S.phaoSec*1000,headline:`${nm(acc)} đang trả lời Phao nghiệp vụ (2 câu)`};
-      }else{news.push(`${nm(acc)} bị nhiều phiếu nhất (${mx} phiếu), đã dùng phao từ trước.`);eliminate(ctx,acc,news,'bị bỏ phiếu')}
-    }else{news.push(`Ngày ${R.round}: phiếu hoà hoặc nhiều người bỏ qua, không ai rời ca.`);ctx.room={news,phase:'result',deadline:0,headline:news[news.length-1]}}
+        ctx.room={news,phase:'phao',phao:{pid:acc},deadline:Date.now()+S.phaoSec*1000,headline:`${nm(acc)} đang trả lời Phao nghiệp vụ (2 câu)`,
+          ann:mkAnn('v','n',vt,`${nm(acc)} bị nhiều phiếu nhất (${mx} phiếu).`,[`${nm(acc)} được dùng Phao nghiệp vụ: trả lời đúng cả 2 câu thì ở lại ca.`,'Mọi người chờ kết quả phao trên màn hình.'],bars)};
+      }else{news.push(`${nm(acc)} bị nhiều phiếu nhất (${mx} phiếu), đã dùng phao từ trước.`);eliminate(ctx,acc,news,'bị bỏ phiếu',mkAnn('v','bad',vt,'',[`${nm(acc)} bị nhiều phiếu nhất (${mx} phiếu) và đã dùng phao từ trước.`],bars))}
+    }else{const why=mx===0?'Không ai bị bầu':top.length>1?'Phiếu hoà':'Số phiếu bỏ qua nhiều hơn hoặc bằng';news.push(`Ngày ${R.round}: ${why.toLowerCase()}, không ai rời ca.`);
+      ctx.room={news,phase:'result',deadline:0,headline:news[news.length-1],ann:mkAnn('v','n',vt,`${why}: không ai rời ca.`,['Cần 1 người nhiều phiếu nhất, không hoà, và nhiều hơn số phiếu bỏ qua.'],bars)};checkWin(ctx,R.alive,true)}
     await commit(ctx);
   }
   async function resolvePhao(){
@@ -2937,22 +2992,30 @@ service cloud.firestore {
     say(ctx,acc,`Phao nghiệp vụ: đúng ${n}/2. Đáp án: (1) ${K.ans[0]} (2) ${K.ans[1]}.`);
     for(const p of R.order)ctx.steps[p]=WAIT;
     ctx.room={kpi,phaoUsed:Object.assign({},R.phaoUsed,{[acc]:true})};
-    if(g.ok){news.push(`${nm(acc)} trả lời đúng cả 2 câu phao và ở lại ca!`);Object.assign(ctx.room,{news,phase:'result',phao:null,deadline:0,headline:news[news.length-1]})}
-    else eliminate(ctx,acc,news,`trả lời phao đúng ${n}/2`);
+    if(g.ok){news.push(`${nm(acc)} trả lời đúng cả 2 câu phao và ở lại ca!`);Object.assign(ctx.room,{news,phase:'result',phao:null,deadline:0,headline:news[news.length-1],ann:mkAnn('p','ok','Kết quả Phao nghiệp vụ',`${nm(acc)} đúng 2/2 và ở lại ca!`,['Vai của người này vẫn được giữ bí mật.'])});checkWin(ctx,R.alive,true)}
+    else eliminate(ctx,acc,news,`trả lời phao đúng ${n}/2`,mkAnn('p','bad','Kết quả Phao nghiệp vụ','',[`${nm(acc)} chỉ đúng ${n}/2 câu phao.`]));
     await commit(ctx);
   }
-  function eliminate(ctx,p,news,why){const alv=Object.assign({},R.alive,{[p]:false});news.push(`${nm(p)} rời ca (${why}). Vai: ${ROLE[roleOf(p)].n}.`);
-    ctx.room=Object.assign(ctx.room,{alive:alv,news,phase:'result',deadline:0,phao:null,headline:news[news.length-1]});checkWin(ctx,alv)}
-  function checkWin(ctx,alv){const al=R.order.filter(p=>alv[p]),w=al.filter(p=>roleOf(p)==='wolf').length;
-    const win=!w?'town':w>=al.length-w?'wolf':'';if(!win)return;
+  function eliminate(ctx,p,news,why,an){const alv=Object.assign({},R.alive,{[p]:false}),ro=roleOf(p),m=`${nm(p)} rời ca. Vai: ${ROLE[ro].n}.`;news.push(`${nm(p)} rời ca (${why}). Vai: ${ROLE[ro].n}.`);
+    an.lead=m;an.tone=ro==='wolf'?'ok':'bad';an.lines.push(ro==='wolf'?'Cả ca đã bắt đúng một Mã Lỗi!':'Tiếc quá, người này thuộc phe Tổng đài.');
+    ctx.room=Object.assign(ctx.room,{alive:alv,news,phase:'result',deadline:0,phao:null,headline:news[news.length-1],ann:an});checkWin(ctx,alv,true)}
+  function checkWin(ctx,alv,dayEnd){const al=R.order.filter(p=>alv[p]),w=al.filter(p=>roleOf(p)==='wolf').length;
+    let win=!w?'town':w>=al.length-w?'wolf':'',late=false;
+    if(!win&&dayEnd&&R.lastDay&&R.round>=R.lastDay){win='wolf';late=true}
+    if(!win){if(dayEnd&&R.lastDay&&ctx.room.ann)ctx.room.ann.lines.push(R.round+1>=R.lastDay?`Ngày mai (Ngày ${R.round+1}) là ngày cuối để tìm Mã Lỗi!`:`Còn ${R.lastDay-R.round} ngày trước hạn chót.`);return}
     const kpi=ctx.room.kpi||R.kpi,reveal={};R.order.forEach(p=>reveal[p]=roleOf(p));
     const final=R.order.map(p=>{const won=(win==='wolf')===(roleOf(p)==='wolf'),s=(ctx.priv[p]&&ctx.priv[p].susp!==undefined)?ctx.priv[p].susp:((P[p].priv&&P[p].priv.susp)||0),k=kpi[p]||0;return{p,k,b:won?3:0,s,t:k+(won?3:0)+s}}).sort((a,b)=>b.t-a.t);
-    const msg=win==='town'?'Phe Tổng đài thắng! Đã loại hết Mã Lỗi.':'Phe Mã Lỗi thắng! Ca trực đã bị đánh sập.';
-    Object.assign(ctx.room,{phase:'end',winner:win,reveal,final,deadline:0,phao:null,headline:msg,news:[...(ctx.room.news||R.news),msg]});
+    const msg=win==='town'?'Phe Tổng đài thắng! Đã loại hết Mã Lỗi.':late?`Phe Mã Lỗi thắng! Hết hạn chót Ngày ${R.lastDay} mà Mã Lỗi vẫn còn ẩn.`:'Phe Mã Lỗi thắng! Ca trực đã bị đánh sập.';
+    const tk='msTD_tally_'+code,TL=LS.get(tk,{games:0,p:{}});
+    if(!H.tallied){H.tallied=true;TL.games++;final.forEach(x=>{const n=nm(x.p),k=nk(n),o=TL.p[k]=TL.p[k]||{n,t:0,g:0,w:0,k:0};o.n=n;o.t+=x.t;o.k=(o.k||0)+x.k;o.g++;if(x.b)o.w++});LS.set(tk,TL)}
+    const rows=Object.values(TL.p).sort((a,b)=>b.t-a.t||(b.k||0)-(a.k||0)),tally={games:TL.games,rows};
+    const prev=ctx.room.ann,wl=R.order.filter(p=>roleOf(p)==='wolf').map(nm).join(', '),best=final[0];
+    Object.assign(ctx.room,{phase:'end',winner:win,reveal,final,deadline:0,phao:null,headline:msg,news:[...(ctx.room.news||R.news),msg],
+      tally,ann:mkAnn('e',win==='town'?'ok':'bad',win==='town'?'Phe Tổng đài thắng!':'Phe Mã Lỗi thắng!',prev&&prev.lead||'',[late?`Đã hết hạn chót Ngày ${R.lastDay} mà Mã Lỗi vẫn còn ẩn.`:win==='town'?'Đã loại hết Mã Lỗi.':'Số Mã Lỗi đã bằng số người phe Tổng đài.',`Mã Lỗi là: ${wl}.`,`Xuất sắc ván này: ${nm(best.p)} (${best.t} điểm).`,TL.games>1?`Dẫn đầu tổng điểm sau ${TL.games} ván: ${rows[0].n} (${rows[0].t} điểm).`:''],prev&&prev.bars)});
     for(const p of R.order)ctx.steps[p]=WAIT}
   async function newGame(){
     const ctx=newCtx();for(const p of Object.keys(P)){ctx.priv[p]={role:null,mates:[],susp:0,lastGuard:''};ctx.steps[p]=WAIT;P[p].priv=Object.assign(P[p].priv||{},{msgs:[]});ctx.msgs[p]=['Ván mới: chờ MC chia vai.']}
-    H={key:{},done:[],stats:H.stats,used:H.used,seen:{},roles:{}};ctx.room=lobbyRoom();await commit(ctx);
+    H={key:{},done:[],stats:H.stats,used:H.used,seen:{},roles:{}};ctx.room=lobbyRoom();ctx.room.tally=R.tally||null;await commit(ctx);
   }
 
   /* ---- tự động chuyển bước ---- */
@@ -2973,13 +3036,13 @@ service cloud.firestore {
     const lobby=R.phase==='lobby',ids=lobby?Object.keys(P).filter(p=>P[p].name&&!P[p].kicked).sort((a,b)=>P[a].joinedAt-P[b].joinedAt):R.order,k=stepKey();
     const subN=k?alive().filter(p=>P[p]&&P[p].act&&P[p].act.key===k).length:0,need=k==='p'+R.round?1:alive().length;
     let ctl='';
-    if(lobby){const n=ids.length,c=suggest(n,S.wolves);ctl=`<p>${n} người đã vào phòng.${n>=4?' Bộ vai: '+compText(n,c)+'.':' Cần ít nhất 4 người.'}</p><button class="btn red" data-a="deal" ${n<4?'disabled':''}>Chia vai & bắt đầu</button>`}
+    if(lobby){const n=ids.length,c=suggest(n,S.wolves);ctl=`<p>${n} người đã vào phòng.${n>=4?' Bộ vai: '+compText(n,c)+'. '+dlText(S.dl==='off'?0:lastDayOf(n,c.wolf))+'.':' Cần ít nhất 4 người.'}</p><button class="btn red" data-a="deal" ${n<4?'disabled':''}>Chia vai & bắt đầu</button>`}
     else if(R.phase==='intro'||R.phase==='result')ctl=`<button class="btn red" data-a="night">Bắt đầu đêm ${R.round+1}</button>`;
     else if(R.phase==='night')ctl=`<p class="big">Đã gửi: ${subN}/${need}</p><button class="btn" data-a="endnight">Kết thúc đêm ngay</button> <button class="btn ghost" data-a="plus">+1 phút</button>`;
     else if(R.phase==='day')ctl=`<p>Thảo luận công khai. Hết giờ sẽ tự mở bỏ phiếu.</p><button class="btn red" data-a="vote">Mở bỏ phiếu ngay</button> <button class="btn ghost" data-a="plus">+1 phút</button>`;
     else if(R.phase==='vote')ctl=`<p class="big">Đã bầu: ${subN}/${need}</p><button class="btn" data-a="endvote">Chốt phiếu ngay</button> <button class="btn ghost" data-a="plus">+1 phút</button>`;
     else if(R.phase==='phao')ctl=`<p>Người bị bầu đang trả lời 2 câu trên điện thoại.</p><button class="btn" data-a="endphao">Chốt ngay</button> <button class="btn ghost" data-a="plus">+1 phút</button>`;
-    else if(R.phase==='end')ctl=`<button class="btn red" data-a="again">Ván mới (giữ người chơi)</button>`;
+    else if(R.phase==='end')ctl=`<button class="btn red" data-a="again">Ván tiếp theo (cộng dồn điểm)</button> <button class="btn ghost" data-a="reset">Xoá tổng điểm, bắt đầu buổi mới</button>`;
     const seats=ids.map(p=>{const out=!lobby&&!R.alive[p],ro=lobby?'':(R.phase==='end'?R.reveal[p]:roleOf(p)),sent=k&&P[p]&&P[p].act&&P[p].act.key===k;
       return`<div class="seat ${out?'out':''}"><b>${esc(nm(p))}</b><span class="small">${lobby?'Đã vào phòng':out?'Rời ca':'Trong ca'}${!lobby?' · '+(R.kpi[p]||0)+' KPI':''}${R.phaoUsed&&R.phaoUsed[p]?' · đã dùng phao':''}</span>${ro&&(showRoles||R.phase==='end')?`<span><span class="tag ${ro==='wolf'?'bad':''}">${ROLE[ro].n}</span></span>`:''}${k&&!out?`<span class="${sent?'okc':'small'}">${sent?'✓ Đã gửi':'… đang làm'}</span>`:''}${lobby?`<button class="btn ghost" data-kick="${p}" style="min-height:36px;padding:6px 10px">Bỏ khỏi phòng</button>`:''}</div>`}).join('');
     const stats=Object.values(H.stats).filter(s=>s.n).sort((a,b)=>a.c/a.n-b.c/b.n).slice(0,8);
@@ -2988,8 +3051,9 @@ service cloud.firestore {
         <div class="row"><button class="btn ghost" data-a="copy">Sao chép link</button>${S.mode==='L'?'<button class="btn ghost" data-a="tab">Mở tab người chơi thử</button>':''}</div><p class="small" id="cp"></p>
         <button class="btn ghost" data-a="close" style="margin-top:10px">Đóng phòng</button></div>
       <div style="display:grid;gap:18px">
-        <div class="card"><span class="ph ${R.phase==='night'?'n':'d'}">${phaseName(R)}</span><div class="row" style="justify-content:space-between;margin:12px 0"><div class="head">${esc(R.headline)}</div>${R.deadline?`<div class="timer cd" data-d="${R.deadline}"></div>`:''}</div>${ctl}</div>
-        ${R.phase==='end'?endHTML(R):''}
+        ${R.ann&&!lobby&&R.phase!=='night'&&R.phase!=='vote'?`<div class="card ann t-${R.ann.tone}">${annHTML(R.ann,true)}</div>`:''}
+        <div class="card"><span class="ph ${R.phase==='night'?'n':'d'}">${phaseName(R)}</span>${R.lastDay&&!lobby&&R.phase!=='end'?`<span class="dl">Hạn chót: hết Ngày ${R.lastDay}</span>`:''}<div class="row" style="justify-content:space-between;margin:12px 0"><div class="head">${esc(R.headline)}</div>${R.deadline?`<div class="timer cd" data-d="${R.deadline}"></div>`:''}</div>${ctl}</div>
+        ${R.phase==='end'?endHTML(R):lobby?tallyHTML(R)+(R.tally?'<button class="btn ghost" data-a="reset" style="justify-self:start">Xoá tổng điểm, bắt đầu buổi mới</button>':''):''}
         <div><div class="row" style="justify-content:space-between;margin-bottom:8px"><h2 style="margin:0">Ca trực</h2>${!lobby&&R.phase!=='end'?`<button class="btn ghost" data-a="eye">${showRoles?'Che vai':'Hiện vai (đừng chiếu lên màn hình!)'}</button>`:''}</div><div class="seats">${seats||'<p class="small">Chưa có ai. Mời mọi người quét mã QR.</p>'}</div></div>
         <div class="g2"><div class="card"><h3>Bảng tin</h3><ol class="log">${(R.news||[]).map(m=>`<li>${esc(m)}</li>`).join('')}</ol></div>
         <div class="card"><h3>Câu hỏi khó nhất (tỉ lệ đúng)</h3>${stats.length?`<table><tbody>${stats.map(s=>`<tr><td>${esc(s.q)}</td><td class="r">${Math.round(100*s.c/s.n)}% (${s.c}/${s.n})</td></tr>`).join('')}</tbody></table>`:'<p class="small">Sẽ hiện sau đêm đầu tiên. Dùng để biết nội dung nào cần training lại.</p>'}</div></div>
@@ -3003,6 +3067,7 @@ service cloud.firestore {
     if(a==='deal')run(deal);else if(a==='night')run(startNight);else if(a==='endnight')run(resolveNight);
     else if(a==='vote')run(openVote);else if(a==='endvote')run(resolveVote);else if(a==='endphao')run(resolvePhao);
     else if(a==='again')run(newGame);
+    else if(a==='reset'){if(!b.dataset.sure){b.dataset.sure=1;b.textContent='Bấm lần nữa để xoá tổng điểm';return}LS.del('msTD_tally_'+code);R.tally=null;await BE.set(rp(),{tally:null});render()}
     else if(a==='plus'){R.deadline=Math.max(R.deadline,Date.now())+60000;await BE.set(rp(),{deadline:R.deadline});render()}
     else if(a==='eye'){showRoles=!showRoles;render()}
     else if(a==='copy'){try{await navigator.clipboard.writeText(link);$('#cp').textContent='Đã sao chép'}catch(err){$('#cp').textContent='Hãy chọn link và sao chép thủ công'}}
@@ -3015,32 +3080,36 @@ function RULES(){return`
 <h2>Luật chơi Ma Sói Tổng Đài (bản điện thoại)</h2>
 <p>Cả phòng là một <b>ca trực tổng đài</b>. Ẩn trong ca là <b>Mã Lỗi</b> muốn đánh sập ca trực. Không ai phải nhắm mắt: mọi lựa chọn bí mật đều bấm trên điện thoại của mình. <b>Điểm mới:</b> mỗi đêm ai cũng phải trả lời 1 câu hỏi nghiệp vụ, và <b>kỹ năng chỉ có hiệu lực khi trả lời đúng</b>. Ai giỏi nghiệp vụ thì phe đó mạnh.</p>
 <h3>Ván chuẩn 5 người</h3>
-<p>1 Mã Lỗi, 1 Giám sát QA, 1 Kỹ thuật viên, 2 Tổng đài viên. MC không chơi, chỉ điều khiển màn hình máy tính (có thể chiếu lên máy chiếu). Bộ vai được công bố trước, chỉ không biết ai giữ vai nào.</p>
+<p>1 Mã Lỗi, 1 Giám sát QA, 1 Kỹ thuật viên, 2 Tổng đài viên. <b>Hạn chót: hết Ngày 2.</b> MC không chơi, chỉ điều khiển màn hình máy tính (có thể chiếu lên máy chiếu). Bộ vai và hạn chót được công bố trước, chỉ không biết ai giữ vai nào.</p>
 ${['wolf','seer','guard','villager'].map(k=>`<div class="rl">${svg(k)}<div><b>${ROLE[k].n}</b> <span class="small">· ${ROLE[k].team}</span><div>${ROLE[k].p}</div><div class="small">${ROLE[k].g}</div></div></div>`).join('')}
 <h3>Cách chơi</h3>
 <ol>
-<li><b>Vào phòng:</b> MC tạo phòng, mọi người quét QR và nhập tên. MC bấm "Chia vai". Mỗi người bấm "Xem vai" trên điện thoại.</li>
-<li><b>Đêm (60 giây):</b> tất cả cùng lúc làm trên điện thoại: chọn 1 người theo vai của mình và trả lời 1 câu hỏi trắc nghiệm. Ai cũng có thao tác giống nhau nên không đoán được vai qua việc ai đang bấm.</li>
-<li><b>Kết quả đêm:</b> Mã Lỗi trả lời đúng thì đánh sập người đã chọn, trừ khi Kỹ thuật viên trả lời đúng và bảo vệ đúng người đó. Giám sát QA đúng thì nhận kết quả soi. Tổng đài viên đúng nhanh nhất nhận manh mối. Người bị đánh sập rời ca và lộ vai. Mỗi người nhận đáp án đúng của câu mình vừa làm.</li>
-<li><b>Ngày, thảo luận (3 phút):</b> nói chuyện công khai, có thể kể manh mối hoặc nói dối. Không được đưa điện thoại cho người khác xem.</li>
-<li><b>Bỏ phiếu bí mật (60 giây):</b> bấm trên điện thoại. Người nhiều phiếu nhất (không hoà và nhiều hơn số phiếu bỏ qua) bị đưa ra xử lý. Kết quả phiếu được công khai sau khi chốt.</li>
-<li><b>Phao nghiệp vụ:</b> người bị bầu trả lời 2 câu hỏi. Đúng cả 2 thì ở lại ca; sai 1 câu là rời ca và lộ vai. Mỗi người chỉ có 1 lần phao trong ván.</li>
+<li><b>Vào phòng:</b> MC tạo phòng, mọi người quét QR và nhập tên. MC bấm "Chia vai". Vai tự hiện trên điện thoại, đọc xong bấm "Úp vai".</li>
+<li><b>Đêm (60 giây):</b> tất cả cùng lúc làm trên điện thoại: chọn 1 người theo vai và trả lời 1 câu hỏi trắc nghiệm. Ai cũng thao tác giống nhau nên không đoán được vai qua việc ai đang bấm.</li>
+<li><b>Trời sáng, thông báo kết quả:</b> mọi điện thoại và màn hình MC cùng hiện bảng kết quả đêm: ai rời ca (lộ vai), hay Kỹ thuật viên đã cứu được người, hay Mã Lỗi trả lời sai nên đêm bình yên; số câu cả ca trả lời đúng; có manh mối được phát hay không; còn mấy ngày đến hạn chót. Tin riêng (kết quả soi, manh mối, đáp án đúng) hiện ngay dưới bảng trên điện thoại của từng người.</li>
+<li><b>Ngày, thảo luận (3 phút):</b> nói chuyện công khai, có thể kể manh mối hoặc nói dối. Điện thoại có dòng "Việc của bạn" gợi ý nên làm gì theo vai. Không đưa điện thoại cho người khác xem.</li>
+<li><b>Bỏ phiếu bí mật (60 giây):</b> người nhiều phiếu nhất (không hoà và nhiều hơn số phiếu bỏ qua) bị đưa ra xử lý. Bảng kết quả phiếu hiện lên cho cả phòng.</li>
+<li><b>Phao nghiệp vụ:</b> người bị bầu trả lời 2 câu. Đúng cả 2 thì ở lại ca (vai vẫn bí mật); sai 1 câu là rời ca và lộ vai. Mỗi người chỉ có 1 lần phao.</li>
+<li><b>Ngụy trang của Mã Lỗi:</b> mỗi Mã Lỗi có 1 lần ngụy trang. Đêm nào Mã Lỗi trả lời đúng mà bị Giám sát QA soi trúng, Giám sát QA sẽ thấy "không phải Mã Lỗi". Mã Lỗi được báo riêng là đã dùng ngụy trang. Lần soi trúng sau sẽ ra kết quả thật.</li>
 <li>Lặp lại đêm và ngày đến khi có phe thắng.</li>
 </ol>
 <h3>Điều kiện thắng</h3>
-<p>Phe Tổng đài thắng khi loại hết Mã Lỗi. Phe Mã Lỗi thắng khi số Mã Lỗi còn lại bằng hoặc nhiều hơn số người phe Tổng đài (5 người: còn 1 Mã Lỗi đối 1 người là Mã Lỗi thắng).</p>
-<h3>Vì sao cân bằng với 5 người</h3>
+<ul><li><b>Phe Tổng đài</b> thắng khi loại hết Mã Lỗi trước hạn chót.</li>
+<li><b>Phe Mã Lỗi</b> thắng khi: còn ít nhất 1 Mã Lỗi sau khi bỏ phiếu ngày cuối (hạn chót), <b>hoặc</b> số Mã Lỗi bằng số người phe Tổng đài.</li>
+<li>Số Mã Lỗi và hạn chót tự động: 4–7 người có 1 Mã Lỗi, hạn chót hết Ngày 2; 8 người có 2 Mã Lỗi, không hạn chót; 9–13 người có 2 Mã Lỗi, hạn chót hết Ngày 6; từ 14 người có 3 Mã Lỗi, không hạn chót. MC có thể tắt hạn chót khi tạo phòng.</li></ul>
+<h3>Vì sao chỉnh như vậy (kiểm tra cân bằng)</h3>
+<p>Tôi chạy mô phỏng 20.000–40.000 ván cho mỗi cỡ phòng. Mô hình còn thô: người chơi ảo bỏ phiếu ngẫu nhiên trong số người chưa được xác nhận trong sạch và không biết nói dối, nên đây là xu hướng chứ không phải con số chính xác.</p>
 <ul>
-<li>Mã Lỗi chỉ cần sống sót 2 đêm là thắng, nên phe Tổng đài thường chỉ có 1–2 lần bỏ phiếu. Bù lại, phe Tổng đài có 2 nguồn thông tin mỗi đêm: kết quả soi của Giám sát QA và 1 manh mối cho Tổng đài viên đúng nhanh nhất.</li>
-<li>Mỗi đêm chỉ có <b>1</b> manh mối, nên Mã Lỗi vẫn có cơ hội nhận vơ là "người có manh mối" và nói dối.</li>
-<li>Mọi kỹ năng đều phụ thuộc vào trả lời đúng, nên Mã Lỗi học kém thì không đánh sập được; Giám sát QA học kém thì soi trượt.</li>
-<li>Phao cần đúng cả 2 câu, nên không quá dễ thoát, nhưng người giỏi nghiệp vụ vẫn có cơ hội lật ngược.</li>
-<li>Người đã rời ca vẫn trả lời câu hỏi mỗi đêm để lấy điểm KPI, nên ai cũng học đến cuối ván.</li>
+<li>Luật đầu tiên, 5 người: Mã Lỗi chỉ thắng khoảng 11%, 6 người khoảng 6%, vì phe Tổng đài có quá nhiều thông tin.</li>
+<li>Thêm hạn chót và manh mối từ Đêm 2: Mã Lỗi lên khoảng 30% với 5 người.</li>
+<li>Thêm Ngụy trang và chỉnh lại số Mã Lỗi theo số người (bản hiện tại): Mã Lỗi thắng khoảng 42% với 5 người, 48–49% với 4, 6 và 8 người, 54% với 7 người, 41–54% với 9–13 người. Ngoài đời Mã Lỗi còn biết nói dối, nên hai phe dự kiến gần ngang nhau.</li>
+<li>Hạn chót còn giúp ván ngắn và đều (5 người: tối đa 2 đêm, 2 ngày, khoảng 10–12 phút), nên một buổi training chơi được nhiều ván, mọi người được thử nhiều vai.</li>
+<li>Mọi kỹ năng vẫn phụ thuộc vào trả lời đúng: ai giỏi nghiệp vụ thì phe đó mạnh. Người đã rời ca vẫn trả lời câu hỏi để lấy KPI.</li>
 </ul>
 <h3>Tính điểm cuối ván</h3>
-<p>Điểm KPI (mỗi câu đúng +1) + 3 điểm nếu thuộc phe thắng + điểm "nghi đúng" (Tổng đài viên mỗi đêm chọn đúng Mã Lỗi là người mình nghi). Người cao điểm nhất được vinh danh <b>Tổng đài viên xuất sắc</b>, dù thuộc phe nào. Màn hình MC có bảng "Câu hỏi khó nhất" để biết nội dung nào cần training lại.</p>
-<h3>Điều chỉnh nếu thấy lệch</h3>
-<ul><li>Mã Lỗi thắng quá dễ: tăng thời gian thảo luận, hoặc dùng câu hỏi khó hơn cho đêm.</li><li>Phe Tổng đài thắng quá dễ: giảm thời gian đêm xuống 40 giây (khó trả lời nhanh để lấy manh mối).</li><li>6 người: thêm 1 Tổng đài viên. 7 người trở lên: app tự dùng 2 Mã Lỗi; hai Mã Lỗi thấy tên nhau trên điện thoại.</li></ul>`}
+<p>Điểm KPI (mỗi câu đúng +1) + 3 điểm nếu thuộc phe thắng + điểm "nghi đúng" (Tổng đài viên mỗi đêm chọn đúng Mã Lỗi là người mình nghi). Người cao điểm nhất ván được vinh danh, dù thuộc phe nào. <b>Chơi nhiều ván:</b> bấm "Ván tiếp theo (cộng dồn điểm)", điểm các ván tự cộng theo tên người chơi. Cuối buổi, ai tổng điểm cao nhất là <b>TĐV xuất sắc của buổi</b>; bằng điểm thì ai trả lời đúng nhiều câu hơn đứng trên, vẫn bằng thì đồng hạng. Bấm "Xoá tổng điểm" khi sang buổi training khác. Người chơi nên giữ nguyên tên giữa các ván. Màn hình MC có bảng "Câu hỏi khó nhất" để biết nội dung nào cần training lại.</p>
+<h3>Điều chỉnh nếu chơi thật thấy lệch</h3>
+<ul><li>Mã Lỗi thắng quá nhiều: tăng thời gian thảo luận, hoặc tắt hạn chót cho nhóm mới chơi.</li><li>Phe Tổng đài thắng quá nhiều: giảm thời gian đêm xuống 40 giây, hoặc dùng nhóm câu hỏi khó hơn.</li><li>Ghi lại phe thắng sau mỗi ván; sau khoảng 10 ván sẽ thấy rõ cần chỉnh theo hướng nào.</li></ul>`}
 }
 </script>
 </body>
