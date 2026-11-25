@@ -70,14 +70,18 @@ table{border-collapse:collapse;width:100%}td,th{padding:8px;border-bottom:1px so
 @media(prefers-reduced-motion:no-preference){.walk{animation:walk 1.8s ease-in-out both}@keyframes walk{from{transform:translate(var(--dx),var(--dy))}}.bub{animation:pop .3s ease-out}}
 .chat{display:grid;gap:8px;margin-top:12px}.cl{display:grid;grid-template-columns:34px minmax(0,1fr);gap:8px;align-items:start;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 10px}
 .botbar{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;gap:8px;justify-content:center;padding:10px;background:color-mix(in srgb,var(--bg) 92%,transparent);border-top:1px solid var(--line)}
-.botbar .btn{min-height:44px;padding:8px 14px}.botpad{padding-bottom:84px}
+
 #mcf{position:fixed;left:-3000px;top:0;width:1280px;height:900px;border:0;background:#fff}#mcf.show{left:0;width:100vw;height:100vh;z-index:25}
-#mcx{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);z-index:26}.av{width:28px;height:45px;flex:none;vertical-align:middle}.av.big{width:64px;height:102px}
+#mcx{position:fixed;bottom:12px;right:12px;z-index:26;min-height:40px;padding:6px 14px;font-size:15px}.av{width:28px;height:45px;flex:none;vertical-align:middle}.av.big{width:64px;height:102px}
 .world{border-radius:14px;overflow:hidden;border:1px solid var(--line);background:#e9d6b4}.world svg{width:100%;height:auto;display:block;touch-action:manipulation;user-select:none;-webkit-user-select:none}
 .lg,.ar{transform-box:fill-box;transform-origin:50% 0}@media(prefers-reduced-motion:no-preference){.walking .lg.l,.walking .ar.r{animation:sw .4s ease-in-out infinite alternate}.walking .lg.r,.walking .ar.l{animation:sw .4s ease-in-out infinite alternate-reverse}@keyframes sw{from{transform:rotate(-28deg)}to{transform:rotate(28deg)}}.mk>*{animation:bob .8s ease-in-out infinite alternate}@keyframes bob{to{transform:translateY(-5px)}}}
 .nearbox{margin-top:10px;display:grid;gap:6px}
 .opt.pp{display:flex;align-items:center;gap:10px;padding:6px 12px}.seat .av{width:32px;height:51px}.objp{display:grid;grid-template-columns:64px minmax(0,1fr);gap:12px;align-items:center}
 /* điện thoại */
+.pv.game{padding:0 8px 12px;gap:8px}.opts.two{grid-template-columns:1fr 1fr}.opts.two .opt{padding:4px 8px;min-height:44px;font-size:15px}.hud .ph{white-space:nowrap}.pv.game .chat{margin-top:0}.pv.game .cl{padding:6px 10px}.hud{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:8px;padding:8px 2px;background:var(--bg)}
+.hud .av{width:22px;height:35px}.hudt{font-size:20px}.hb{font:600 14px/1 "Be Vietnam Pro",system-ui,sans-serif;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:99px;padding:8px 14px;position:relative;cursor:pointer}
+.dot{position:absolute;top:2px;right:4px;width:9px;height:9px;border-radius:50%;background:var(--red)}.pv.game .scene{border-radius:12px}.pv.game .todo{margin:0;font-size:15px}.nearbox p{margin:2px 4px}
+.botbar{padding:6px}.botbar .btn{min-height:38px;padding:4px 12px;font-size:14px}.botpad{padding-bottom:60px}
 .pv{max-width:480px;margin:0 auto;padding:16px;display:grid;gap:14px}
 .ptop{background:var(--red);color:#fff;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px}
 .ptop b{font-size:18px}
@@ -2512,7 +2516,7 @@ const avAt=(ch,x,y,s,dead)=>`<g transform="translate(${x-20*s} ${y-62*s}) scale(
 /* ================= Phòng 1: thế giới đi lại được ================= */
 const WW=900,WH=740,SPEED=150;
 /* vị trí đặt mô hình: [x chân đế, y chân đế, nửa rộng, sâu (mặt trên), cao] */
-const LAY={mgtren:[95,200,36,34,62],mgtruoc:[220,200,36,24,78],maysay:[345,200,36,24,78],tulanh:[540,200,36,30,138],locnuoc:[650,200,20,24,112],dieuhoa:[790,120,0,0,0],
+const LAY_KHO={mgtren:[95,200,36,34,62],mgtruoc:[220,200,36,24,78],maysay:[345,200,36,24,78],tulanh:[540,200,36,30,138],locnuoc:[650,200,20,24,112],dieuhoa:[790,120,0,0,0],
   tongdai:[180,450,62,46,40],maytinh:[340,450,56,44,40],tuhoso:[830,420,30,28,116],hopdungcu:[580,470,30,22,30],thung:[720,610,40,34,64],bian:[450,620,28,28,48]};
 const shade=(c,k)=>`color-mix(in srgb,${c} ${Math.round(k*100)}%,${k>1?'#fff':'#000'})`;
 function box(w,d,h,front,top,extra){/* gốc = giữa cạnh dưới mặt trước */
@@ -2531,13 +2535,55 @@ const MODEL={
  thung:()=>box(40,34,64,'#b7844a','#d6a565',`<rect x="-6" y="-98" width="12" height="34" fill="#f5e6c8" opacity=".7"/><path d="M-40 -32h80" stroke="#8b5e34" stroke-width="2"/><rect x="-30" y="-56" width="24" height="14" fill="#fff" opacity=".8"/><path d="M-27 -51h18M-27 -46h12" stroke="#64748b" stroke-width="1.5"/><path d="M14 -24l8 8M22 -24l-8 8" stroke="#8b5e34" stroke-width="2"/>`),
  bian:()=>box(28,28,48,'#6d28d9','#8b5cf6',`<rect x="-5" y="-76" width="10" height="76" fill="#facc15"/><rect x="-28" y="-66" width="56" height="8" fill="#facc15"/><path d="M0 -78q-14 -14 -16 -4q0 8 16 4q14 4 16 -4q-2 -10 -16 4" fill="#fde047" stroke="#ca8a04"/><text x="-16" y="-14" font-size="22" font-weight="800" fill="#fff">?</text><text x="16" y="-14" font-size="22" font-weight="800" fill="#fff" text-anchor="middle">?</text>`)
 };
-const usePt=id=>{const L=LAY[id];return id==='dieuhoa'?[L[0],L[1]+40]:[L[0],L[1]+26]};
-const blocks=()=>Object.keys(LAY).filter(k=>LAY[k][2]).map(k=>{const [x,y,w,d]=LAY[k];return[x-w-6,y-d-6,x+w+6,y+4]});
+/* ---- mô hình thêm cho phòng tổng đài và xưởng sửa chữa ---- */
+Object.assign(OBJ,{
+ bandai1:{n:'Bàn tổng đài số 1',kw:'tổng đài'},bandai2:{n:'Bàn tổng đài số 2',kw:'tổng đài'},bandai3:{n:'Bàn tổng đài số 3',kw:'tổng đài'},
+ bangkpi:{n:'Bảng KPI',kw:'tổng đài'},cafe:{n:'Máy pha cà phê',kw:''},mayin:{n:'Máy in phiếu',kw:'tổng đài'},
+ banksua:{n:'Bàn sửa chữa',kw:'Máy giặt'},kelinhkien:{n:'Kệ linh kiện',kw:''},mgthao:{n:'Máy giặt đang sửa',kw:'Máy giặt'},
+ dongho:{n:'Đồng hồ vạn năng',kw:''},xeday:{n:'Xe đẩy hàng',kw:''}});
+Object.assign(MODEL,{
+ bandai1:()=>MODEL.tongdai(),bandai2:()=>MODEL.tongdai(),bandai3:()=>MODEL.tongdai(),
+ bangkpi:()=>`<rect x="-74" y="-104" width="148" height="84" rx="6" fill="#111827"/><rect x="-68" y="-98" width="136" height="72" rx="3" fill="#0f172a"/><text x="-60" y="-84" font-size="10" font-weight="800" fill="#f8fafc">KPI CA TRỰC</text><rect x="-58" y="-50" width="14" height="20" fill="#22c55e"/><rect x="-38" y="-62" width="14" height="32" fill="#22c55e"/><rect x="-18" y="-56" width="14" height="26" fill="#facc15"/><rect x="2" y="-70" width="14" height="40" fill="#22c55e"/><polyline points="24,-40 38,-52 50,-46 62,-72" fill="none" stroke="#38bdf8" stroke-width="3"/><circle cx="62" cy="-72" r="3" fill="#38bdf8"/><rect x="-6" y="-20" width="12" height="14" fill="#374151"/><ellipse cx="0" cy="22" rx="34" ry="6" fill="rgba(56,189,248,.12)"/>`,
+ cafe:()=>box(26,24,74,'#1f2937','#374151',`<rect x="-20" y="-70" width="40" height="14" rx="3" fill="#111827"/><rect x="-14" y="-67" width="16" height="8" rx="1.5" fill="#22d3ee"/><circle cx="10" cy="-63" r="3" fill="#ef4444"/><rect x="-10" y="-50" width="20" height="8" rx="2" fill="#9ca3af"/><rect x="-3" y="-42" width="6" height="6" fill="#6b7280"/><rect x="-9" y="-26" width="18" height="16" rx="3" fill="#fff"/><path d="M9 -22q7 0 7 5t-7 5" fill="none" stroke="#fff" stroke-width="2.5"/><path d="M-3 -32q3 -4 0 -8M3 -32q3 -4 0 -8" stroke="#e5e7eb" stroke-width="1.5" fill="none"/><rect x="-22" y="-8" width="44" height="5" rx="2" fill="#4b5563"/>`),
+ mayin:()=>box(40,34,46,'#d1d5db','#e5e7eb',`<rect x="-30" y="-76" width="60" height="16" rx="3" fill="#9ca3af"/><rect x="-24" y="-96" width="48" height="24" fill="#fff" stroke="#cbd5e1"/><path d="M-18 -90h30M-18 -84h36M-18 -78h22" stroke="#94a3b8" stroke-width="1.5"/><rect x="-34" y="-36" width="68" height="8" rx="2" fill="#4b5563"/><rect x="14" y="-74" width="12" height="6" rx="1" fill="#0f172a"/><circle cx="-24" cy="-20" r="3" fill="#22c55e"/><rect x="-26" y="-14" width="52" height="6" rx="2" fill="#fff"/>`),
+ banksua:()=>box(80,44,44,'#78350f','#a16207',`<rect x="-76" y="-86" width="152" height="40" rx="3" fill="#ca8a04"/><rect x="-66" y="-82" width="40" height="24" rx="3" fill="#15803d"/><path d="M-60 -76h28M-60 -70h20M-60 -64h26" stroke="#bbf7d0" stroke-width="1.5"/><circle cx="-38" cy="-62" r="2" fill="#facc15"/><rect x="-10" y="-82" width="30" height="14" rx="2" fill="#6b7280"/><rect x="-4" y="-90" width="18" height="10" fill="#4b5563"/><path d="M30 -60l30 -16" stroke="#dc2626" stroke-width="5" stroke-linecap="round"/><path d="M58 -75l8 -5" stroke="#9ca3af" stroke-width="3"/><path d="M-20 -54q20 10 40 0" stroke="#2563eb" stroke-width="2" fill="none"/><path d="M-16 -54q20 14 44 0" stroke="#ef4444" stroke-width="2" fill="none"/>`),
+ kelinhkien:()=>`<ellipse cx="0" cy="2" rx="68" ry="7" fill="rgba(0,0,0,.18)"/><rect x="-62" y="-150" width="6" height="152" fill="#64748b"/><rect x="56" y="-150" width="6" height="152" fill="#64748b"/>${[-12,-58,-104,-150].map(y=>`<rect x="-64" y="${y}" width="128" height="7" rx="2" fill="#94a3b8"/>`).join('')}
+  <rect x="-54" y="-40" width="34" height="28" fill="#d6a565"/><rect x="-16" y="-34" width="28" height="22" fill="#60a5fa"/><rect x="18" y="-44" width="34" height="32" fill="#d6a565"/><rect x="-54" y="-86" width="24" height="28" fill="#f87171"/><rect x="-26" y="-80" width="40" height="22" fill="#d6a565"/><rect x="18" y="-88" width="30" height="30" fill="#a3a3a3"/><circle cx="33" cy="-73" r="9" fill="#525252"/><rect x="-54" y="-128" width="40" height="24" fill="#d6a565"/><rect x="-10" y="-134" width="22" height="30" fill="#34d399"/><rect x="16" y="-126" width="36" height="22" fill="#fbbf24"/>`,
+ mgthao:()=>box(36,34,62,'#e5e7eb','#f8fafc',`<rect x="-34" y="-96" width="68" height="7" rx="3" fill="#334155"/><rect x="-28" y="-92" width="56" height="24" rx="8" fill="#cbd5e1" transform="rotate(-18 -28 -92)"/><rect x="-30" y="-56" width="60" height="50" rx="3" fill="#1f2937"/><circle cx="0" cy="-34" r="18" fill="#6b7280"/><circle cx="0" cy="-34" r="10" fill="#9ca3af"/><rect x="-26" y="-16" width="14" height="10" rx="2" fill="#b45309"/><path d="M-12 -12q20 -6 30 4M-12 -10q18 2 26 8" stroke="#ef4444" stroke-width="1.8" fill="none"/><path d="M-12 -8q14 8 34 2" stroke="#2563eb" stroke-width="1.8" fill="none"/><rect x="42" y="-50" width="10" height="50" rx="2" fill="#e5e7eb" stroke="#94a3b8" transform="rotate(12 42 0)"/><text x="0" y="-62" font-size="8" text-anchor="middle" fill="#dc2626" font-weight="800">ĐANG SỬA</text>`),
+ dongho:()=>box(26,22,40,'#6b7280','#9ca3af',`<rect x="-14" y="-82" width="28" height="40" rx="5" fill="#facc15" stroke="#a16207"/><rect x="-10" y="-78" width="20" height="10" rx="2" fill="#bef264"/><text x="0" y="-70.5" font-size="7" text-anchor="middle" fill="#14532d" font-weight="800">220V</text><circle cx="0" cy="-56" r="6" fill="#1f2937"/><path d="M0 -56l3 -4" stroke="#fff" stroke-width="1.5"/><path d="M-6 -44q-20 10 -18 40" stroke="#ef4444" stroke-width="2.5" fill="none"/><path d="M6 -44q20 10 18 40" stroke="#111827" stroke-width="2.5" fill="none"/>`),
+ xeday:()=>`<ellipse cx="0" cy="2" rx="34" ry="6" fill="rgba(0,0,0,.18)"/><path d="M-22 -96v92h44" fill="none" stroke="#dc2626" stroke-width="5" stroke-linejoin="round"/><path d="M-30 -96h16" stroke="#111827" stroke-width="6" stroke-linecap="round"/><circle cx="-16" cy="-2" r="7" fill="#111827"/><circle cx="16" cy="-2" r="7" fill="#111827"/><rect x="-16" y="-70" width="40" height="62" fill="#c8945a"/><rect x="-16" y="-70" width="40" height="10" fill="#d6a565"/><rect x="-10" y="-50" width="22" height="12" fill="#fff" opacity=".85"/><path d="M-7 -45h16" stroke="#64748b" stroke-width="1.5"/>`
+});
+const LAY_DAI={bandai1:[150,290,62,46,40],bandai2:[330,290,62,46,40],bandai3:[510,290,62,46,40],dieuhoa:[330,120,0,0,0],bangkpi:[690,120,0,0,0],cafe:[845,250,26,24,74],locnuoc:[715,250,20,24,112],
+  maytinh:[170,540,56,44,40],mayin:[380,540,40,34,46],tuhoso:[840,500,30,28,116],bian:[610,610,28,28,48],thung:[730,640,40,34,64]};
+const LAY_XUONG={banksua:[170,270,80,44,44],kelinhkien:[420,230,64,10,150],mgthao:[600,230,36,34,62],tulanh:[740,230,36,30,138],hopdungcu:[850,260,30,22,30],
+  dongho:[170,520,26,22,40],mgtruoc:[320,540,36,24,78],maysay:[440,540,36,24,78],locnuoc:[590,520,20,24,112],xeday:[740,530,30,20,100],bian:[850,640,28,28,48],thung:[620,660,40,34,64]};
+function decoDai(){return `<defs><pattern id="carpet" width="40" height="40" patternUnits="userSpaceOnUse"><rect width="40" height="40" fill="#8fa3b8"/><path d="M0 0h40v40" fill="none" stroke="#7f93a8" stroke-width="2"/><circle cx="20" cy="20" r="1.5" fill="#a3b5c7"/></pattern><linearGradient id="wallb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a7d8d4"/><stop offset="1" stop-color="#cdeae7"/></linearGradient></defs>
+  <rect width="${WW}" height="${WH}" fill="url(#carpet)"/><rect width="${WW}" height="130" fill="url(#wallb)"/><rect y="122" width="${WW}" height="12" fill="#5b6b82"/>
+  <rect x="0" y="0" width="14" height="${WH}" fill="#94a3b8"/><rect x="${WW-14}" y="0" width="14" height="${WH}" fill="#94a3b8"/><rect x="0" y="${WH-14}" width="${WW}" height="14" fill="#64748b"/><rect x="${WW/2-50}" y="${WH-14}" width="100" height="14" fill="#c2a27a"/><text x="${WW/2}" y="${WH-3}" text-anchor="middle" font-size="10" font-weight="700" fill="#5b4630">CỬA RA VÀO</text>
+  <rect x="30" y="34" width="220" height="34" rx="6" fill="#d4001a"/><text x="140" y="57" text-anchor="middle" font-size="16" font-weight="800" fill="#fff">PHÒNG TỔNG ĐÀI</text>
+  <rect x="470" y="28" width="120" height="44" rx="6" fill="#fff" stroke="#94a3b8"/><text x="530" y="46" text-anchor="middle" font-size="9" fill="#475569">Tổng đài miễn phí</text><text x="530" y="63" text-anchor="middle" font-size="15" font-weight="800" fill="#d4001a">1800 1529</text>
+  <circle cx="860" cy="50" r="16" fill="#fff" stroke="#334155" stroke-width="3"/><path d="M860 50V40M860 50l7 4" stroke="#334155" stroke-width="2"/>
+  ${[150,330,510].map(x=>`<g transform="translate(${x} 318)"><ellipse cx="0" cy="14" rx="20" ry="6" fill="rgba(0,0,0,.15)"/><rect x="-16" y="-6" width="32" height="16" rx="6" fill="#1f2937"/><rect x="-14" y="-26" width="28" height="22" rx="6" fill="#374151"/><path d="M0 10v6M-10 18h20" stroke="#111827" stroke-width="3"/></g>`).join('')}
+  <rect x="120" y="390" width="660" height="10" rx="5" fill="#64748b" opacity=".35"/>
+  <g transform="translate(40 690)"><rect x="-12" y="-16" width="24" height="18" rx="4" fill="#a16207"/><circle cx="0" cy="-30" r="16" fill="#22c55e"/><circle cx="-10" cy="-38" r="10" fill="#16a34a"/><circle cx="10" cy="-40" r="9" fill="#4ade80"/></g>`}
+function decoXuong(){return `<defs><pattern id="conc" width="150" height="150" patternUnits="userSpaceOnUse"><rect width="150" height="150" fill="#d6d3d1"/><path d="M0 0H150V150" fill="none" stroke="#c4c0bc" stroke-width="2"/><circle cx="40" cy="60" r="2" fill="#bdb8b3"/><circle cx="110" cy="30" r="1.5" fill="#bdb8b3"/></pattern><pattern id="haz" width="20" height="20" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="10" height="20" fill="#facc15"/><rect x="10" width="10" height="20" fill="#1f2937"/></pattern></defs>
+  <rect width="${WW}" height="${WH}" fill="url(#conc)"/><rect width="${WW}" height="130" fill="#9ca3af"/><rect y="122" width="${WW}" height="12" fill="url(#haz)"/>
+  <rect x="0" y="0" width="14" height="${WH}" fill="#6b7280"/><rect x="${WW-14}" y="0" width="14" height="${WH}" fill="#6b7280"/><rect x="0" y="${WH-14}" width="${WW}" height="14" fill="#4b5563"/><rect x="${WW/2-50}" y="${WH-14}" width="100" height="14" fill="#c2a27a"/><text x="${WW/2}" y="${WH-3}" text-anchor="middle" font-size="10" font-weight="700" fill="#5b4630">CỬA RA VÀO</text>
+  <rect x="30" y="34" width="230" height="34" rx="6" fill="#d4001a"/><text x="145" y="57" text-anchor="middle" font-size="16" font-weight="800" fill="#fff">XƯỞNG SỬA CHỮA</text>
+  <rect x="300" y="20" width="200" height="70" rx="4" fill="#c8a678"/>${[0,1,2,3,4,5,6,7,8].map(i=>`<circle cx="${312+i*22}" cy="32" r="2" fill="#8b6b47"/>`).join('')}<path d="M320 44v34M318 44h4" stroke="#dc2626" stroke-width="4"/><path d="M350 42l10 34" stroke="#2563eb" stroke-width="5" stroke-linecap="round"/><circle cx="392" cy="60" r="12" fill="none" stroke="#6b7280" stroke-width="5"/><path d="M430 44v30" stroke="#f59e0b" stroke-width="6"/><path d="M460 44l14 30M474 44l-14 30" stroke="#374151" stroke-width="4"/>
+  <polygon points="560,24 600,24 580,58" fill="#facc15" stroke="#1f2937" stroke-width="3"/><text x="580" y="46" text-anchor="middle" font-size="16" font-weight="900" fill="#1f2937">!</text><text x="580" y="76" text-anchor="middle" font-size="9" font-weight="800" fill="#1f2937">AN TOÀN ĐIỆN</text>
+  <rect x="40" y="380" width="820" height="8" fill="url(#haz)" opacity=".7"/>
+  <rect x="660" y="30" width="80" height="56" rx="4" fill="#e0f2fe" stroke="#475569" stroke-width="4"/><path d="M700 30v56M660 58h80" stroke="#475569" stroke-width="3"/>`}
+
+const ROOMS=[{n:'Kho bảo hành',lay:LAY_KHO},{n:'Phòng tổng đài',lay:LAY_DAI},{n:'Xưởng sửa chữa',lay:LAY_XUONG}];
+let LAYC=LAY_KHO;const layOf=R=>ROOMS[((R&&R.room)||0)%ROOMS.length].lay;
+const usePt=id=>{const L=LAYC[id];return L[2]?[L[0],L[1]+26]:[L[0],L[1]+40]};
+const blocks=()=>Object.keys(LAYC).filter(k=>LAYC[k][2]).map(k=>{const [x,y,w,d]=LAYC[k];return[x-w-6,y-d-6,x+w+6,y+4]});
 function walkTo(x,y){x=Math.max(30,Math.min(WW-30,x));y=Math.max(150,Math.min(WH-40,y));
   for(const [a,b,c,d] of blocks())if(x>a&&x<c&&y>b&&y<d)y=d+2;return[x,y]}
 const spawnPt=i=>[400+(i%6)*24-((i/6|0)%2)*12,WH-60-(i/6|0)*22];
 const mvPos=(m,now)=>{if(!m)return null;const [x0,y0,x1,y1,t]=m,d=Math.hypot(x1-x0,y1-y0),dur=d/SPEED*1000,f=dur?Math.max(0,Math.min(1,(now-t)/dur)):1;return{x:x0+(x1-x0)*f,y:y0+(y1-y0)*f,moving:f<1,dx:x1-x0}};
-function roomStatic(){
+function roomStatic(i){i=(i||0)%ROOMS.length;if(i===1)return decoDai();if(i===2)return decoXuong();
   let s=`<defs><pattern id="wood" width="120" height="40" patternUnits="userSpaceOnUse"><rect width="120" height="40" fill="#e9d6b4"/><path d="M0 20H120M0 40H120M60 0V20M0 20V40M90 20V40" stroke="#d3bb92" stroke-width="1.5"/><path d="M10 8h30M70 30h25" stroke="#dfc9a3"/></pattern><linearGradient id="wallg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b8c4d4"/><stop offset="1" stop-color="#cfd8e3"/></linearGradient></defs>
   <rect width="${WW}" height="${WH}" fill="url(#wood)"/><rect width="${WW}" height="130" fill="url(#wallg)"/><rect y="122" width="${WW}" height="12" fill="#8b7355"/>
   <rect x="0" y="0" width="14" height="${WH}" fill="#94a3b8"/><rect x="${WW-14}" y="0" width="14" height="${WH}" fill="#94a3b8"/><rect x="0" y="${WH-14}" width="${WW}" height="14" fill="#64748b"/><rect x="${WW/2-50}" y="${WH-14}" width="100" height="14" fill="#c2a27a"/><text x="${WW/2}" y="${WH-3}" text-anchor="middle" font-size="10" font-weight="700" fill="#5b4630">CỬA RA VÀO</text>
@@ -2552,15 +2598,15 @@ function roomStatic(){
 function World(o){/* o: {mode:'play'|'view', pid, onMove(m), onNear(id)} */
   const el=document.createElement('div');el.className='world'+(o.mode==='view'?' wview':'');
   const VW=o.mode==='view'?WW:440,VH=o.mode==='view'?WH:560;
-  el.innerHTML=`<svg viewBox="0 0 ${VW} ${VH}" role="img" aria-label="Phòng 1, kho bảo hành"><g class="cam">${roomStatic()}<g class="ents"></g></g></svg>`;
-  const svgE=el.querySelector('svg'),cam=el.querySelector('.cam'),ents=el.querySelector('.ents');
+  el.innerHTML=`<svg viewBox="0 0 ${VW} ${VH}" role="img" aria-label="Phòng làm nhiệm vụ"><g class="cam"><g class="st"></g><g class="ents"></g></g></svg>`;
+  const svgE=el.querySelector('svg'),cam=el.querySelector('.cam'),ents=el.querySelector('.ents'),stE=el.querySelector('.st');let curRoom=-1;
   let R=null,me=null,near='',objSig='',nodes={},cx=WW/2,cy=WH/2;
-  function update(R2){R=R2;const sig=JSON.stringify([R.objs,R.spots,R.round]);
+  function update(R2){R=R2;LAYC=layOf(R);const ri=(R.room||0)%ROOMS.length;if(ri!==curRoom){curRoom=ri;stE.innerHTML=roomStatic(ri);svgE.setAttribute('aria-label',ROOMS[ri].n)}const sig=JSON.stringify([R.objs,R.spots,R.round,ri]);
     if(sig!==objSig){objSig=sig;ents.querySelectorAll('.ob').forEach(n=>n.remove());
       const task=new Set((R.objs||[]).map(x=>x.id)),who={};(R.spots||[]).forEach(([ob,p])=>who[ob]=p);
-      for(const id of Object.keys(LAY)){const [x,y]=LAY[id],has=task.has(id),tk=who[id]&&who[id]!==o.pid,mine=!!o.pid&&who[id]===o.pid,top=-(LAY[id][3]+LAY[id][4])-(id==='dieuhoa'?70:22);
+      for(const id of Object.keys(LAYC)){const [x,y]=LAYC[id],wall=!LAYC[id][2],has=task.has(id),tk=who[id]&&who[id]!==o.pid,mine=!!o.pid&&who[id]===o.pid,top=wall?-122:-(LAYC[id][3]+LAYC[id][4])-22;
         const g=document.createElementNS('http://www.w3.org/2000/svg','g');g.setAttribute('class','ob ent');g.dataset.o=id;g.dataset.y=y;g.setAttribute('transform',`translate(${x} ${y})`);
-        g.innerHTML=MODEL[id]()+(has?`<g class="mk${tk?' tk':''}" transform="translate(0 ${top})"><circle r="12" fill="${tk?'#94a3b8':mine?'#22c55e':'#facc15'}" stroke="#fff" stroke-width="2.5"/><text y="5" text-anchor="middle" font-size="15" font-weight="900" fill="${tk?'#fff':'#1f2937'}">${tk||mine?'✓':'!'}</text></g>`:'')+`<text class="ol" y="${id==='dieuhoa'?52:20}" text-anchor="middle" font-size="12" font-weight="700" fill="#1e293b" stroke="#fff" stroke-width="3" paint-order="stroke">${esc(OBJ[id].n)}</text>`;
+        g.innerHTML=MODEL[id]()+(has?`<g class="mk${tk?' tk':''}" transform="translate(0 ${top})"><circle r="12" fill="${tk?'#94a3b8':mine?'#22c55e':'#facc15'}" stroke="#fff" stroke-width="2.5"/><text y="5" text-anchor="middle" font-size="15" font-weight="900" fill="${tk?'#fff':'#1f2937'}">${tk||mine?'✓':'!'}</text></g>`:'')+`<text class="ol" y="${wall?52:20}" text-anchor="middle" font-size="12" font-weight="700" fill="#1e293b" stroke="#fff" stroke-width="3" paint-order="stroke">${esc(OBJ[id].n)}</text>`;
         ents.appendChild(g)}}
     for(const p of R.order||[]){if(!nodes[p]){const g=document.createElementNS('http://www.w3.org/2000/svg','g');g.setAttribute('class','pe ent');
         g.innerHTML=`<ellipse cx="0" cy="0" rx="13" ry="5" fill="rgba(0,0,0,.22)"/>${p===o.pid?'<ellipse cx="0" cy="0" rx="19" ry="8" fill="none" stroke="#2563eb" stroke-width="3"/>':''}<g class="fl"><g transform="translate(-23 -71.3) scale(1.15)">${avInner(R.chars&&R.chars[p],R.alive&&!R.alive[p])}</g></g><text y="-80" text-anchor="middle" font-size="13" font-weight="800" fill="${p===o.pid?'#1d4ed8':'#1e293b'}" stroke="#fff" stroke-width="3" paint-order="stroke">${esc(p===o.pid?'Bạn':(R.names||{})[p]||'')}</text>`;
@@ -2580,6 +2626,7 @@ function World(o){/* o: {mode:'play'|'view', pid, onMove(m), onNear(id)} */
   return{el,update,setMe,get near(){return near},posOf}
 }
 
+function objIcon(id,R){LAYC=layOf(R);const L=LAYC[id]||[0,0,40,30,80],w=L[2]||70,h=(L[3]+L[4])||110;return`<svg viewBox="${-w-14} ${L[2]?-h-34:-130} ${2*w+28} ${L[2]?h+44:170}" style="width:64px;height:64px">${MODEL[id]?MODEL[id]():''}</svg>`}
 const WALK={};
 function roomSVG(R,o){o=o||{};
   const objs=R.objs||[],spots=R.spots||[],ch=R.chars||{},who={},placed=new Set(),now=Date.now(),DX=388,DY=82;
@@ -2602,7 +2649,7 @@ function roomSVG(R,o){o=o||{};
 function meetSVG(R){
   const ids=R.order||[],ch=R.chars||{},n=ids.length,cx=210,cy=200,last={},lc=(R.chat||[]).slice(-1)[0];if(lc)last[lc.p]=lc.t;
   let s=`<svg class="scene" viewBox="0 0 420 345" role="img" aria-label="Phòng 2, phòng họp"><rect width="420" height="345" rx="14" fill="#efe7da"/><rect width="420" height="52" rx="14" fill="#7a5c3e"/><rect y="38" width="420" height="14" fill="#684d33"/>
-  <text x="16" y="30" font-size="15" font-weight="700" fill="#fff">Phòng 2 · Phòng họp</text><rect x="320" y="12" width="86" height="22" rx="5" fill="#f2a900"/><text x="363" y="27" text-anchor="middle" font-size="11" font-weight="700" fill="#1f2937">NGÀY ${R.round||1}</text>
+  <text x="16" y="30" font-size="15" font-weight="700" fill="#fff">Phòng họp</text><rect x="320" y="12" width="86" height="22" rx="5" fill="#f2a900"/><text x="363" y="27" text-anchor="middle" font-size="11" font-weight="700" fill="#1f2937">NGÀY ${R.round||1}</text>
   <ellipse cx="${cx}" cy="${cy+16}" rx="112" ry="50" fill="#a87b4f"/><ellipse cx="${cx}" cy="${cy+10}" rx="112" ry="50" fill="#c89766"/><ellipse cx="${cx}" cy="${cy+10}" rx="90" ry="34" fill="none" stroke="#d9ad7e" stroke-width="2"/>`;
   const pts=ids.map((p,i)=>{const t=-Math.PI/2+2*Math.PI*i/Math.max(n,1);return[p,cx+160*Math.cos(t),cy+14+96*Math.sin(t)]}).sort((a,b)=>a[2]-b[2]);
   let bub='';
@@ -2611,7 +2658,7 @@ function meetSVG(R){
   return s+bub+'</svg>';
 }
 function chatHTML(R){const c=(R.chat||[]);if(!c.length)return'';const ch=R.chars||{};
-  return`<div class="chat">${c.slice(-8).map(x=>`<div class="cl">${av(ch[x.p])}<div><b>${esc((R.names||{})[x.p]||'')}</b><br>${esc(x.t)}</div></div>`).join('')}</div>`}
+  return`<div class="chat">${c.slice(-4).reverse().map(x=>`<div class="cl">${av(ch[x.p])}<div><b>${esc((R.names||{})[x.p]||'')}</b><br>${esc(x.t)}</div></div>`).join('')}</div>`}
 
 /* ================= ngân hàng câu hỏi ================= */
 /* Định dạng: Câu hỏi | Đáp án đúng | Sai 1 | Sai 2 | Sai 3 | g:Nhóm | s:Nguồn */
@@ -2751,7 +2798,7 @@ async function playerApp(code,mode,cfgS){
   const st=mode==='L'?SS:LS,pk='msTD_pid_'+code;
   let pid=st.get(pk,'');if(!pid){pid=rid(10);st.set(pk,pid)}
   const rp='msTD/'+code,pp=rp+'/players/'+pid;
-  let R=null,ME=null,sel={key:'',target:'',ans:[]},showRole=null,sending=false,world=null,wKey='';const ak='msTD_ann_'+code+'_'+pid;let seenAnn=st.get(ak,'');
+  let R=null,ME=null,sel={key:'',target:'',ans:[]},showRole=null,sending=false,world=null,wKey='',sheet='',seenMsg=0;const ak='msTD_ann_'+code+'_'+pid;let seenAnn=st.get(ak,'');
   BE.watch(rp,d=>{R=d;render()});BE.watch(pp,d=>{ME=d;render()});
   const view=app.querySelector('.pv');
   function render(){
@@ -2767,21 +2814,29 @@ async function playerApp(code,mode,cfgS){
     if(R.phase==='lobby'||!role){
       h+=`<div class="card"><p class="big">Xin chào ${esc(ME.name)}!</p><p>Bạn đã vào phòng. Chờ MC chia vai…</p><p class="small pulse">Giữ màn hình này mở.</p></div>`;
     }else{
-      const r=ROLE[role],sr=showRole===null?(R.phase==='intro'||R.phase==='lobby'):showRole;
-      h+=`<div class="card"><div class="row" style="justify-content:space-between"><span class="row" style="gap:8px">${myCh?av(myCh,R.alive&&!R.alive[pid]):''}<span><b>${esc(ME.name)}</b> · ${R.alive&&R.alive[pid]?'đang trong ca':'<span class="warn">đã rời ca</span>'}${myCh?`<br><span class="small">Nhân vật: ${charName(myCh)}</span>`:''}</span></span><button class="btn ghost" id="rb">${sr?'Úp vai':'Xem vai'}</button></div>
-        ${sr?`<div class="role" style="margin-top:12px">${svg(role)}<div><div class="big" style="color:${r.bad?'var(--red)':'var(--blue)'}">${r.n}</div><div class="small">${r.team}${pr.mates&&pr.mates.length?' · Đồng bọn: '+esc(pr.mates.join(', ')):''}</div></div></div><p style="margin:10px 0 0"><b>Kỹ năng:</b> ${r.p}</p><p style="margin:6px 0 0"><b>Mục tiêu:</b> ${r.g}</p>`:''}</div>`;
-      if(R.phase==='intro'&&myCh)h+=`<div class="card"><h3>Nhân vật của bạn</h3><div class="role">${av(myCh,false,'av big')}<div><div class="big">${charName(myCh)}</div><div class="small">Nhân vật được bốc ngẫu nhiên, không liên quan đến vai. Mọi người nhìn nhân vật để nhận ra nhau trong các căn phòng.</div></div></div></div>`;
-      if(R.phase==='end')h+=endHTML(R);
+      const r=ROLE[role],alive=R.alive&&R.alive[pid],ms=(pr.msgs||[]),unread=ms.length>seenMsg,ph=R.phase;
+      h+=`<div class="hud">${myCh?av(myCh,!alive):''}<span class="ph ${ph==='night'?'n':'d'}">${phaseShort(R)}</span>${R.deadline&&R.deadline>Date.now()&&ph!=='intro'?`<span class="cd hudt" data-d="${R.deadline}"></span>`:''}<span style="flex:1"></span><button class="hb" id="rb">Vai</button><button class="hb" id="ib">Tin${unread?'<i class="dot"></i>':''}</button></div>`;
+      if(ph==='intro'){
+        h+=`<div class="card"><div class="role">${svg(role)}<div><div class="big" style="color:${r.bad?'var(--red)':'var(--blue)'}">${r.n}</div><div class="small">${r.team}${pr.mates&&pr.mates.length?' · Đồng bọn: '+esc(pr.mates.join(', ')):''}</div></div></div><p style="margin:10px 0 0">${r.p}</p></div>`;
+        if(myCh)h+=`<div class="card"><div class="role">${av(myCh,false,'av big')}<div><div class="small">Nhân vật của bạn</div><div class="big">${charName(myCh)}</div></div></div></div>`;
+      }
+      else if(ph==='end')h+=endHTML(R);
       else if(stp.kind!=='wait'&&!done)h+=stepHTML(stp);
-      else h+=`<div class="card"><span class="ph ${R.phase==='night'?'n':'d'}">${phaseName(R)}</span><p class="big" style="margin:10px 0 4px">${esc(R.headline||'')}</p>${R.deadline&&R.deadline>Date.now()?`<p class="small">${R.phase==='intro'||R.phase==='result'?'Tự chuyển sang đêm sau':'Còn'} <span class="cd" data-d="${R.deadline}"></span></p>`:''}${R.lastDay&&R.phase!=='end'?`<p class="small">Hạn chót: hết Ngày ${R.lastDay}${R.round>=R.lastDay&&R.phase!=='night'?' · <b class="warn">hôm nay là ngày cuối!</b>':''}</p>`:''}<div class="todo"><b>Việc của bạn:</b> ${todo(R,role,R.alive&&R.alive[pid],done,pid)}</div>${R.phase==='night'?`<div id="wslot" style="margin-top:12px"></div><div class="nearbox" id="nearbox"></div>`:['day','vote','phao','result'].includes(R.phase)?`<div style="margin-top:12px">${meetSVG(R)}</div>${chatHTML(R)}`:''}</div>`;
-      if(R.bot&&R.phase==='day'&&R.alive&&R.alive[pid])h+=sayHTML();
-      const ms=(pr.msgs||[]).slice().reverse();
-      h+=`<div class="card"><h3>Tin riêng của bạn</h3>${ms.length?`<ul class="msgs">${ms.map(m=>`<li>${esc(m)}</li>`).join('')}</ul>`:'<p class="small">Chưa có.</p>'}</div>`;
-      h+=`<div class="card"><h3>Bảng tin chung</h3><ul class="msgs">${(R.news||[]).slice().reverse().map(m=>`<li>${esc(m)}</li>`).join('')}</ul>
-        <h3 style="margin-top:14px">Ca trực</h3><p>${(R.order||[]).map(p=>`<span class="tag ${R.alive[p]?'':'bad'}" style="margin:2px">${esc(R.names[p])}${R.alive[p]?'':' (rời ca)'} · ${R.kpi[p]||0} KPI</span>`).join(' ')}</p></div>`;
+      else if(ph==='night')h+=`<div id="wslot"></div><div class="nearbox" id="nearbox"></div>`;
+      else if(['day','vote','phao','result'].includes(ph)){
+        h+=meetSVG(R);
+        h+=`<div class="todo">${R.lastDay&&R.round>=R.lastDay&&ph!=='result'?'<b class="warn">Ngày cuối!</b> ':''}${todo(R,role,alive,done,pid)}</div>`;
+        h+=chatHTML(R);
+        if(R.bot&&ph==='day'&&alive)h+=sayHTML();
+      }
+      if(sheet==='role')h+=`<div class="ov" id="sheet"><div class="ovc"><div class="role">${svg(role)}<div><div class="big" style="color:${r.bad?'var(--red)':'var(--blue)'}">${r.n}</div><div class="small">${r.team}${pr.mates&&pr.mates.length?' · Đồng bọn: '+esc(pr.mates.join(', ')):''}</div></div></div><p><b>Kỹ năng:</b> ${r.p}</p><p><b>Mục tiêu:</b> ${r.g}</p>${myCh?`<p class="small">Nhân vật: ${charName(myCh)}</p>`:''}<button class="btn red full" id="shx">Đóng</button></div></div>`;
+      if(sheet==='info')h+=`<div class="ov" id="sheet"><div class="ovc" style="max-height:86vh;overflow:auto"><h3 style="margin:0">Tin riêng</h3>${ms.length?`<ul class="msgs">${ms.slice().reverse().map(m=>`<li>${esc(m)}</li>`).join('')}</ul>`:'<p class="small">Chưa có.</p>'}
+        <h3 style="margin:8px 0 0">Bảng tin</h3><ul class="msgs">${(R.news||[]).slice().reverse().map(m=>`<li>${esc(m)}</li>`).join('')}</ul>${R.lastDay?`<p class="small">Hạn chót: hết Ngày ${R.lastDay}</p>`:''}
+        <p>${(R.order||[]).map(p=>`<span class="tag ${R.alive[p]?'':'bad'}" style="margin:2px">${esc(R.names[p])}${R.alive[p]?'':' (rời ca)'} · ${R.kpi[p]||0} KPI</span>`).join(' ')}</p><button class="btn red full" id="shx">Đóng</button></div></div>`;
     }
     const busyStep=role&&R.phase!=='end'&&stp.kind!=='wait'&&!done;
-    if(R.ann&&R.ann.id!==seenAnn&&!busyStep){const l=pr.last&&pr.last.id===R.ann.id?pr.last.m:[];
+    const g=!!(role&&R.phase!=='lobby');view.classList.toggle('game',g);const pt=app.querySelector('.ptop');if(pt)pt.style.display=g?'none':'';
+    if(R.ann&&R.ann.id!==seenAnn&&!busyStep&&!sheet){const l=pr.last&&pr.last.id===R.ann.id?pr.last.m:[];
       h+=`<div class="ov" role="dialog" aria-modal="true"><div class="ovc t-${R.ann.tone||'n'}">${annHTML(R.ann)}${l.length?`<div class="priv"><b>Tin riêng của bạn</b>${l.map(m=>`<p>${esc(m)}</p>`).join('')}</div>`:''}<button class="btn red full" id="ovok">Đã xem</button></div></div>`}
     view.innerHTML=h;tick();
     const slot=view.querySelector('#wslot');
@@ -2791,24 +2846,24 @@ async function playerApp(code,mode,cfgS){
       world.update(R);slot.appendChild(world.el);paintNear()}
   }
   function paintNear(){const box=view.querySelector('#nearbox');if(!box||!world)return;const n=world.near,st=(ME&&ME.priv&&ME.priv.step)||{},done=ME.act&&ME.act.key===st.key;
-    if(!n){box.innerHTML=`<p class="small">Chạm vào sàn hoặc chạm thẳng vào đồ vật để đi tới. Dấu ! vàng là có nhiệm vụ, dấu ✓ xám là đã có người làm.</p>`;return}
+    if(!n){box.innerHTML=done?`<p class="small okc">✓ Đã gửi · chờ mọi người</p>`:`<p class="small">Chạm sàn để đi · tìm dấu <b>!</b> vàng</p>`;return}
     const O=OBJ[n],tk=(R.spots||[]).some(([o,p])=>o===n&&p!==pid);
-    box.innerHTML=done||!st.objs?`<p class="small">Bạn đang đứng cạnh ${esc(O.n)}.${done?' Bạn đã gửi nhiệm vụ, cứ đi dạo chờ mọi người nhé.':''}</p>`:tk?`<p class="warn">${esc(O.n)} đã có người làm. Hãy tìm đồ vật khác có dấu ! vàng.</p>`:`<button class="btn red full" data-near="${n}">Làm nhiệm vụ: ${esc(O.n)}</button>`}
+    box.innerHTML=done||!st.objs?`<p class="small okc">✓ Đã gửi · chờ mọi người</p>`:tk?`<p class="warn">${esc(O.n)} đã có người làm</p>`:`<button class="btn red full" data-near="${n}">Làm nhiệm vụ: ${esc(O.n)}</button>`}
   let sayT='';
   function sayHTML(){const al=(R.order||[]).filter(p=>p!==pid&&R.alive[p]);
-    return`<div class="card"><h3>Nói với cả ca</h3><p class="small">Chế độ chơi thử: chọn 1 người rồi chọn câu muốn nói. Bot sẽ nghe và phản ứng (có thể nói dối).</p><div class="opts">${al.map(p=>`<button class="opt pp ${sayT===p?'on':''}" data-st="${p}">${av(R.chars&&R.chars[p])}<span>${esc(R.names[p])}</span></button>`).join('')}</div>
-      <div class="row" style="margin-top:10px"><button class="btn" data-sy="sus">Tôi nghi người này</button><button class="btn" data-sy="inn">Người này trong sạch</button><button class="btn red" data-sy="claim">Tôi là Giám sát QA: người này LÀ Mã Lỗi</button></div></div>`}
+    return`<div class="card"><h3 style="margin:0 0 8px">Bạn nói</h3><div class="opts two">${al.map(p=>`<button class="opt pp ${sayT===p?'on':''}" data-st="${p}">${av(R.chars&&R.chars[p])}<span>${esc(R.names[p])}</span></button>`).join('')}</div>
+      <div class="row" style="margin-top:10px"><button class="btn" data-sy="sus">Nghi</button><button class="btn" data-sy="inn">Trong sạch</button><button class="btn red" data-sy="claim">Tôi soi ra LÀ Mã Lỗi</button></div></div>`}
   const title={night:'Nhiệm vụ đêm',quiz:'Hội đồng chấm',vote:'Bỏ phiếu',phao:'Phao nghiệp vụ'};
   function stepHTML(s){
-    let h=`<div class="card" style="border:2px solid var(--blue)"><div class="row" style="justify-content:space-between"><h2 style="margin:0">${title[s.kind]||''}</h2>${R.deadline?`<span class="cd big" data-d="${R.deadline}"></span>`:''}</div>`;
-    if(s.objs){
-      if(!sel.obj)return h+`<p class="lbl">Bạn đang ở Phòng 1 · Kho bảo hành. Chạm vào sàn để đi, đến gần đồ vật có dấu ! vàng để làm nhiệm vụ.</p><div id="wslot"></div><div class="nearbox" id="nearbox"></div><p class="warn" id="se"></p></div>`;
-      const O=OBJ[sel.obj];h+=`<div class="objp" style="margin-top:10px"><svg viewBox="-32 -32 64 64" style="width:64px;height:64px">${O.d}</svg><div><b>${esc(O.n)}</b><br><button class="btn ghost" id="chg" style="min-height:34px;padding:4px 10px;margin-top:4px">Chọn đồ vật khác</button></div></div>`}
+    if(s.objs&&!sel.obj)return`<div id="wslot"></div><div class="nearbox" id="nearbox"></div><p class="warn" id="se"></p>`;
+    let h=`<div class="card" style="border:2px solid var(--blue)">`;
+    if(s.objs){const O=OBJ[sel.obj];h+=`<div class="objp">${objIcon(sel.obj,R)}<div><b>${esc(O.n)}</b><br><button class="btn ghost" id="chg" style="min-height:32px;padding:2px 10px;margin-top:4px">Đổi đồ vật</button></div></div>`}
+    else h+=`<h2 style="margin:0">${title[s.kind]||''}</h2>`;
     if(s.prompt)h+=`<p class="lbl">${esc(s.prompt)}</p>`;
     if(s.targets){const list=s.targets.map(t=>[t,R.names[t]]);if(s.kind==='vote')list.push(['skip','Bỏ qua, không bầu ai']);
-      h+=`<div class="opts">${list.map(([v,l])=>`<button class="opt pp ${sel.target===v?'on':''}" data-t="${v}">${v!=='skip'&&R.chars&&R.chars[v]?av(R.chars[v]):''}<span>${esc(l)}</span></button>`).join('')}</div>`}
+      h+=`<div class="opts two">${list.map(([v,l])=>`<button class="opt pp ${sel.target===v?'on':''}" data-t="${v}">${v!=='skip'&&R.chars&&R.chars[v]?av(R.chars[v]):''}<span>${esc(l)}</span></button>`).join('')}</div>`}
     const qs=s.objs?[s.objs.find(o=>o.id===sel.obj).q]:s.qs||(s.q?[s.q]:[]);
-    qs.forEach((q,i)=>{h+=`<p class="lbl">Câu hỏi${qs.length>1?' '+(i+1):''}</p><p class="q">${esc(q.q)}</p><div class="opts">${q.opts.map((o,j)=>`<button class="opt ${sel.ans[i]===j?'on':''}" data-q="${i}" data-a="${j}">${'ABCD'[j]}. ${esc(o)}</button>`).join('')}</div>`});
+    qs.forEach((q,i)=>{h+=`${qs.length>1?`<p class="lbl">Câu ${i+1}</p>`:''}<p class="q">${esc(q.q)}</p><div class="opts">${q.opts.map((o,j)=>`<button class="opt ${sel.ans[i]===j?'on':''}" data-q="${i}" data-a="${j}">${'ABCD'[j]}. ${esc(o)}</button>`).join('')}</div>`});
     return h+`<p class="warn" id="se"></p><button class="btn red full" id="sb" ${sending?'disabled':''}>Gửi</button></div>`;
   }
   async function pickObj(o){const s=ME.priv.step;if(!s||!s.objs||sel.obj)return;
@@ -2822,7 +2877,9 @@ async function playerApp(code,mode,cfgS){
       try{await BE.set(pp,{say:{id:rid(6),k:'d'+R.round,t,claim:b.dataset.sy==='claim'?sayT:''}})}catch(err){showErr(err)}sayT='';return}
     if(b.id==='chg'){sel.obj='';sel.ans=[];render();try{await BE.set(pp,{spot:{k:ME.priv.step.key,o:''}})}catch(err){showErr(err)}return}
     if(b.id==='jb'){const n=$('#jn').value.trim();if(!n){$('#je').textContent='Nhập tên của bạn.';return}b.disabled=true;await BE.set(pp,{name:n,joinedAt:Date.now(),kicked:false});return}
-    if(b.id==='rb'){showRole=!(showRole===null?(R.phase==='intro'||R.phase==='lobby'):showRole);render();return}
+    if(b.id==='rb'){sheet='role';render();return}
+    if(b.id==='ib'){sheet='info';seenMsg=((ME.priv||{}).msgs||[]).length;render();return}
+    if(b.id==='shx'){sheet='';render();return}
     if(b.id==='ovok'){seenAnn=R.ann.id;st.set(ak,seenAnn);render();return}
     if(b.dataset.t!==undefined){sel.target=b.dataset.t;render();return}
     if(b.dataset.q!==undefined){sel.ans[+b.dataset.q]=+b.dataset.a;render();return}
@@ -2846,7 +2903,7 @@ function annHTML(a,big){if(!a)return'';const mx=Math.max(1,...(a.bars||[]).map(b
 function todo(R,role,alive,done,pid){
   if(R.phase==='intro')return'Đọc kỹ vai và kỹ năng. Khi MC bắt đầu đêm, nhiệm vụ sẽ hiện ngay tại đây.';
   if(!alive&&R.phase!=='night')return'Bạn đã rời ca: không tiết lộ vai của người khác. Đêm vẫn có câu hỏi để bạn lấy thêm KPI.';
-  if(R.phase==='night')return done?'Đã gửi. Xem mọi người đang đứng ở đồ vật nào, chờ kết quả đêm.':'Chạm 1 đồ vật trong Phòng 1 để làm nhiệm vụ.';
+  if(R.phase==='night')return done?'Đã gửi. Xem mọi người đang đứng ở đồ vật nào, chờ kết quả đêm.':'Đi tới 1 đồ vật trong Phòng 1 để làm nhiệm vụ.';
   if(R.phase==='day')return{wolf:'Giả làm người tốt. Có thể nhận là Tổng đài viên có manh mối để đánh lạc hướng. Câu giờ đến hết hạn chót cũng là cách thắng.',
     seer:'Nếu đã soi ra Mã Lỗi, hãy công khai để cả ca bỏ phiếu. Lộ vai thì Mã Lỗi sẽ nhắm vào bạn đêm sau.',
     guard:'Nghe xem ai đáng tin để bảo vệ đêm sau. Không cần lộ vai.',
@@ -2872,6 +2929,7 @@ function botApp(){
     $('#bq').onclick=()=>{location.hash='';location.reload()};
     setTimeout(()=>{playerApp(code,'L');document.querySelector('.pv').classList.add('botpad')},300)}
 }
+function phaseShort(R){const ri=(R.room||0)%ROOMS.length;return{intro:'Xem vai',night:`Đêm ${R.round}`,day:`Ngày ${R.round} · bàn bạc`,vote:'Bỏ phiếu',phao:'Phao nghiệp vụ',result:'Kết quả',end:'Kết thúc'}[R.phase]||''}
 function phaseName(R){return{lobby:'Phòng chờ',intro:'Xem vai',night:`Đêm ${R.round}`,day:`Ngày ${R.round} · thảo luận`,vote:`Ngày ${R.round} · bỏ phiếu`,phao:`Ngày ${R.round} · phao`,result:`Ngày ${R.round} · kết quả`,end:'Kết thúc'}[R.phase]||''}
 function tick(){document.querySelectorAll('.cd').forEach(el=>el.textContent=mmss(+el.dataset.d-Date.now()))}
 function tallyHTML(R){const T=R.tally;if(!T||!T.rows||!T.rows.length)return'';
@@ -3037,7 +3095,7 @@ function mcApp(BOT){
     if(ph==='lobby')run(deal);else if(ph==='intro'||ph==='result')run(startNight);else if(ph==='night')run(resolveNight);
     else if(ph==='day')run(openVote);else if(ph==='vote')run(resolveVote);else if(ph==='phao')run(resolvePhao);
     else if(ph==='end'){BT.mem={};BT.auto=null;run(newGame)}}
-  function botTick(){if(!R||!H)return;const now=Date.now(),key=R.phase+R.round;
+  function botTick(){if(!R||!H)return;LAYC=layOf(R);const now=Date.now(),key=R.phase+R.round;
     if(R.phase==='lobby'){const ids=Object.keys(P).filter(p=>P[p].name&&!P[p].kicked);if(ids.some(p=>!P[p].bot)&&ids.length>=BOT.n&&(!BT.auto||BT.auto.ph!==key))BT.auto={ph:key,at:now+1500}}
     if((R.phase==='intro'||R.phase==='result')&&(!BT.auto||BT.auto.ph!==key)){const at=now+(R.phase==='intro'?25000:12000);BT.auto={ph:key,at};R.deadline=at;BE.set(rp(),{deadline:at})}
     if(BT.auto&&BT.auto.ph===key&&BT.auto.at&&now>BT.auto.at){next();return}
@@ -3183,7 +3241,7 @@ service cloud.firestore {
   /* ---- đêm ---- */
   async function startNight(){
     const r=(R.round||0)+1,key='n'+r,ctx=newCtx(),al=alive();H.key={};H.objKey={};
-    const m=Math.min(12,R.order.length+2),slots=shuffle([...Array(12).keys()]),objs=shuffle(OBJ_IDS).slice(0,m).map((id,i)=>({id,s:slots[i]})),oq=[];
+    const ri=(r-1)%ROOMS.length,rl=ROOMS[ri].lay,m=Math.min(Object.keys(rl).length,R.order.length+2),objs=shuffle(Object.keys(rl)).slice(0,m).map(id=>({id,s:0})),oq=[];
     for(const o of objs){const q=pickQ(OBJ[o.id].kw);H.objKey[o.id]={k:key,c:[q.c],qi:[q.qi],ans:[q.ans]};oq.push({id:o.id,q:q.q})}
     for(const p of R.order){const ro=roleOf(p);
       if(R.alive[p]){let prompt,targets;
@@ -3194,7 +3252,7 @@ service cloud.firestore {
         ctx.steps[p]={key,kind:'night',q:null,qs:null,objs:oq,prompt,targets};
       }else ctx.steps[p]={key,kind:'quiz',q:null,qs:null,objs:oq,prompt:'Bạn đã rời ca: trả lời đúng vẫn được +1 KPI',targets:null};
       H.key[p]={k:key,obj:true}}
-    ctx.room={phase:'night',round:r,deadline:Date.now()+S.nightSec*1000,headline:`Đêm ${r}: vào Phòng 1, chạm 1 đồ vật để làm nhiệm vụ`,objs:objs,spots:[],mv:[],chat:[]};
+    ctx.room={phase:'night',round:r,deadline:Date.now()+S.nightSec*1000,headline:`Đêm ${r}: vào ${ROOMS[ri].n}, tìm đồ vật có dấu ! để làm nhiệm vụ`,room:ri,objs:objs,spots:[],mv:[],chat:[]};
     await commit(ctx);
   }
   async function resolveNight(){
@@ -3359,9 +3417,9 @@ ${['wolf','seer','guard','villager'].map(k=>`<div class="rl">${svg(k)}<div><b>${
 <ol>
 <li><b>Vào phòng:</b> MC tạo phòng, mọi người quét QR và nhập tên. MC bấm "Chia vai". Vai tự hiện trên điện thoại, đọc xong bấm "Úp vai".</li>
 <li><b>Nhân vật:</b> chia vai xong, mỗi người được bốc 1 nhân vật riêng (màu áo + phụ kiện như tai nghe, mũ bảo hộ, kính). Nhân vật công khai, không liên quan đến vai.</li>
-<li><b>Đêm, Phòng 1 · Kho bảo hành (60 giây):</b> trong phòng có các đồ vật (máy giặt, tủ lạnh, máy lọc nước, bàn tổng đài, hộp bí ẩn…), số đồ vật nhiều hơn số người 2 cái. Mỗi người chạm 1 đồ vật chưa ai chọn để mở nhiệm vụ: phía trên là kỹ năng theo vai (Mã Lỗi chọn người để đánh sập, Giám sát QA chọn người để soi…, hiện tên và nhân vật), phía dưới là câu hỏi trắc nghiệm của đồ vật đó. Ai cũng thao tác giống nhau nên không đoán được vai qua cách bấm. Nhân vật của mỗi người hiện ở đồ vật họ đã chọn.</li>
+<li><b>Đêm (60 giây), mỗi đêm một phòng mới:</b> Đêm 1 Kho bảo hành, Đêm 2 Phòng tổng đài, Đêm 3 Xưởng sửa chữa, rồi lặp lại. Mỗi phòng có 12 đồ vật; đêm đó chỉ số người + 2 đồ vật có dấu ! vàng là có nhiệm vụ. Chạm vào sàn để nhân vật đi, đến gần đồ vật có dấu ! thì bấm "Làm nhiệm vụ": phía trên là kỹ năng theo vai (Mã Lỗi chọn người để đánh sập, Giám sát QA chọn người để soi…), phía dưới là câu hỏi trắc nghiệm của đồ vật đó. Mỗi đồ vật chỉ 1 người làm. Ai cũng thao tác giống nhau nên không đoán được vai qua cách bấm.</li>
 <li><b>Trời sáng, thông báo kết quả:</b> mọi điện thoại và màn hình MC cùng hiện bảng kết quả đêm: ai rời ca (lộ vai), hay Kỹ thuật viên đã cứu được người, hay Mã Lỗi trả lời sai nên đêm bình yên; số câu cả ca trả lời đúng; có manh mối được phát hay không; còn mấy ngày đến hạn chót. Tin riêng (kết quả soi, manh mối, đáp án đúng) hiện ngay dưới bảng trên điện thoại của từng người.</li>
-<li><b>Ngày, Phòng 2 · Phòng họp (thảo luận 3 phút):</b> mọi nhân vật ngồi quanh bàn họp, người đã rời ca hiện mờ. nói chuyện công khai, có thể kể manh mối hoặc nói dối. Điện thoại có dòng "Việc của bạn" gợi ý nên làm gì theo vai. Không đưa điện thoại cho người khác xem.</li>
+<li><b>Ngày, Phòng họp (thảo luận 3 phút):</b> mọi nhân vật ngồi quanh bàn họp, người đã rời ca hiện mờ. nói chuyện công khai, có thể kể manh mối hoặc nói dối. Điện thoại có dòng "Việc của bạn" gợi ý nên làm gì theo vai. Không đưa điện thoại cho người khác xem.</li>
 <li><b>Bỏ phiếu bí mật (60 giây):</b> người nhiều phiếu nhất (không hoà và nhiều hơn số phiếu bỏ qua) bị đưa ra xử lý. Bảng kết quả phiếu hiện lên cho cả phòng.</li>
 <li><b>Phao nghiệp vụ:</b> người bị bầu trả lời 2 câu. Đúng cả 2 thì ở lại ca (vai vẫn bí mật); sai 1 câu là rời ca và lộ vai. Mỗi người chỉ có 1 lần phao.</li>
 <li><b>Ngụy trang của Mã Lỗi:</b> mỗi Mã Lỗi có 1 lần ngụy trang. Đêm nào Mã Lỗi trả lời đúng mà bị Giám sát QA soi trúng, Giám sát QA sẽ thấy "không phải Mã Lỗi". Mã Lỗi được báo riêng là đã dùng ngụy trang. Lần soi trúng sau sẽ ra kết quả thật.</li>
