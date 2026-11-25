@@ -66,6 +66,8 @@ table{border-collapse:collapse;width:100%}td,th{padding:8px;border-bottom:1px so
 .rl{display:grid;grid-template-columns:44px minmax(0,1fr);gap:12px;align-items:start;padding:10px 12px;border-radius:12px;background:var(--card);border:1px solid var(--line);margin:8px 0}
 .rl svg{width:40px;height:40px}
 .bi{padding:10px 0;border-bottom:1px solid var(--line);display:grid;gap:3px}.bi button{justify-self:start}#blist{max-height:560px;overflow:auto}
+.scene{width:100%;height:auto;display:block;border-radius:14px}.av{width:34px;height:41px;flex:none;vertical-align:middle}.av.big{width:72px;height:86px}
+.opt.pp{display:flex;align-items:center;gap:10px;padding:6px 12px}.seat .av{width:40px;height:48px}.objp{display:grid;grid-template-columns:64px minmax(0,1fr);gap:12px;align-items:center}
 /* điện thoại */
 .pv{max-width:480px;margin:0 auto;padding:16px;display:grid;gap:14px}
 .ptop{background:var(--red);color:#fff;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px}
@@ -2455,6 +2457,69 @@ const lastDayOf=(n,w)=>w===1?2:w===2&&n>=9?6:0;
 const dlText=d=>d?`Mã Lỗi thắng nếu vẫn còn ẩn sau Ngày ${d}`:'Không có hạn chót';
 const compText=(n,c)=>`${c.wolf} Mã Lỗi, 1 Giám sát QA${c.guard?', 1 Kỹ thuật viên':''}, ${n-c.wolf-1-c.guard} Tổng đài viên`;
 
+/* ================= nhân vật & căn phòng ================= */
+const COLS=[['Đỏ','#e0352b'],['Xanh dương','#2563eb'],['Xanh lá','#16a34a'],['Vàng','#eab308'],['Cam','#f97316'],['Tím','#8b5cf6'],['Hồng','#ec4899'],['Ngọc','#14b8a6'],['Nâu','#92400e'],['Xám','#64748b'],['Chàm','#3730a3'],['Chanh','#84cc16']];
+const ACCS=['Tai nghe','Mũ bảo hộ','Mũ lưỡi trai','Kính','Nơ','Mũ len'];
+const HAIR=['#2b1d14','#4a2f1d','#111827','#7c4a1e'];
+const charName=ch=>ch?`${COLS[ch.c%12][0]} · ${ACCS[ch.a%6]}`:'';
+/* nhân vật gốc "Bé Kỹ Thuật": đầu tròn, áo màu, thẻ tên, phụ kiện */
+function avInner(ch,dead){
+  const col=COLS[(ch&&ch.c||0)%12][1],a=(ch&&ch.a||0)%6,hair=HAIR[(ch&&ch.c||0)%4];
+  let acc='';
+  if(a===0)acc=`<path d="M8.5 17a11.5 11.5 0 0 1 23 0" fill="none" stroke="#1f2937" stroke-width="2.4"/><rect x="5.5" y="14.5" width="5" height="8" rx="2.4" fill="#1f2937"/><rect x="29.5" y="14.5" width="5" height="8" rx="2.4" fill="#1f2937"/><path d="M8 22q1 5 7 5" fill="none" stroke="#1f2937" stroke-width="1.6"/><circle cx="15.5" cy="27" r="1.6" fill="#1f2937"/>`;
+  if(a===1)acc=`<path d="M8 15a12 11 0 0 1 24 0z" fill="#facc15" stroke="#a16207" stroke-width="1"/><rect x="6" y="13.5" width="28" height="3.2" rx="1.6" fill="#eab308"/><rect x="18.5" y="4.5" width="3" height="9" rx="1.5" fill="#fde047"/>`;
+  if(a===2)acc=`<path d="M8.5 14a11.5 10 0 0 1 23 0z" fill="${col}" stroke="rgba(0,0,0,.25)"/><path d="M27 13.2h10a2 2 0 0 1 0 3H27z" fill="${col}" stroke="rgba(0,0,0,.25)"/><circle cx="20" cy="5" r="1.6" fill="#fff"/>`;
+  if(a===3)acc=`<circle cx="15.5" cy="18" r="3.4" fill="rgba(255,255,255,.25)" stroke="#1f2937" stroke-width="1.4"/><circle cx="24.5" cy="18" r="3.4" fill="rgba(255,255,255,.25)" stroke="#1f2937" stroke-width="1.4"/><path d="M18.9 18h2.2" stroke="#1f2937" stroke-width="1.4"/>`;
+  if(a===4)acc=`<path d="M20 7l-6-4v8zM20 7l6-4v8z" fill="#f43f5e"/><circle cx="20" cy="7" r="2" fill="#be123c"/>`;
+  if(a===5)acc=`<path d="M8.5 13.5a11.5 10 0 0 1 23 0v1.5h-23z" fill="${col}"/><rect x="8" y="12.5" width="24" height="4" rx="2" fill="#fff" opacity=".85"/><circle cx="20" cy="2.8" r="2.6" fill="#fff"/>`;
+  const eyes=dead?`<path d="M14 16l3 3M17 16l-3 3M23 16l3 3M26 16l-3 3" stroke="#1f2937" stroke-width="1.4"/>`:`<circle cx="15.8" cy="18" r="1.5" fill="#1f2937"/><circle cx="24.2" cy="18" r="1.5" fill="#1f2937"/><path d="M16.5 22.3q3.5 2.6 7 0" fill="none" stroke="#1f2937" stroke-width="1.3" stroke-linecap="round"/>`;
+  return `<g${dead?' opacity=".38"':''}><rect x="8" y="26" width="24" height="20" rx="9" fill="${col}"/><rect x="15" y="31" width="10" height="6" rx="1.6" fill="#fff" opacity=".9"/><rect x="16.5" y="32.8" width="7" height="1.2" fill="${col}"/><circle cx="20" cy="17" r="11" fill="#f5d0b0"/><path d="M9.2 16a11 11 0 0 1 21.6 0q-4-6-10.8-5Q14 10 9.2 16z" fill="${hair}"/>${eyes}<circle cx="12.6" cy="21.4" r="1.6" fill="#fb7185" opacity=".45"/><circle cx="27.4" cy="21.4" r="1.6" fill="#fb7185" opacity=".45"/>${acc}</g>`;
+}
+const av=(ch,dead,cls)=>`<svg class="${cls||'av'}" viewBox="0 0 40 48" aria-hidden="true">${avInner(ch,dead)}</svg>`;
+const avAt=(ch,x,y,s,dead)=>`<g transform="translate(${x-20*s} ${y-48*s}) scale(${s})">${avInner(ch,dead)}</g>`;
+
+/* đồ vật trong Phòng 1 (vẽ quanh gốc 0,0, rộng khoảng 50) */
+const OBJ={
+ mgtren:{n:'Máy giặt cửa trên',kw:'Máy giặt',d:`<rect x="-20" y="-22" width="40" height="44" rx="4" fill="#f8fafc" stroke="#94a3b8"/><rect x="-20" y="-22" width="40" height="10" rx="3" fill="#e2e8f0" stroke="#94a3b8"/><circle cx="12" cy="-17" r="2.2" fill="#2563eb"/><rect x="-14" y="-6" width="28" height="22" rx="3" fill="#cbd5e1"/><path d="M-10 4q10 6 20 0" stroke="#64748b" fill="none"/>`},
+ mgtruoc:{n:'Máy giặt cửa trước',kw:'Máy giặt',d:`<rect x="-20" y="-22" width="40" height="44" rx="4" fill="#f8fafc" stroke="#94a3b8"/><rect x="-16" y="-19" width="14" height="5" rx="1.5" fill="#cbd5e1"/><circle cx="12" cy="-16.5" r="2.2" fill="#16a34a"/><circle cx="0" cy="5" r="12" fill="#bae6fd" stroke="#64748b" stroke-width="2.5"/><path d="M-7 8q7 4 14 0" stroke="#0284c7" fill="none"/>`},
+ maysay:{n:'Máy giặt sấy',kw:'Máy giặt',d:`<rect x="-20" y="-22" width="40" height="44" rx="4" fill="#e5e7eb" stroke="#94a3b8"/><rect x="-16" y="-19" width="32" height="5" rx="1.5" fill="#111827"/><circle cx="0" cy="5" r="12" fill="#1e293b" stroke="#94a3b8" stroke-width="2.5"/><path d="M-5 2q5-5 10 0M-5 8q5-5 10 0" stroke="#f97316" fill="none"/>`},
+ tulanh:{n:'Tủ lạnh',kw:'Tủ lạnh',d:`<rect x="-16" y="-27" width="32" height="52" rx="4" fill="#e2e8f0" stroke="#94a3b8"/><path d="M-16 -9h32" stroke="#94a3b8"/><rect x="10" y="-23" width="2.5" height="10" rx="1" fill="#64748b"/><rect x="10" y="-5" width="2.5" height="14" rx="1" fill="#64748b"/>`},
+ locnuoc:{n:'Máy lọc nước',kw:'lọc nước',d:`<rect x="-11" y="-27" width="22" height="52" rx="4" fill="#f1f5f9" stroke="#94a3b8"/><rect x="-7" y="-22" width="14" height="16" rx="3" fill="#7dd3fc"/><rect x="-3" y="-2" width="6" height="5" rx="1" fill="#475569"/><path d="M0 4v5" stroke="#38bdf8" stroke-width="2" stroke-dasharray="2 2"/><rect x="-8" y="12" width="16" height="3" rx="1.5" fill="#cbd5e1"/>`},
+ dieuhoa:{n:'Máy điều hòa',kw:'điều hòa',d:`<rect x="-24" y="-12" width="48" height="20" rx="6" fill="#f8fafc" stroke="#94a3b8"/><path d="M-18 3h36" stroke="#cbd5e1" stroke-width="2"/><circle cx="17" cy="-5" r="1.6" fill="#22c55e"/><path d="M-12 12q2 5 0 9M0 12q2 5 0 9M12 12q2 5 0 9" stroke="#7dd3fc" fill="none" stroke-width="1.6"/>`},
+ tongdai:{n:'Bàn tổng đài',kw:'tổng đài',d:`<rect x="-24" y="2" width="48" height="6" rx="2" fill="#a16207"/><rect x="-21" y="8" width="3" height="14" fill="#854d0e"/><rect x="18" y="8" width="3" height="14" fill="#854d0e"/><rect x="-16" y="-10" width="16" height="12" rx="2" fill="#1f2937"/><rect x="-14" y="-8" width="12" height="4" rx="1" fill="#22d3ee"/><path d="M6 -4a7 7 0 0 1 14 0" fill="none" stroke="#111827" stroke-width="2.4"/><rect x="4" y="-5" width="4" height="7" rx="2" fill="#111827"/><rect x="18" y="-5" width="4" height="7" rx="2" fill="#111827"/>`},
+ maytinh:{n:'Máy tính tra cứu',kw:'tổng đài',d:`<rect x="-20" y="-20" width="40" height="27" rx="3" fill="#1f2937"/><rect x="-17" y="-17" width="34" height="21" rx="2" fill="#38bdf8"/><path d="M-12 -10h18M-12 -5h24M-12 0h14" stroke="#e0f2fe" stroke-width="2"/><rect x="-4" y="7" width="8" height="8" fill="#475569"/><rect x="-14" y="15" width="28" height="4" rx="2" fill="#334155"/>`},
+ tuhoso:{n:'Tủ hồ sơ bảo hành',kw:'',d:`<rect x="-16" y="-26" width="32" height="50" rx="3" fill="#94a3b8" stroke="#64748b"/><rect x="-12" y="-22" width="24" height="13" rx="2" fill="#cbd5e1"/><rect x="-12" y="-6" width="24" height="13" rx="2" fill="#cbd5e1"/><rect x="-12" y="10" width="24" height="11" rx="2" fill="#cbd5e1"/><rect x="-4" y="-17" width="8" height="2.5" rx="1" fill="#475569"/><rect x="-4" y="-1" width="8" height="2.5" rx="1" fill="#475569"/><rect x="-4" y="14" width="8" height="2.5" rx="1" fill="#475569"/>`},
+ hopdungcu:{n:'Hộp dụng cụ',kw:'',d:`<path d="M-8 -10v-5h16v5" fill="none" stroke="#7f1d1d" stroke-width="3"/><rect x="-22" y="-10" width="44" height="26" rx="4" fill="#dc2626"/><rect x="-22" y="-2" width="44" height="4" fill="#991b1b"/><rect x="-4" y="-4" width="8" height="7" rx="1.5" fill="#fbbf24"/>`},
+ thung:{n:'Thùng linh kiện',kw:'',d:`<path d="M-22 -6l22-10 22 10-22 10z" fill="#d6a565"/><path d="M-22 -6v22l22 10V4z" fill="#b7844a"/><path d="M22 -6v22L0 26V4z" fill="#c8945a"/><path d="M-11 -11l22 10" stroke="#f5e6c8" stroke-width="3"/>`},
+ bian:{n:'Hộp bí ẩn',kw:'',d:`<rect x="-19" y="-12" width="38" height="30" rx="4" fill="#7c3aed"/><rect x="-21" y="-17" width="42" height="9" rx="3" fill="#8b5cf6"/><rect x="-3" y="-17" width="6" height="35" fill="#facc15"/><text x="0" y="11" text-anchor="middle" font-size="16" font-weight="800" fill="#fff">?</text>`}
+};
+const OBJ_IDS=Object.keys(OBJ);
+/* 12 chỗ đặt trong phòng, sát tường và giữa phòng */
+const SLOTS=[[60,100],[160,100],[260,100],[360,100],[60,205],[160,205],[260,205],[360,205],[60,305],[160,305],[260,305],[360,305]];
+
+function roomSVG(R,o){o=o||{};
+  const objs=R.objs||[],spots=R.spots||[],ch=R.chars||{},who={};spots.forEach(([ob,p])=>(who[ob]=who[ob]||[]).push(p));
+  let s=`<svg class="scene" viewBox="0 0 420 360" role="img" aria-label="Phòng 1, kho bảo hành"><defs><pattern id="tile" width="30" height="30" patternUnits="userSpaceOnUse"><rect width="30" height="30" fill="#dbe4ee"/><path d="M30 0H0V30" fill="none" stroke="#c7d2de"/></pattern></defs>
+  <rect width="420" height="360" rx="14" fill="url(#tile)"/><rect width="420" height="52" rx="14" fill="#5b6b82"/><rect y="38" width="420" height="14" fill="#4a5870"/>
+  <text x="16" y="30" font-size="15" font-weight="700" fill="#fff">Phòng 1 · Kho bảo hành</text><rect x="330" y="12" width="76" height="22" rx="5" fill="#d4001a"/><text x="368" y="27" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">ĐÊM ${R.round||1}</text>`;
+  objs.forEach(({id,s:si})=>{const O=OBJ[id];if(!O)return;const [x,y]=SLOTS[si],mine=o.sel===id,us=who[id]||[],taken=us.some(p=>p!==o.pid);
+    s+=`<g data-o="${id}" style="cursor:${o.click&&!taken?'pointer':'default'}" ${o.click?`role="button" aria-label="${esc(O.n)}" tabindex="0"`:''}><rect x="${x-46}" y="${y-44}" width="92" height="92" rx="12" fill="${mine?'rgba(37,99,235,.18)':'rgba(255,255,255,.55)'}" stroke="${mine?'#2563eb':taken?'#94a3b8':'#fff'}" stroke-width="${mine?3:1.5}" ${taken&&o.click?'stroke-dasharray="5 4"':''}/>
+    <g transform="translate(${x} ${y-8})">${O.d}</g><text x="${x}" y="${y+40}" text-anchor="middle" font-size="10.5" font-weight="600" fill="#1e293b">${esc(O.n)}</text></g>`;
+    us.forEach((p,i)=>{s+=avAt(ch[p],x+28-i*16,y+30,.74,R.alive&&!R.alive[p])});
+  });
+  return s+'</svg>';
+}
+function meetSVG(R){
+  const ids=R.order||[],ch=R.chars||{},n=ids.length,cx=210,cy=200;
+  let s=`<svg class="scene" viewBox="0 0 420 345" role="img" aria-label="Phòng 2, phòng họp"><rect width="420" height="345" rx="14" fill="#efe7da"/><rect width="420" height="52" rx="14" fill="#7a5c3e"/><rect y="38" width="420" height="14" fill="#684d33"/>
+  <text x="16" y="30" font-size="15" font-weight="700" fill="#fff">Phòng 2 · Phòng họp</text><rect x="320" y="12" width="86" height="22" rx="5" fill="#f2a900"/><text x="363" y="27" text-anchor="middle" font-size="11" font-weight="700" fill="#1f2937">NGÀY ${R.round||1}</text>
+  <rect x="16" y="64" width="120" height="30" rx="4" fill="#fff" stroke="#b9a58c"/><text x="76" y="84" text-anchor="middle" font-size="11" fill="#475569">Ai là Mã Lỗi?</text>
+  <ellipse cx="${cx}" cy="${cy+16}" rx="112" ry="50" fill="#a87b4f"/><ellipse cx="${cx}" cy="${cy+10}" rx="112" ry="50" fill="#c89766"/><ellipse cx="${cx}" cy="${cy+10}" rx="90" ry="34" fill="none" stroke="#d9ad7e" stroke-width="2"/>`;
+  const pts=ids.map((p,i)=>{const t=-Math.PI/2+2*Math.PI*i/Math.max(n,1);return[p,cx+160*Math.cos(t),cy+14+96*Math.sin(t)]}).sort((a,b)=>a[2]-b[2]);
+  pts.forEach(([p,x,y])=>{const dead=R.alive&&!R.alive[p];s+=avAt(ch[p],x,y+16,1.2,dead)+`<text x="${x}" y="${y+32}" text-anchor="middle" font-size="13" font-weight="700" fill="${dead?'#94a3b8':'#1e293b'}">${esc((R.names||{})[p]||'')}${dead?' (rời ca)':''}</text>`});
+  return s+'</svg>';
+}
+
 /* ================= ngân hàng câu hỏi ================= */
 /* Định dạng: Câu hỏi | Đáp án đúng | Sai 1 | Sai 2 | Sai 3 | g:Nhóm | s:Nguồn */
 const GENERAL=`Khách gọi đến đang rất bực tức. Việc đầu tiên nên làm là gì? | Lắng nghe hết ý và ghi nhận cảm xúc của khách | Giải thích ngay quy định bảo hành | Chuyển máy cho cấp trên | Đề nghị khách bình tĩnh rồi gọi lại sau | g:Kỹ năng tổng đài | s:Câu mẫu chung, cần đối chiếu quy trình nội bộ
@@ -2603,17 +2668,18 @@ async function playerApp(code,mode,cfgS){
       view.innerHTML=`<div class="card"><h2>Vào phòng ${esc(code.toUpperCase())}</h2><label for="jn">Tên của bạn</label><input id="jn" autocomplete="name" maxlength="20"><p class="warn" id="je"></p><button class="btn red full" id="jb">Vào phòng</button></div>`;
       return}
     const pr=ME.priv||{},stp=pr.step||{kind:'wait'},role=pr.role,done=ME.act&&ME.act.key===stp.key;
-    if(stp.key!==sel.key)sel={key:stp.key,target:'',ans:[]};
+    if(stp.key!==sel.key)sel={key:stp.key,target:'',ans:[],obj:''};const myCh=R.chars&&R.chars[pid];
     let h='';
     if(R.phase==='lobby'||!role){
       h+=`<div class="card"><p class="big">Xin chào ${esc(ME.name)}!</p><p>Bạn đã vào phòng. Chờ MC chia vai…</p><p class="small pulse">Giữ màn hình này mở.</p></div>`;
     }else{
       const r=ROLE[role],sr=showRole===null?(R.phase==='intro'||R.phase==='lobby'):showRole;
-      h+=`<div class="card"><div class="row" style="justify-content:space-between"><span><b>${esc(ME.name)}</b> · ${R.alive&&R.alive[pid]?'đang trong ca':'<span class="warn">đã rời ca</span>'}</span><button class="btn ghost" id="rb">${sr?'Úp vai':'Xem vai'}</button></div>
+      h+=`<div class="card"><div class="row" style="justify-content:space-between"><span class="row" style="gap:8px">${myCh?av(myCh,R.alive&&!R.alive[pid]):''}<span><b>${esc(ME.name)}</b> · ${R.alive&&R.alive[pid]?'đang trong ca':'<span class="warn">đã rời ca</span>'}${myCh?`<br><span class="small">Nhân vật: ${charName(myCh)}</span>`:''}</span></span><button class="btn ghost" id="rb">${sr?'Úp vai':'Xem vai'}</button></div>
         ${sr?`<div class="role" style="margin-top:12px">${svg(role)}<div><div class="big" style="color:${r.bad?'var(--red)':'var(--blue)'}">${r.n}</div><div class="small">${r.team}${pr.mates&&pr.mates.length?' · Đồng bọn: '+esc(pr.mates.join(', ')):''}</div></div></div><p style="margin:10px 0 0"><b>Kỹ năng:</b> ${r.p}</p><p style="margin:6px 0 0"><b>Mục tiêu:</b> ${r.g}</p>`:''}</div>`;
+      if(R.phase==='intro'&&myCh)h+=`<div class="card"><h3>Nhân vật của bạn</h3><div class="role">${av(myCh,false,'av big')}<div><div class="big">${charName(myCh)}</div><div class="small">Nhân vật được bốc ngẫu nhiên, không liên quan đến vai. Mọi người nhìn nhân vật để nhận ra nhau trong các căn phòng.</div></div></div></div>`;
       if(R.phase==='end')h+=endHTML(R);
       else if(stp.kind!=='wait'&&!done)h+=stepHTML(stp);
-      else h+=`<div class="card"><span class="ph ${R.phase==='night'?'n':'d'}">${phaseName(R)}</span><p class="big" style="margin:10px 0 4px">${esc(R.headline||'')}</p>${R.deadline&&R.phase!=='result'?`<p class="small">Còn <span class="cd" data-d="${R.deadline}"></span></p>`:''}${R.lastDay&&R.phase!=='end'?`<p class="small">Hạn chót: hết Ngày ${R.lastDay}${R.round>=R.lastDay&&R.phase!=='night'?' · <b class="warn">hôm nay là ngày cuối!</b>':''}</p>`:''}<div class="todo"><b>Việc của bạn:</b> ${todo(R,role,R.alive&&R.alive[pid],done,pid)}</div></div>`;
+      else h+=`<div class="card"><span class="ph ${R.phase==='night'?'n':'d'}">${phaseName(R)}</span><p class="big" style="margin:10px 0 4px">${esc(R.headline||'')}</p>${R.deadline&&R.phase!=='result'?`<p class="small">Còn <span class="cd" data-d="${R.deadline}"></span></p>`:''}${R.lastDay&&R.phase!=='end'?`<p class="small">Hạn chót: hết Ngày ${R.lastDay}${R.round>=R.lastDay&&R.phase!=='night'?' · <b class="warn">hôm nay là ngày cuối!</b>':''}</p>`:''}<div class="todo"><b>Việc của bạn:</b> ${todo(R,role,R.alive&&R.alive[pid],done,pid)}</div>${R.phase==='night'?`<div style="margin-top:12px">${roomSVG(R,{pid,sel:ME.act&&ME.act.obj})}</div>`:['day','vote','phao','result'].includes(R.phase)?`<div style="margin-top:12px">${meetSVG(R)}</div>`:''}</div>`;
       const ms=(pr.msgs||[]).slice().reverse();
       h+=`<div class="card"><h3>Tin riêng của bạn</h3>${ms.length?`<ul class="msgs">${ms.map(m=>`<li>${esc(m)}</li>`).join('')}</ul>`:'<p class="small">Chưa có.</p>'}</div>`;
       h+=`<div class="card"><h3>Bảng tin chung</h3><ul class="msgs">${(R.news||[]).slice().reverse().map(m=>`<li>${esc(m)}</li>`).join('')}</ul>
@@ -2627,25 +2693,35 @@ async function playerApp(code,mode,cfgS){
   const title={night:'Nhiệm vụ đêm',quiz:'Hội đồng chấm',vote:'Bỏ phiếu',phao:'Phao nghiệp vụ'};
   function stepHTML(s){
     let h=`<div class="card" style="border:2px solid var(--blue)"><div class="row" style="justify-content:space-between"><h2 style="margin:0">${title[s.kind]||''}</h2>${R.deadline?`<span class="cd big" data-d="${R.deadline}"></span>`:''}</div>`;
+    if(s.objs){
+      if(!sel.obj)return h+`<p class="lbl">Bạn đang ở Phòng 1. Chạm vào 1 đồ vật để mở nhiệm vụ.</p><p class="small">Đồ vật viền nét đứt là đã có người khác chọn. Ai cũng làm thao tác giống nhau nên không đoán được vai qua cách bấm.</p>${roomSVG(R,{pid,sel:'',click:1})}<p class="warn" id="se"></p></div>`;
+      const O=OBJ[sel.obj];h+=`<div class="objp" style="margin-top:10px"><svg viewBox="-32 -32 64 64" style="width:64px;height:64px">${O.d}</svg><div><b>${esc(O.n)}</b><br><button class="btn ghost" id="chg" style="min-height:34px;padding:4px 10px;margin-top:4px">Chọn đồ vật khác</button></div></div>`}
     if(s.prompt)h+=`<p class="lbl">${esc(s.prompt)}</p>`;
     if(s.targets){const list=s.targets.map(t=>[t,R.names[t]]);if(s.kind==='vote')list.push(['skip','Bỏ qua, không bầu ai']);
-      h+=`<div class="opts">${list.map(([v,l])=>`<button class="opt ${sel.target===v?'on':''}" data-t="${v}">${esc(l)}</button>`).join('')}</div>`}
-    const qs=s.qs||(s.q?[s.q]:[]);
+      h+=`<div class="opts">${list.map(([v,l])=>`<button class="opt pp ${sel.target===v?'on':''}" data-t="${v}">${v!=='skip'&&R.chars&&R.chars[v]?av(R.chars[v]):''}<span>${esc(l)}</span></button>`).join('')}</div>`}
+    const qs=s.objs?[s.objs.find(o=>o.id===sel.obj).q]:s.qs||(s.q?[s.q]:[]);
     qs.forEach((q,i)=>{h+=`<p class="lbl">Câu hỏi${qs.length>1?' '+(i+1):''}</p><p class="q">${esc(q.q)}</p><div class="opts">${q.opts.map((o,j)=>`<button class="opt ${sel.ans[i]===j?'on':''}" data-q="${i}" data-a="${j}">${'ABCD'[j]}. ${esc(o)}</button>`).join('')}</div>`});
     return h+`<p class="warn" id="se"></p><button class="btn red full" id="sb" ${sending?'disabled':''}>Gửi</button></div>`;
   }
+  async function pickObj(o){const s=ME.priv.step;if(!s||!s.objs||sel.obj)return;
+    if((R.spots||[]).some(([ob,p])=>ob===o&&p!==pid)){const w=$('#se');if(w)w.textContent='Đồ vật này đã có người chọn, hãy chọn đồ vật khác.';return}
+    sel.obj=o;sel.ans=[];render();try{await BE.set(pp,{spot:{k:s.key,o}})}catch(err){showErr(err)}}
+  view.addEventListener('keydown',e=>{const g=e.target.closest&&e.target.closest('[data-o]');if(g&&(e.key==='Enter'||e.key===' ')){e.preventDefault();pickObj(g.dataset.o)}});
   view.addEventListener('click',async e=>{
+    const og=e.target.closest('[data-o]');if(og&&!e.target.closest('button')){pickObj(og.dataset.o);return}
     const b=e.target.closest('button');if(!b)return;
+    if(b.id==='chg'){sel.obj='';sel.ans=[];render();try{await BE.set(pp,{spot:{k:ME.priv.step.key,o:''}})}catch(err){showErr(err)}return}
     if(b.id==='jb'){const n=$('#jn').value.trim();if(!n){$('#je').textContent='Nhập tên của bạn.';return}b.disabled=true;await BE.set(pp,{name:n,joinedAt:Date.now(),kicked:false});return}
     if(b.id==='rb'){showRole=!(showRole===null?(R.phase==='intro'||R.phase==='lobby'):showRole);render();return}
     if(b.id==='ovok'){seenAnn=R.ann.id;st.set(ak,seenAnn);render();return}
     if(b.dataset.t!==undefined){sel.target=b.dataset.t;render();return}
     if(b.dataset.q!==undefined){sel.ans[+b.dataset.q]=+b.dataset.a;render();return}
-    if(b.id==='sb'){const s=ME.priv.step,qs=s.qs||(s.q?[s.q]:[]);
+    if(b.id==='sb'){const s=ME.priv.step,qs=s.objs?(sel.obj?[1]:[]):s.qs||(s.q?[s.q]:[]);
+      if(s.objs&&!sel.obj){$('#se').textContent='Hãy chạm vào 1 đồ vật.';return}
       if(s.targets&&!sel.target){$('#se').textContent='Hãy chọn 1 người.';return}
       if(qs.some((_,i)=>sel.ans[i]===undefined)){$('#se').textContent='Hãy trả lời câu hỏi.';return}
       sending=true;b.disabled=true;
-      try{await BE.set(pp,{act:{key:s.key,target:sel.target||'',ans:qs.length>1?sel.ans:(qs.length?sel.ans[0]:-1),t:Date.now()}})}catch(err){showErr(err)}
+      try{await BE.set(pp,{act:{key:s.key,obj:sel.obj||'',target:sel.target||'',ans:qs.length>1?sel.ans:(qs.length?sel.ans[0]:-1),t:Date.now()}})}catch(err){showErr(err)}
       sending=false}
   });
   setInterval(tick,500);
@@ -2660,7 +2736,7 @@ function annHTML(a,big){if(!a)return'';const mx=Math.max(1,...(a.bars||[]).map(b
 function todo(R,role,alive,done,pid){
   if(R.phase==='intro')return'Đọc kỹ vai và kỹ năng. Khi MC bắt đầu đêm, nhiệm vụ sẽ hiện ngay tại đây.';
   if(!alive&&R.phase!=='night')return'Bạn đã rời ca: không tiết lộ vai của người khác. Đêm vẫn có câu hỏi để bạn lấy thêm KPI.';
-  if(R.phase==='night')return done?'Đã gửi. Chờ mọi người xong để xem kết quả đêm.':'Làm nhiệm vụ đêm ở trên.';
+  if(R.phase==='night')return done?'Đã gửi. Xem mọi người đang đứng ở đồ vật nào, chờ kết quả đêm.':'Chạm 1 đồ vật trong Phòng 1 để làm nhiệm vụ.';
   if(R.phase==='day')return{wolf:'Giả làm người tốt. Có thể nhận là Tổng đài viên có manh mối để đánh lạc hướng. Câu giờ đến hết hạn chót cũng là cách thắng.',
     seer:'Nếu đã soi ra Mã Lỗi, hãy công khai để cả ca bỏ phiếu. Lộ vai thì Mã Lỗi sẽ nhắm vào bạn đêm sau.',
     guard:'Nghe xem ai đáng tin để bảo vệ đêm sau. Không cần lộ vai.',
@@ -2783,7 +2859,7 @@ function mcApp(){
   let BE=null,code='',R=null,P={},H=null,busy=false,showRoles=false,qrCache={},link='';
   const hk=()=>'msTD_host_'+code,saveH=()=>LS.set(hk(),H);
   const rp=()=>'msTD/'+code,pp=p=>'msTD/'+code+'/players/'+p;
-  const WAIT={key:'w',kind:'wait',q:null,qs:null,prompt:null,targets:null};
+  const WAIT={key:'w',kind:'wait',q:null,qs:null,objs:null,prompt:null,targets:null};
   const nm=p=>(R&&R.names&&R.names[p])||(P[p]&&P[p].name)||'?';
   const alive=()=>(R.order||[]).filter(p=>R.alive[p]);
   const roleOf=p=>(H.roles&&H.roles[p])||(P[p]&&P[p].priv&&P[p].priv.role);
@@ -2861,7 +2937,8 @@ service cloud.firestore {
     link=`${S.base}#j.${code}.${S.mode}${S.mode==='F'?'.'+b64e(S.cfg):''}`;
     if(fresh){H={key:{},done:[],stats:{},used:[],seen:{},roles:{}};saveH();await BE.set(rp(),lobbyRoom())}
     BE.watch(rp(),d=>{R=d;render();check()});
-    BE.watchCol(rp()+'/players',o=>{P=o||{};const k=R&&stepKey();if(k){for(const p in P)if(P[p].act&&P[p].act.key===k&&!H.seen[k+p]){H.seen[k+p]=Date.now();saveH()}}render();check()});
+    BE.watchCol(rp()+'/players',o=>{P=o||{};const k=R&&stepKey();
+      if(R&&R.phase==='night'){const sp=(R.order||[]).filter(p=>P[p]&&P[p].spot&&P[p].spot.k===k&&P[p].spot.o).map(p=>[P[p].spot.o,p]);if(JSON.stringify(sp)!==JSON.stringify(R.spots||[])){R.spots=sp;BE.set(rp(),{spots:sp})}}if(k){for(const p in P)if(P[p].act&&P[p].act.key===k&&!H.seen[k+p]){H.seen[k+p]=Date.now();saveH()}}render();check()});
   }
   const lobbyRoom=()=>({v:3,tally:null,lastDay:0,ann:null,phase:'lobby',round:0,names:{},alive:{},kpi:{},phaoUsed:{},order:[],news:[],headline:'Quét mã QR để vào phòng',deadline:0,winner:'',reveal:null,final:null,phao:null,comp:''});
 
@@ -2880,48 +2957,52 @@ service cloud.firestore {
     Object.assign(R,c.room);saveH();ops.push(BE.set(rp(),c.room));await Promise.all(ops);render();
   }
   const run=async f=>{if(busy)return;busy=true;try{await f()}catch(e){showErr(e)}finally{busy=false;setTimeout(check,50)}};
-  function pickQ(){
+  function pickQ(kw){
     const gs=S.groups||[],b=getBank().filter(x=>!gs.length||gs.includes(x.g));
     let pool=b.filter(x=>!H.used.includes(nk(x.q)));if(!pool.length){H.used=[];pool=b}
+    if(kw){const m=pool.filter(x=>nk(x.g).includes(nk(kw)));if(m.length)pool=m}
     const x=pick(pool),k=nk(x.q);H.used.push(k);const opts=shuffle([x.a,...x.w]);H.stats[k]=H.stats[k]||{q:x.q,n:0,c:0};
     return{qi:k,q:{q:x.q,opts},c:opts.indexOf(x.a),ans:x.a}}
-  function grade(p,key){const a=P[p]&&P[p].act,K=H.key[p];
+  function grade(p,key){const a=P[p]&&P[p].act;let K=H.key[p];
     if(!K||K.k!==key)return{sub:false,ok:false,parts:[]};
-    if(!a||a.key!==key)return{sub:false,ok:false,parts:K.c.map(()=>false)};
+    if(K.obj){if(!a||a.key!==key||!H.objKey||!H.objKey[a.obj])return{sub:false,ok:false,parts:[false],K:null};K=H.objKey[a.obj]}
+    else if(!a||a.key!==key)return{sub:false,ok:false,parts:K.c.map(()=>false),K};
     const ans=Array.isArray(a.ans)?a.ans:[a.ans],parts=K.c.map((c,i)=>ans[i]===c);
     parts.forEach((ok,i)=>{const s=H.stats[K.qi[i]];if(s){s.n++;if(ok)s.c++}});
-    return{sub:true,ok:parts.every(Boolean),parts,a}}
+    return{sub:true,ok:parts.every(Boolean),parts,a,K}}
 
   /* ---- luật: chia vai ---- */
   async function deal(){
     const ids=Object.keys(P).filter(p=>P[p].name&&!P[p].kicked).sort((a,b)=>P[a].joinedAt-P[b].joinedAt);
     if(ids.length<4)return;
     const c=suggest(ids.length,S.wolves),deck=[];for(let i=0;i<c.wolf;i++)deck.push('wolf');deck.push('seer');if(c.guard)deck.push('guard');while(deck.length<ids.length)deck.push('villager');
-    const roles=shuffle(deck),map={},names={};ids.forEach((p,i)=>{map[p]=roles[i];names[p]=P[p].name});
+    const roles=shuffle(deck),map={},names={},cols=shuffle([...Array(12).keys()]),accs=shuffle([...Array(6).keys()]),chars={};ids.forEach((p,i)=>{map[p]=roles[i];names[p]=P[p].name;chars[p]={c:cols[i%12],a:accs[i%6]}});
     H={key:{},done:[],stats:H.stats||{},used:H.used||[],seen:{},roles:map};
     const ctx=newCtx();
     for(const p of ids){const r=map[p],mates=r==='wolf'?ids.filter(q=>q!==p&&map[q]==='wolf').map(q=>names[q]):[];
       ctx.priv[p]={role:r,mates,susp:0,lastGuard:''};ctx.steps[p]=WAIT;
       P[p].priv=Object.assign(P[p].priv||{},{msgs:[]});
-      say(ctx,p,`Bạn là ${ROLE[r].n}.${mates.length?' Đồng bọn: '+mates.join(', ')+'.':''} Kỹ năng ghi ở thẻ vai bên dưới.`)}
+      say(ctx,p,`Bạn là ${ROLE[r].n}.${mates.length?' Đồng bọn: '+mates.join(', ')+'.':''} Nhân vật của bạn: ${charName(chars[p])}.`)}
     const comp=compText(ids.length,c),ld=S.dl==='off'?0:lastDayOf(ids.length,c.wolf),all=v=>Object.fromEntries(ids.map(p=>[p,v]));
-    ctx.room={phase:'intro',round:0,names,alive:all(true),kpi:all(0),phaoUsed:all(false),order:ids,news:[`Ván bắt đầu: ${ids.length} người gồm ${comp}. ${dlText(ld)}.`],headline:'Mở điện thoại, đọc vai và giữ bí mật',deadline:0,winner:'',reveal:null,final:null,phao:null,comp,lastDay:ld,
-      ann:mkAnn('s','b','Ván bắt đầu!',`${ids.length} người: ${comp}.`,[ld?`Hạn chót: ${dlText(ld)}.`:'',ld?'Phe Tổng đài phải tìm ra Mã Lỗi trước hạn chót.':'','Đọc vai trên điện thoại và giữ bí mật.'])};
+    ctx.room={phase:'intro',round:0,names,alive:all(true),kpi:all(0),phaoUsed:all(false),order:ids,news:[`Ván bắt đầu: ${ids.length} người gồm ${comp}. ${dlText(ld)}.`],headline:'Mở điện thoại, đọc vai và giữ bí mật',deadline:0,winner:'',reveal:null,final:null,phao:null,comp,lastDay:ld,chars,objs:[],spots:[],
+      ann:mkAnn('s','b','Ván bắt đầu!',`${ids.length} người: ${comp}.`,[ld?`Hạn chót: ${dlText(ld)}.`:'',ld?'Phe Tổng đài phải tìm ra Mã Lỗi trước hạn chót.':'','Mỗi người được bốc 1 nhân vật riêng, ai cũng thấy nhân vật của nhau.','Đọc vai trên điện thoại và giữ bí mật.'])};
     await commit(ctx);
   }
   /* ---- đêm ---- */
   async function startNight(){
-    const r=(R.round||0)+1,key='n'+r,ctx=newCtx(),al=alive();H.key={};
-    for(const p of R.order){const q=pickQ(),ro=roleOf(p);
+    const r=(R.round||0)+1,key='n'+r,ctx=newCtx(),al=alive();H.key={};H.objKey={};
+    const m=Math.min(12,R.order.length+2),slots=shuffle([...Array(12).keys()]),objs=shuffle(OBJ_IDS).slice(0,m).map((id,i)=>({id,s:slots[i]})),oq=[];
+    for(const o of objs){const q=pickQ(OBJ[o.id].kw);H.objKey[o.id]={k:key,c:[q.c],qi:[q.qi],ans:[q.ans]};oq.push({id:o.id,q:q.q})}
+    for(const p of R.order){const ro=roleOf(p);
       if(R.alive[p]){let prompt,targets;
         if(ro==='wolf'){prompt='Chọn người để đánh sập';targets=al.filter(x=>roleOf(x)!=='wolf')}
         else if(ro==='seer'){prompt='Chọn người để soi';targets=al.filter(x=>x!==p)}
         else if(ro==='guard'){prompt='Chọn người để bảo vệ (không trùng đêm trước)';const lg=P[p].priv&&P[p].priv.lastGuard;targets=al.filter(x=>x!==lg)}
         else{prompt='Bạn nghi ai là Mã Lỗi nhất?';targets=al.filter(x=>x!==p)}
-        ctx.steps[p]={key,kind:'night',q:q.q,qs:null,prompt,targets};
-      }else ctx.steps[p]={key,kind:'quiz',q:q.q,qs:null,prompt:'Bạn đã rời ca: trả lời đúng vẫn được +1 KPI',targets:null};
-      H.key[p]={k:key,c:[q.c],qi:[q.qi],ans:[q.ans]}}
-    ctx.room={phase:'night',round:r,deadline:Date.now()+S.nightSec*1000,headline:`Đêm ${r}: mọi người làm nhiệm vụ trên điện thoại`};
+        ctx.steps[p]={key,kind:'night',q:null,qs:null,objs:oq,prompt,targets};
+      }else ctx.steps[p]={key,kind:'quiz',q:null,qs:null,objs:oq,prompt:'Bạn đã rời ca: trả lời đúng vẫn được +1 KPI',targets:null};
+      H.key[p]={k:key,obj:true}}
+    ctx.room={phase:'night',round:r,deadline:Date.now()+S.nightSec*1000,headline:`Đêm ${r}: vào Phòng 1, chạm 1 đồ vật để làm nhiệm vụ`,objs:objs,spots:[]};
     await commit(ctx);
   }
   async function resolveNight(){
@@ -2936,9 +3017,9 @@ service cloud.firestore {
     H.disg=H.disg||{};let fake='';
     {const sp=al.find(p=>roleOf(p)==='seer'),tg=sp&&G[sp].ok&&G[sp].a.target;
      if(tg&&roleOf(tg)==='wolf'&&G[tg]&&G[tg].ok&&!H.disg[tg]){H.disg[tg]=true;fake=tg;say(ctx,tg,`Đêm ${R.round}: Giám sát QA vừa soi trúng bạn, nhưng bạn đã NGỤY TRANG thành công: họ thấy bạn "không phải Mã Lỗi". Bạn đã dùng hết ngụy trang.`)}}
-    for(const p of R.order){const g=G[p],K=H.key[p],ro=roleOf(p),n=`Đêm ${R.round}: `;
-      if(!g.sub){say(ctx,p,`${n}bạn chưa gửi kịp${R.alive[p]&&ro!=='villager'?', kỹ năng không có hiệu lực':''}. Đáp án đúng: ${K.ans[0]}.`);continue}
-      const fb=g.ok?'trả lời ĐÚNG (+1 KPI).':`trả lời SAI. Đáp án đúng: ${K.ans[0]}.`;
+    for(const p of R.order){const g=G[p],K=g.K,ro=roleOf(p),n=`Đêm ${R.round}: `;
+      if(!g.sub){say(ctx,p,`${n}bạn chưa gửi kịp${R.alive[p]&&ro!=='villager'?', kỹ năng không có hiệu lực':''}.`);continue}
+      const fb=(g.a&&g.a.obj&&OBJ[g.a.obj]?`[${OBJ[g.a.obj].n}] `:'')+(g.ok?'trả lời ĐÚNG (+1 KPI).':`trả lời SAI. Đáp án đúng: ${K.ans[0]}.`);
       if(!R.alive[p]){say(ctx,p,n+fb);continue}
       let x='';
       if(ro==='wolf')x=g.ok?' Lệnh đánh sập đã gửi.':' Lệnh đánh sập thất bại.';
@@ -2962,7 +3043,7 @@ service cloud.firestore {
   async function openVote(){
     const key='v'+R.round;if(H.done.includes('d'+R.round))return;H.done.push('d'+R.round);
     const ctx=newCtx(),al=alive();
-    for(const p of R.order)ctx.steps[p]=R.alive[p]?{key,kind:'vote',q:null,qs:null,prompt:'Đưa ai ra xử lý ca?',targets:al.filter(x=>x!==p)}:WAIT;
+    for(const p of R.order)ctx.steps[p]=R.alive[p]?{key,kind:'vote',q:null,qs:null,objs:null,prompt:'Đưa ai ra xử lý ca?',targets:al.filter(x=>x!==p)}:WAIT;
     ctx.room={phase:'vote',deadline:Date.now()+S.voteSec*1000,headline:`Ngày ${R.round}: bỏ phiếu bí mật trên điện thoại`};
     await commit(ctx);
   }
@@ -2976,7 +3057,7 @@ service cloud.firestore {
     if(mx>0&&top.length===1&&mx>skip){const acc=top[0];
       if(!R.phaoUsed[acc]){const q1=pickQ(),q2=pickQ(),k='p'+R.round;
         H.key={[acc]:{k,c:[q1.c,q2.c],qi:[q1.qi,q2.qi],ans:[q1.ans,q2.ans]}};
-        ctx.steps[acc]={key:k,kind:'phao',q:null,qs:[q1.q,q2.q],prompt:'Trả lời ĐÚNG CẢ 2 câu để ở lại ca (chỉ 1 lần mỗi ván).',targets:null};
+        ctx.steps[acc]={key:k,kind:'phao',q:null,objs:null,qs:[q1.q,q2.q],prompt:'Trả lời ĐÚNG CẢ 2 câu để ở lại ca (chỉ 1 lần mỗi ván).',targets:null};
         news.push(`${nm(acc)} bị nhiều phiếu nhất (${mx} phiếu) và dùng Phao nghiệp vụ.`);
         ctx.room={news,phase:'phao',phao:{pid:acc},deadline:Date.now()+S.phaoSec*1000,headline:`${nm(acc)} đang trả lời Phao nghiệp vụ (2 câu)`,
           ann:mkAnn('v','n',vt,`${nm(acc)} bị nhiều phiếu nhất (${mx} phiếu).`,[`${nm(acc)} được dùng Phao nghiệp vụ: trả lời đúng cả 2 câu thì ở lại ca.`,'Mọi người chờ kết quả phao trên màn hình.'],bars)};
@@ -3044,7 +3125,7 @@ service cloud.firestore {
     else if(R.phase==='phao')ctl=`<p>Người bị bầu đang trả lời 2 câu trên điện thoại.</p><button class="btn" data-a="endphao">Chốt ngay</button> <button class="btn ghost" data-a="plus">+1 phút</button>`;
     else if(R.phase==='end')ctl=`<button class="btn red" data-a="again">Ván tiếp theo (cộng dồn điểm)</button> <button class="btn ghost" data-a="reset">Xoá tổng điểm, bắt đầu buổi mới</button>`;
     const seats=ids.map(p=>{const out=!lobby&&!R.alive[p],ro=lobby?'':(R.phase==='end'?R.reveal[p]:roleOf(p)),sent=k&&P[p]&&P[p].act&&P[p].act.key===k;
-      return`<div class="seat ${out?'out':''}"><b>${esc(nm(p))}</b><span class="small">${lobby?'Đã vào phòng':out?'Rời ca':'Trong ca'}${!lobby?' · '+(R.kpi[p]||0)+' KPI':''}${R.phaoUsed&&R.phaoUsed[p]?' · đã dùng phao':''}</span>${ro&&(showRoles||R.phase==='end')?`<span><span class="tag ${ro==='wolf'?'bad':''}">${ROLE[ro].n}</span></span>`:''}${k&&!out?`<span class="${sent?'okc':'small'}">${sent?'✓ Đã gửi':'… đang làm'}</span>`:''}${lobby?`<button class="btn ghost" data-kick="${p}" style="min-height:36px;padding:6px 10px">Bỏ khỏi phòng</button>`:''}</div>`}).join('');
+      return`<div class="seat ${out?'out':''}">${!lobby&&R.chars&&R.chars[p]?av(R.chars[p],out):''}<b>${esc(nm(p))}</b><span class="small">${lobby?'Đã vào phòng':out?'Rời ca':'Trong ca'}${!lobby?' · '+(R.kpi[p]||0)+' KPI':''}${R.phaoUsed&&R.phaoUsed[p]?' · đã dùng phao':''}</span>${ro&&(showRoles||R.phase==='end')?`<span><span class="tag ${ro==='wolf'?'bad':''}">${ROLE[ro].n}</span></span>`:''}${k&&!out?`<span class="${sent?'okc':'small'}">${sent?'✓ Đã gửi':'… đang làm'}</span>`:''}${lobby?`<button class="btn ghost" data-kick="${p}" style="min-height:36px;padding:6px 10px">Bỏ khỏi phòng</button>`:''}</div>`}).join('');
     const stats=Object.values(H.stats).filter(s=>s.n).sort((a,b)=>a.c/a.n-b.c/b.n).slice(0,8);
     $('#t-room').innerHTML=`<div class="g2b">
       <div class="card"><div class="qr">${qrSvg()}</div><p style="margin:10px 0 4px"><b>Quét để vào phòng ${esc(code.toUpperCase())}</b></p><p class="url">${esc(link)}</p>
@@ -3052,7 +3133,7 @@ service cloud.firestore {
         <button class="btn ghost" data-a="close" style="margin-top:10px">Đóng phòng</button></div>
       <div style="display:grid;gap:18px">
         ${R.ann&&!lobby&&R.phase!=='night'&&R.phase!=='vote'?`<div class="card ann t-${R.ann.tone}">${annHTML(R.ann,true)}</div>`:''}
-        <div class="card"><span class="ph ${R.phase==='night'?'n':'d'}">${phaseName(R)}</span>${R.lastDay&&!lobby&&R.phase!=='end'?`<span class="dl">Hạn chót: hết Ngày ${R.lastDay}</span>`:''}<div class="row" style="justify-content:space-between;margin:12px 0"><div class="head">${esc(R.headline)}</div>${R.deadline?`<div class="timer cd" data-d="${R.deadline}"></div>`:''}</div>${ctl}</div>
+        <div class="card"><span class="ph ${R.phase==='night'?'n':'d'}">${phaseName(R)}</span>${R.lastDay&&!lobby&&R.phase!=='end'?`<span class="dl">Hạn chót: hết Ngày ${R.lastDay}</span>`:''}<div class="row" style="justify-content:space-between;margin:12px 0"><div class="head">${esc(R.headline)}</div>${R.deadline?`<div class="timer cd" data-d="${R.deadline}"></div>`:''}</div>${ctl}${R.phase==='night'?`<div style="margin-top:14px;max-width:620px">${roomSVG(R,{})}</div>`:['day','vote','phao','result'].includes(R.phase)?`<div style="margin-top:14px;max-width:620px">${meetSVG(R)}</div>`:''}</div>
         ${R.phase==='end'?endHTML(R):lobby?tallyHTML(R)+(R.tally?'<button class="btn ghost" data-a="reset" style="justify-self:start">Xoá tổng điểm, bắt đầu buổi mới</button>':''):''}
         <div><div class="row" style="justify-content:space-between;margin-bottom:8px"><h2 style="margin:0">Ca trực</h2>${!lobby&&R.phase!=='end'?`<button class="btn ghost" data-a="eye">${showRoles?'Che vai':'Hiện vai (đừng chiếu lên màn hình!)'}</button>`:''}</div><div class="seats">${seats||'<p class="small">Chưa có ai. Mời mọi người quét mã QR.</p>'}</div></div>
         <div class="g2"><div class="card"><h3>Bảng tin</h3><ol class="log">${(R.news||[]).map(m=>`<li>${esc(m)}</li>`).join('')}</ol></div>
@@ -3085,9 +3166,10 @@ ${['wolf','seer','guard','villager'].map(k=>`<div class="rl">${svg(k)}<div><b>${
 <h3>Cách chơi</h3>
 <ol>
 <li><b>Vào phòng:</b> MC tạo phòng, mọi người quét QR và nhập tên. MC bấm "Chia vai". Vai tự hiện trên điện thoại, đọc xong bấm "Úp vai".</li>
-<li><b>Đêm (60 giây):</b> tất cả cùng lúc làm trên điện thoại: chọn 1 người theo vai và trả lời 1 câu hỏi trắc nghiệm. Ai cũng thao tác giống nhau nên không đoán được vai qua việc ai đang bấm.</li>
+<li><b>Nhân vật:</b> chia vai xong, mỗi người được bốc 1 nhân vật riêng (màu áo + phụ kiện như tai nghe, mũ bảo hộ, kính). Nhân vật công khai, không liên quan đến vai.</li>
+<li><b>Đêm, Phòng 1 · Kho bảo hành (60 giây):</b> trong phòng có các đồ vật (máy giặt, tủ lạnh, máy lọc nước, bàn tổng đài, hộp bí ẩn…), số đồ vật nhiều hơn số người 2 cái. Mỗi người chạm 1 đồ vật chưa ai chọn để mở nhiệm vụ: phía trên là kỹ năng theo vai (Mã Lỗi chọn người để đánh sập, Giám sát QA chọn người để soi…, hiện tên và nhân vật), phía dưới là câu hỏi trắc nghiệm của đồ vật đó. Ai cũng thao tác giống nhau nên không đoán được vai qua cách bấm. Nhân vật của mỗi người hiện ở đồ vật họ đã chọn.</li>
 <li><b>Trời sáng, thông báo kết quả:</b> mọi điện thoại và màn hình MC cùng hiện bảng kết quả đêm: ai rời ca (lộ vai), hay Kỹ thuật viên đã cứu được người, hay Mã Lỗi trả lời sai nên đêm bình yên; số câu cả ca trả lời đúng; có manh mối được phát hay không; còn mấy ngày đến hạn chót. Tin riêng (kết quả soi, manh mối, đáp án đúng) hiện ngay dưới bảng trên điện thoại của từng người.</li>
-<li><b>Ngày, thảo luận (3 phút):</b> nói chuyện công khai, có thể kể manh mối hoặc nói dối. Điện thoại có dòng "Việc của bạn" gợi ý nên làm gì theo vai. Không đưa điện thoại cho người khác xem.</li>
+<li><b>Ngày, Phòng 2 · Phòng họp (thảo luận 3 phút):</b> mọi nhân vật ngồi quanh bàn họp, người đã rời ca hiện mờ. nói chuyện công khai, có thể kể manh mối hoặc nói dối. Điện thoại có dòng "Việc của bạn" gợi ý nên làm gì theo vai. Không đưa điện thoại cho người khác xem.</li>
 <li><b>Bỏ phiếu bí mật (60 giây):</b> người nhiều phiếu nhất (không hoà và nhiều hơn số phiếu bỏ qua) bị đưa ra xử lý. Bảng kết quả phiếu hiện lên cho cả phòng.</li>
 <li><b>Phao nghiệp vụ:</b> người bị bầu trả lời 2 câu. Đúng cả 2 thì ở lại ca (vai vẫn bí mật); sai 1 câu là rời ca và lộ vai. Mỗi người chỉ có 1 lần phao.</li>
 <li><b>Ngụy trang của Mã Lỗi:</b> mỗi Mã Lỗi có 1 lần ngụy trang. Đêm nào Mã Lỗi trả lời đúng mà bị Giám sát QA soi trúng, Giám sát QA sẽ thấy "không phải Mã Lỗi". Mã Lỗi được báo riêng là đã dùng ngụy trang. Lần soi trúng sau sẽ ra kết quả thật.</li>
