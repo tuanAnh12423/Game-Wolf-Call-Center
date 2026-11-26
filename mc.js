@@ -181,31 +181,36 @@ function mcApp(BOT){
 
   function setup(){
     $('#hcode').innerHTML='';
-    $('#t-room').innerHTML=`<div class="g2"><div>
-      <h2>Tạo phòng chơi</h2>
-      <label>Cách kết nối điện thoại</label>
-      <div class="mode"><label><input type="radio" name="md" value="F" ${S.mode==='F'?'checked':''}> Điện thoại thật (Firebase)</label><label><input type="radio" name="md" value="L" ${S.mode==='L'?'checked':''}> Thử trên 1 máy (nhiều tab)</label></div>
-      <div id="fbox" class="${S.mode==='F'?'':'hide'}">
-        <label for="cfg">Cấu hình Firebase (dán nguyên đoạn firebaseConfig)</label><textarea id="cfg" placeholder="const firebaseConfig = { apiKey: &quot;...&quot;, projectId: &quot;...&quot;, ... }">${esc(S.cfgRaw)}</textarea>
-        <p class="small" id="cfgok"></p>
-      </div>
-      <label for="base">Địa chỉ trang web (GitHub Pages)</label><input id="base" value="${esc(S.base)}">
-      <div class="cols3">
-        <div><label for="s1">Đêm (giây)</label><input id="s1" type="number" min="20" value="${S.nightSec}"></div>
-        <div><label for="s2">Thảo luận (giây)</label><input id="s2" type="number" min="30" value="${S.talkSec}"></div>
-        <div><label for="s3">Bỏ phiếu (giây)</label><input id="s3" type="number" min="20" value="${S.voteSec}"></div>
-        <div><label for="s4">Phao (giây)</label><input id="s4" type="number" min="30" value="${S.phaoSec}"></div>
-      </div>
-      <label for="sw">Số Mã Lỗi</label><select id="sw"><option value="auto">Tự động theo số người (khuyên dùng)</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select>
-      <label for="sdl">Hạn chót ca trực</label><select id="sdl"><option value="auto">Bật, theo số người (khuyên dùng, giúp cân bằng)</option><option value="off">Tắt</option></select>
-      <label>Nhóm câu hỏi dùng trong ván</label><div class="mode" id="gbox"></div><p class="small">Bỏ chọn nhóm chưa muốn dùng. Quản lý câu hỏi ở tab "Ngân hàng câu hỏi".</p>
-      <p class="warn" id="se"></p><button class="btn red" id="create">Tạo phòng & mã QR</button>
-      <div class="card" style="margin-top:16px"><h3>Chơi thử với bot</h3><p class="small">Thử một mình trên điện thoại hoặc máy tính, các bot đóng vai người chơi còn lại. Mở trên điện thoại bằng link trang + <b>#bot</b>.</p><a class="btn" href="#bot" onclick="setTimeout(()=>location.reload(),50)">Chơi thử với bot</a></div>
-    </div><div>
-      <h2>Chia vai theo số người</h2>
-      <div class="card"><table><thead><tr><th>Số người</th><th>Bộ vai</th></tr></thead><tbody>${[4,5,6,7,8,9,10,11,12,13].map(n=>`<tr><td>${n}</td><td>${compText(n,suggest(n,'auto'))}<br><span class="small">${dlText(lastDayOf(n,suggest(n,'auto').wolf))}</span></td></tr>`).join('')}</tbody></table>
-      <p class="small">Chơi bao nhiêu ván cũng được: bấm "Ván tiếp theo" để cộng dồn điểm, cuối buổi ai tổng cao nhất là TĐV xuất sắc của buổi. Ván chuẩn cho buổi training là <b>5 người</b>. MC không chơi, chỉ điều khiển màn hình này.</p></div>
-      <details class="card" style="margin-top:14px"><summary><b>Cách tạo Firebase (làm 1 lần, miễn phí)</b></summary>
+    $('#t-room').innerHTML=`<div class="setup"><div class="sv">
+      <h1 class="pt">Tạo phòng chơi</h1>
+      <p class="lead2">Chọn cách kết nối, chỉnh thời gian rồi tạo mã QR cho cả phòng quét.</p>
+      <section class="step"><h3><span class="sn">1</span>Kết nối điện thoại</h3>
+        <div class="mode seg"><label><input type="radio" name="md" value="F" ${S.mode==='F'?'checked':''}> Điện thoại thật (Firebase)</label><label><input type="radio" name="md" value="L" ${S.mode==='L'?'checked':''}> Thử trên 1 máy (nhiều tab)</label></div>
+        <div id="fbox" class="${S.mode==='F'?'':'hide'}">
+          <label for="cfg">Cấu hình Firebase (dán nguyên đoạn firebaseConfig)</label><textarea id="cfg" placeholder="const firebaseConfig = { apiKey: &quot;...&quot;, projectId: &quot;...&quot;, ... }">${esc(S.cfgRaw)}</textarea>
+          <p class="small" id="cfgok"></p>
+        </div>
+        <label for="base">Địa chỉ trang web (GitHub Pages)</label><input id="base" value="${esc(S.base)}">
+      </section>
+      <section class="step"><h3><span class="sn">2</span>Thời gian và vai</h3>
+        <div class="cols3">
+          <div><label for="s1">Đêm (giây)</label><input id="s1" type="number" min="20" value="${S.nightSec}"></div>
+          <div><label for="s2">Thảo luận (giây)</label><input id="s2" type="number" min="30" value="${S.talkSec}"></div>
+          <div><label for="s3">Bỏ phiếu (giây)</label><input id="s3" type="number" min="20" value="${S.voteSec}"></div>
+          <div><label for="s4">Phao (giây)</label><input id="s4" type="number" min="30" value="${S.phaoSec}"></div>
+        </div>
+        <div class="cols2"><div><label for="sw">Số Mã Lỗi</label><select id="sw"><option value="auto">Tự động theo số người</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div>
+        <div><label for="sdl">Hạn chót ca trực</label><select id="sdl"><option value="auto">Bật, theo số người</option><option value="off">Tắt</option></select></div></div>
+      </section>
+      <section class="step"><h3><span class="sn">3</span>Nhóm câu hỏi</h3>
+        <div class="mode" id="gbox"></div><p class="small">Bỏ chọn nhóm chưa muốn dùng. Thêm, sửa câu hỏi ở tab "Ngân hàng câu hỏi".</p>
+      </section>
+      <p class="warn" id="se"></p><button class="btn red big" id="create">Tạo phòng và mã QR</button>
+    </div><aside class="sa">
+      <div class="card tryb"><h3>Chơi thử với bot</h3><p class="small">Thử một mình trên điện thoại hoặc máy tính, các bot đóng vai người chơi còn lại. Mở trên điện thoại bằng link trang + <b>#bot</b>.</p><a class="btn" href="#bot" onclick="setTimeout(()=>location.reload(),50)">Chơi thử với bot</a></div>
+      <div class="card"><h3>Bộ vai theo số người</h3><table class="comp"><thead><tr><th>Người</th><th class="r">Mã Lỗi</th><th class="r">QA</th><th class="r">KTV</th><th class="r">TĐV</th><th class="r">Hạn chót</th></tr></thead><tbody>${[4,5,6,7,8,9,10,11,12,13].map(n=>{const c=suggest(n,'auto'),d=lastDayOf(n,c.wolf);return`<tr${n===5?' class="std"':''}><td>${n}${n===5?' <small>chuẩn</small>':''}</td><td class="r">${c.wolf}</td><td class="r">1</td><td class="r">${c.guard}</td><td class="r">${n-c.wolf-1-c.guard}</td><td class="r">${d?'Ngày '+d:'Không'}</td></tr>`}).join('')}</tbody></table>
+      <p class="small">MC không chơi, chỉ điều khiển màn hình này. Chơi bao nhiêu ván cũng được, điểm tự cộng dồn cả buổi.</p></div>
+      <details class="card fb"><summary><b>Cách tạo Firebase (làm 1 lần, miễn phí)</b></summary>
       <ol><li>Vào console.firebase.google.com, bấm tạo project mới (ví dụ tên <b>masoi-tongdai</b>), có thể tắt Google Analytics.</li>
       <li>Vào <b>Build → Firestore Database → Create database</b>, chọn vị trí gần (ví dụ asia-southeast1).</li>
       <li>Mở tab <b>Rules</b>, thay bằng đoạn dưới rồi bấm <b>Publish</b>:</li></ol>
@@ -222,7 +227,7 @@ service cloud.firestore {
 }</pre>
       <ol start="4"><li>Bấm bánh răng <b>Project settings</b>, kéo xuống <b>Your apps</b>, bấm biểu tượng Web <b>&lt;/&gt;</b>, đặt tên app rồi đăng ký.</li><li>Sao chép đoạn <b>firebaseConfig</b> hiện ra và dán vào ô bên trái.</li></ol>
       <p class="small">Nên dùng project riêng cho game, đừng sửa Rules của project web tra cứu mã lỗi.</p></details>
-    </div></div>`;
+    </aside></div>`;
     $('#sw').value=S.wolves;$('#sdl').value=S.dl||'auto';refreshGroups();
     const md=()=>document.querySelector('input[name=md]:checked').value;
     document.querySelectorAll('input[name=md]').forEach(r=>r.onchange=()=>$('#fbox').classList.toggle('hide',md()!=='F'));
@@ -427,35 +432,45 @@ service cloud.firestore {
 
   /* ---- giao diện MC ---- */
   function qrSvg(){if(qrCache[link])return qrCache[link];try{const q=qrcode(0,'L');q.addData(link);q.make();return qrCache[link]=q.createSvgTag({cellSize:5,margin:2,scalable:true})}catch(e){return'<p style="color:#000">Link quá dài để tạo QR.</p>'}}
+  function rosterHTML(ids,lobby,k){
+    return ids.map(p=>{const out=!lobby&&!R.alive[p],ro=lobby?'':(R.phase==='end'?R.reveal[p]:roleOf(p)),sent=!!(k&&!out&&P[p]&&P[p].act&&P[p].act.key===k),bot=P[p]&&P[p].bot,ch=R.chars&&R.chars[p];
+      const st=lobby?(bot?'Bot':'Đã vào phòng'):out?'Rời ca':k?(sent?'Đã gửi':'Đang làm'):`${R.kpi[p]||0} KPI`;
+      return`<div class="chip${out?' out':''}${sent?' sent':''}">${!lobby&&ch?av(ch,out):`<span class="ini">${esc((nm(p)[0]||'?').toUpperCase())}</span>`}<span class="cn"><b>${esc(nm(p))}</b><small>${st}${ro&&(showRoles||R.phase==='end')?` · <em class="${ro==='wolf'?'bad':''}">${ROLE[ro].n}</em>`:''}${R.phaoUsed&&R.phaoUsed[p]&&!lobby?' · đã dùng phao':''}</small></span>${lobby?`<button class="x" data-kick="${p}" aria-label="Bỏ ${esc(nm(p))} khỏi phòng">×</button>`:''}</div>`}).join('')}
   function render(){
     if(!R){$('#t-room').innerHTML='<div class="card">Đang kết nối phòng…</div>';return}
-    document.body.dataset.phase=R.phase==='night'?'night':'day';
-    $('#hcode').innerHTML=`<span class="code">${esc(code.toUpperCase())}</span>`;
-    const lobby=R.phase==='lobby',ids=lobby?Object.keys(P).filter(p=>P[p].name&&!P[p].kicked).sort((a,b)=>P[a].joinedAt-P[b].joinedAt):R.order,k=stepKey();
-    const subN=k?alive().filter(p=>P[p]&&P[p].act&&P[p].act.key===k).length:0,need=k==='p'+R.round?1:alive().length;
-    let ctl='';
-    if(lobby){const n=ids.length,c=suggest(n,S.wolves);ctl=`<p>${n} người đã vào phòng.${n>=4?' Bộ vai: '+compText(n,c)+'. '+dlText(S.dl==='off'?0:lastDayOf(n,c.wolf))+'.':' Cần ít nhất 4 người.'}</p>${BOT?'':`<div class="row" style="margin-bottom:10px"><button class="btn ghost" data-a="addbot" ${n>=12?'disabled':''}>+ Thêm bot</button><button class="btn ghost" data-a="botwolf">Bot làm Mã Lỗi: ${S.botWolf?'Có':'Không'}</button></div>`}<button class="btn red" data-a="deal" ${n<4?'disabled':''}>Chia vai & bắt đầu</button>`}
-    else if(R.phase==='intro'||R.phase==='result')ctl=`<button class="btn red" data-a="night">Bắt đầu đêm ${R.round+1}</button>`;
-    else if(R.phase==='night')ctl=`<p class="big">Đã gửi: ${subN}/${need}</p><button class="btn" data-a="endnight">Kết thúc đêm ngay</button> <button class="btn ghost" data-a="plus">+1 phút</button>`;
-    else if(R.phase==='day')ctl=`<p>Thảo luận công khai. Hết giờ sẽ tự mở bỏ phiếu.</p><button class="btn red" data-a="vote">Mở bỏ phiếu ngay</button> <button class="btn ghost" data-a="plus">+1 phút</button>`;
-    else if(R.phase==='vote')ctl=`<p class="big">Đã bầu: ${subN}/${need}</p><button class="btn" data-a="endvote">Chốt phiếu ngay</button> <button class="btn ghost" data-a="plus">+1 phút</button>`;
-    else if(R.phase==='phao')ctl=`<p>Người bị bầu đang trả lời 2 câu trên điện thoại.</p><button class="btn" data-a="endphao">Chốt ngay</button> <button class="btn ghost" data-a="plus">+1 phút</button>`;
-    else if(R.phase==='end')ctl=`<button class="btn red" data-a="again">Ván tiếp theo (cộng dồn điểm)</button> <button class="btn ghost" data-a="reset">Xoá tổng điểm, bắt đầu buổi mới</button>`;
-    const seats=ids.map(p=>{const out=!lobby&&!R.alive[p],ro=lobby?'':(R.phase==='end'?R.reveal[p]:roleOf(p)),sent=k&&P[p]&&P[p].act&&P[p].act.key===k;
-      return`<div class="seat ${out?'out':''}">${!lobby&&R.chars&&R.chars[p]?av(R.chars[p],out):''}<b>${esc(nm(p))}</b><span class="small">${lobby?'Đã vào phòng':out?'Rời ca':'Trong ca'}${!lobby?' · '+(R.kpi[p]||0)+' KPI':''}${R.phaoUsed&&R.phaoUsed[p]?' · đã dùng phao':''}</span>${ro&&(showRoles||R.phase==='end')?`<span><span class="tag ${ro==='wolf'?'bad':''}">${ROLE[ro].n}</span></span>`:''}${k&&!out?`<span class="${sent?'okc':'small'}">${sent?'✓ Đã gửi':'… đang làm'}</span>`:''}${lobby?`<button class="btn ghost" data-kick="${p}" style="min-height:36px;padding:6px 10px">Bỏ khỏi phòng</button>`:''}</div>`}).join('');
+    const ph=R.phase,lobby=ph==='lobby';
+    document.body.dataset.phase=ph==='night'?'night':'day';
+    $('#hcode').innerHTML=lobby?'':`<span class="small">Mã phòng</span><span class="code">${esc(code.toUpperCase())}</span>`;
+    const ids=lobby?Object.keys(P).filter(p=>P[p].name&&!P[p].kicked).sort((a,b)=>P[a].joinedAt-P[b].joinedAt):R.order,k=stepKey();
+    const subN=k?alive().filter(p=>P[p]&&P[p].act&&P[p].act.key===k).length:0,need=k==='p'+R.round?1:alive().length,n=ids.length,c=suggest(n,S.wolves);
+    const plus='<button class="btn ghost sm" data-a="plus">+1 phút</button>';let main='',extra='';
+    if(lobby){main=`<button class="btn red big full" data-a="deal" ${n<4?'disabled':''}>Chia vai và bắt đầu</button>`;extra=BOT?'':`<button class="btn ghost sm" data-a="addbot" ${n>=12?'disabled':''}>+ Thêm bot</button><button class="btn ghost sm" data-a="botwolf">Bot làm Mã Lỗi: ${S.botWolf?'Có':'Không'}</button>`}
+    else if(ph==='intro'||ph==='result')main=`<button class="btn red big full" data-a="night">Bắt đầu đêm ${R.round+1}</button>`;
+    else if(ph==='night'){main='<button class="btn full" data-a="endnight">Kết thúc đêm ngay</button>';extra=plus+`<button class="btn ghost sm" data-a="pos">${showPos?'Ẩn vị trí':'Hiện vị trí (chỉ MC xem)'}</button>`}
+    else if(ph==='day'){main='<button class="btn red big full" data-a="vote">Mở bỏ phiếu ngay</button>';extra=plus}
+    else if(ph==='vote'){main='<button class="btn full" data-a="endvote">Chốt phiếu ngay</button>';extra=plus}
+    else if(ph==='phao'){main='<button class="btn full" data-a="endphao">Chốt phao ngay</button>';extra=plus}
+    else if(ph==='end'){main='<button class="btn red big full" data-a="again">Ván tiếp theo</button>';extra='<button class="btn ghost sm" data-a="reset">Xoá tổng điểm, bắt đầu buổi mới</button>'}
+    const status=lobby||ph==='end'?'':`<section class="status"><div class="sl"><span class="ph ${ph==='night'?'n':'d'}">${phaseName(R)}</span>${R.lastDay&&ph!=='end'?`<span class="dl">Hạn chót: hết Ngày ${R.lastDay}</span>`:''}</div>
+      <div class="head">${esc(ph==='day'?'Cả ca thảo luận để tìm ra Mã Lỗi':ph==='result'?'Chuẩn bị sang đêm tiếp theo':ph==='vote'?'Bỏ phiếu bí mật trên điện thoại':R.headline)}</div>${R.deadline&&R.deadline>Date.now()?`<div class="timer cd" data-d="${R.deadline}"></div>`:''}
+      ${k?`<div class="prog"><span>${ph==='vote'?'Đã bầu':'Đã gửi'} <b>${subN}/${need}</b></span><i><u style="width:${Math.round(100*subN/Math.max(1,need))}%"></u></i></div>`:''}</section>`;
+    let stage='';
+    if(lobby)stage=BOT?'<div class="lobby"><div><h2>Chơi thử với bot</h2><p>Đây là màn hình MC chạy ngầm. Các bot tự vào phòng và tự chơi, bấm Tiếp tục trên điện thoại để sang bước sau.</p></div></div>'
+      :`<div class="lobby"><div class="qr">${qrSvg()}</div><div class="lj"><h2>Quét mã để vào ca trực</h2><p>Mở camera điện thoại, quét mã rồi nhập tên của bạn.</p><div class="code huge">${esc(code.toUpperCase())}</div><p class="url">${esc(link)}</p><div class="row"><button class="btn ghost sm" data-a="copy">Sao chép link</button>${S.mode==='L'?'<button class="btn ghost sm" data-a="tab">Mở tab người chơi thử</button>':''}</div><p class="small" id="cp"></p></div></div>`;
+    else if(ph==='intro')stage=`<div class="cast"><h2>Mọi người đang xem thẻ vai</h2><p class="small">Giữ bí mật vai của mình. MC bắt đầu đêm khi cả ca sẵn sàng.</p><div class="castg">${R.order.map(p=>`<div class="ca">${av(R.chars&&R.chars[p],false,'av big')}<b>${esc(nm(p))}</b><small>${charName(R.chars&&R.chars[p])}</small></div>`).join('')}</div></div>`;
+    else if(ph==='night')stage='<div id="mwslot"></div>';
+    else if(ph==='end')stage=endHTML(R,false);
+    else stage=meetSVG(R)+chatHTML(R);
+    let side=`<div class="card ctl">${lobby?`<div class="cnt"><b>${n}</b><span>người đã vào phòng</span></div><p class="small">${n>=4?'Bộ vai: '+compText(n,c)+'. '+dlText(S.dl==='off'?0:lastDayOf(n,c.wolf))+'.':'Cần ít nhất 4 người để chia vai.'}</p>`:''}${main}${extra?`<div class="row">${extra}</div>`:''}</div>`;
+    if(R.ann&&['day','phao','result'].includes(ph))side+=`<div class="card ann t-${R.ann.tone}">${annHTML(R.ann,true)}</div>`;
+    if(ph==='day')side+=`${R.scene?`<div class="trace"><span>Dấu vết đêm qua</span><b>Mã Lỗi ra tay từ ${esc(R.scene.at)}</b>${(R.scene.objs||[]).length?`<div class="chips">${R.scene.objs.map(o=>`<i>${esc(o)}</i>`).join('')}</div>`:''}</div>`:''}<div class="card asks"><h3>Hỏi nhau</h3><ul>${debateQs(R).map(q=>`<li>${esc(q)}</li>`).join('')}</ul></div>`;
+    if(ph==='end'||(lobby&&R.tally))side+=tallyHTML(R)+(lobby&&R.tally?'<button class="btn ghost sm" data-a="reset">Xoá tổng điểm, bắt đầu buổi mới</button>':'');
     const stats=Object.values(H.stats).filter(s=>s.n).sort((a,b)=>a.c/a.n-b.c/b.n).slice(0,8);
-    $('#t-room').innerHTML=`<div class="g2b">
-      ${BOT?'<div class="card"><h3>Chơi thử với bot</h3><p class="small">Đây là màn hình MC chạy ngầm. Các bot tự chơi; bấm Tiếp tục trên điện thoại để sang bước sau.</p></div>':`<div class="card"><div class="qr">${qrSvg()}</div><p style="margin:10px 0 4px"><b>Quét để vào phòng ${esc(code.toUpperCase())}</b></p><p class="url">${esc(link)}</p>
-        <div class="row"><button class="btn ghost" data-a="copy">Sao chép link</button>${S.mode==='L'?'<button class="btn ghost" data-a="tab">Mở tab người chơi thử</button>':''}</div><p class="small" id="cp"></p>
-        <button class="btn ghost" data-a="close" style="margin-top:10px">Đóng phòng</button></div>`}
-      <div style="display:grid;gap:18px">
-        ${R.ann&&!lobby&&R.phase!=='night'&&R.phase!=='vote'?`<div class="card ann t-${R.ann.tone}">${annHTML(R.ann,true)}</div>`:''}
-        <div class="card"><span class="ph ${R.phase==='night'?'n':'d'}">${phaseName(R)}</span>${R.lastDay&&!lobby&&R.phase!=='end'?`<span class="dl">Hạn chót: hết Ngày ${R.lastDay}</span>`:''}<div class="row" style="justify-content:space-between;margin:12px 0"><div class="head">${esc(R.headline)}</div>${R.deadline?`<div class="timer cd" data-d="${R.deadline}"></div>`:''}</div>${ctl}${R.phase==='night'?`<div class="row" style="margin-top:12px"><button class="btn ghost" data-a="pos">${showPos?'Ẩn vị trí người chơi':'Hiện vị trí (chỉ MC xem, đừng chiếu)'}</button></div><div id="mwslot" style="margin-top:10px"></div>`:['day','vote','phao','result'].includes(R.phase)?`<div style="margin-top:14px;max-width:620px">${R.phase==='day'?`<div class="card" style="margin-top:12px">${R.scene?`<p class="big" style="margin:0 0 8px">Dấu vết: Mã Lỗi ra tay từ ${esc(R.scene.at)}${(R.scene.objs||[]).length?` (${esc(R.scene.objs.join(', '))})`:''}</p>`:''}<b>Hỏi nhau:</b><ol style="font-size:19px">${debateQs(R).map(q=>`<li>${esc(q)}</li>`).join('')}</ol></div>`:''}${meetSVG(R)}${chatHTML(R)}</div>`:''}</div>
-        ${R.phase==='end'?endHTML(R):lobby?tallyHTML(R)+(R.tally?'<button class="btn ghost" data-a="reset" style="justify-self:start">Xoá tổng điểm, bắt đầu buổi mới</button>':''):''}
-        <div><div class="row" style="justify-content:space-between;margin-bottom:8px"><h2 style="margin:0">Ca trực</h2>${!lobby&&R.phase!=='end'?`<button class="btn ghost" data-a="eye">${showRoles?'Che vai':'Hiện vai (đừng chiếu lên màn hình!)'}</button>`:''}</div><div class="seats">${seats||'<p class="small">Chưa có ai. Mời mọi người quét mã QR.</p>'}</div></div>
-        <div class="g2"><div class="card"><h3>Bảng tin</h3><ol class="log">${(R.news||[]).map(m=>`<li>${esc(m)}</li>`).join('')}</ol></div>
-        <div class="card"><h3>Câu hỏi khó nhất (tỉ lệ đúng)</h3>${stats.length?`<table><tbody>${stats.map(s=>`<tr><td>${esc(s.q)}</td><td class="r">${Math.round(100*s.c/s.n)}% (${s.c}/${s.n})</td></tr>`).join('')}</tbody></table>`:'<p class="small">Sẽ hiện sau đêm đầu tiên. Dùng để biết nội dung nào cần training lại.</p>'}</div></div>
-      </div></div>`;
+    const roster=`<section class="rost"><div class="rh"><h3>Ca trực <small>${n} người</small></h3>${!lobby&&ph!=='end'?`<button class="btn ghost sm" data-a="eye">${showRoles?'Che vai':'Hiện vai (đừng chiếu)'}</button>`:''}</div><div class="chips2">${rosterHTML(ids,lobby,k)||'<p class="small">Chưa có ai vào phòng.</p>'}</div></section>`;
+    const foot=lobby?'':`<section class="foot"><div class="card"><h3>Bảng tin</h3><ol class="log">${(R.news||[]).slice().reverse().map(m=>`<li>${esc(m)}</li>`).join('')}</ol></div>
+      <div class="card"><h3>Câu hỏi khó nhất</h3>${stats.length?`<table class="hard"><tbody>${stats.map(s=>{const pc=Math.round(100*s.c/s.n);return`<tr><td>${esc(s.q)}</td><td class="r"><span class="pct${pc<50?' lo':''}">${pc}%</span><small>${s.c}/${s.n}</small></td></tr>`}).join('')}</tbody></table>`:'<p class="small">Hiện sau đêm đầu tiên. Câu nào tỉ lệ đúng thấp là nội dung cần training lại.</p>'}</div></section>`;
+    const tools=BOT?'':`<div class="tools">${lobby?'':'<button class="btn ghost sm" data-a="copy">Sao chép link phòng</button><span class="small" id="cp"></span>'}<button class="btn ghost sm" data-a="close">Đóng phòng</button></div>`;
+    $('#t-room').innerHTML=`<div class="mcg${lobby?' is-lobby':''}">${status}<div class="stage">${stage}</div><aside class="side">${side}</aside>${roster}${foot}${tools}</div>`;
     tick();const ms=$('#mwslot');if(ms){if(!mcWorld)mcWorld=World({mode:'view'});mcWorld.update(R);mcWorld.el.classList.toggle('nopeople',!showPos);ms.appendChild(mcWorld.el)}
   }
   $('#t-room').addEventListener('click',async e=>{
